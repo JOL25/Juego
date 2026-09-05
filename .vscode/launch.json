@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "Run Nightfall Survivors",
+      "url": "http://127.0.0.1:8080",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Serve Nightfall Survivors"
+    }
+  ]
+}

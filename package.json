@@ -1,0 +1,11 @@
+{
+  "name": "nightfall-survivors",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/dev-server.js",
+    "test": "node --test",
+    "test:browser": "node scripts/browser-smoke.js",
+    "benchmark": "node scripts/performance-benchmark.js"
+  }
+}

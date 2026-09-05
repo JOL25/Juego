@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Nightfall Survivors</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <div id="game-wrap">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Touch pause button (visible always during play, styled via CSS) -->
+    <button id="btn-pause-touch" class="icon-button" aria-label="Pausar">⏸</button>
+    <button type="button" id="btn-dash" class="action-button btn-dash" aria-label="Dash">Dash</button>
+    <button type="button" id="btn-ult" class="action-button btn-ult" aria-label="Definitiva">Ult</button>
+
+    <!-- MAIN MENU -->
+    <div id="screen-menu" class="screen">
+      <div class="panel panel-menu">
+        <h1 class="game-title">Nightfall Survivors</h1>
+        <p class="subtitle">Sobrevive a la horda interminable. Sube de nivel. No mires atrás.</p>
+        <button id="btn-start" class="btn-primary">Empezar</button>
+        <div class="controls-hint">
+          <strong>Movimiento:</strong> WASD / Flechas / Joystick táctil<br/>
+          <strong>Dash:</strong> Espacio o Shift<br/>
+          <strong>Definitiva:</strong> Q, E o R (se desbloquea al nivel 5)<br/>
+          <strong>Pausa:</strong> Esc o P
+        </div>
+      </div>
+    </div>
+
+    <!-- LEVEL UP -->
+    <div id="screen-levelup" class="screen hidden">
+      <div class="panel panel-levelup">
+        <h2 class="section-title">¡Subiste de nivel!</h2>
+        <p class="subtitle">Elige una mejora</p>
+        <div id="levelup-options" class="levelup-grid"></div>
+      </div>
+    </div>
+
+    <!-- PAUSE -->
+    <div id="screen-pause" class="screen hidden">
+      <div class="panel">
+        <h2 class="section-title">Pausa</h2>
+        <button id="btn-resume" class="btn-primary">Continuar</button>
+        <button id="btn-restart-pause" class="btn-secondary">Reiniciar</button>
+      </div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="screen-gameover" class="screen hidden">
+      <div class="panel">
+        <h2 class="section-title danger">Has caído</h2>
+        <div id="gameover-stats" class="gameover-stats"></div>
+        <button id="btn-restart-gameover" class="btn-primary">Volver a intentar</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
