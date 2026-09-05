@@ -1,4 +1,4 @@
-# Nightfall Survivors
+# Circle vs Geometry
 
 Endless top-down survival shooter (Vampire Survivors–like), built with vanilla
 HTML5 Canvas + ES modules — no build step, no external game framework.
