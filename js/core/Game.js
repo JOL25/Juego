@@ -371,10 +371,22 @@ export class Game {
     if (died) this._killEnemy(enemy);
   }
 
+  knockBackEnemy(enemy, distancePx) {
+    if (!enemy.active) return;
+    const dx = enemy.x - this.player.x;
+    const dy = enemy.y - this.player.y;
+    enemy.knockBack(dx === 0 && dy === 0 ? this.player.facing : dx, dy, distancePx);
+  }
+
+  slowEnemy(enemy, percent, durationSeconds) {
+    if (!enemy.active) return;
+    enemy.applySlow(percent, durationSeconds);
+  }
+
   _killEnemy(enemy) {
     if (!enemy.active) return;
     this.player.kills += 1;
-    if (this.player.healOnKill > 0) this.player.heal(this.player.healOnKill);
+    this.player.tryHealOnKill();
     this.spawnDeathBurst(enemy.x, enemy.y, enemy.type.color);
     this.spawnPickup(enemy.x, enemy.y, PICKUP_KIND.XP, enemy.xpValue);
     this.enemyPool.release(enemy);

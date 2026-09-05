@@ -2,7 +2,56 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { Whip } from '../../js/weapons/Whip.js';
+import { Game } from '../../js/core/Game.js';
+import { Enemy, ENEMY_TYPES } from '../../js/entities/Enemy.js';
 import { createEnemy, createWeaponGame, assertClose } from './helpers.js';
+
+test('el latigo empuja desde nivel 3 y aumenta un centimetro por nivel desde el 5', () => {
+  const distances = [0, 0, 60, 60, 72, 84, 96, 108];
+  for (let level = 1; level <= 8; level++) {
+    const enemy = new Enemy();
+    enemy.reset(ENEMY_TYPES.hexagon, 50, 0, 1, 1);
+    enemy.speed = 0;
+    const game = createWeaponGame({ enemies: [enemy] });
+    game.knockBackEnemy = Game.prototype.knockBackEnemy;
+    const whip = new Whip();
+    whip.level = level;
+    whip.fire(game);
+    enemy.update(0.15, 0, 0);
+    assertClose(enemy.x, 50 + distances[level - 1]);
+    assertClose(enemy.y, 0);
+  }
+});
+
+test('el empuje aleja a los enemigos de ambos lados y no afecta a los no golpeados', () => {
+  const enemies = [[50, 0], [-50, 0], [0, 50]].map(([x, y]) => {
+    const enemy = new Enemy();
+    enemy.reset(ENEMY_TYPES.hexagon, x, y, 1, 1);
+    enemy.speed = 0;
+    return enemy;
+  });
+  const game = createWeaponGame({ enemies });
+  game.knockBackEnemy = Game.prototype.knockBackEnemy;
+  const whip = new Whip();
+  whip.level = 5;
+  whip.fire(game);
+  enemies.forEach((enemy) => enemy.update(0.15, 0, 0));
+  assertClose(enemies[0].x, 122);
+  assertClose(enemies[1].x, -122);
+  assertClose(enemies[2].y, 50);
+});
+
+test('un golpe mortal no aplica empuje al enemigo liberado', () => {
+  const enemy = new Enemy();
+  enemy.reset(ENEMY_TYPES.triangle, 50, 0, 1, 1);
+  const game = createWeaponGame({ enemies: [enemy] });
+  game.damageEnemy = (target) => { target.active = false; };
+  game.knockBackEnemy = Game.prototype.knockBackEnemy;
+  const whip = new Whip();
+  whip.level = 3;
+  whip.fire(game);
+  assert.equal(enemy.knockbackTimer, 0);
+});
 
 test('Whip nivel 1 golpea distancia y ángulo límite, pero no fuera del arco', () => {
   const halfArc = 50 * Math.PI / 180;

@@ -6,16 +6,17 @@
 
 import { Weapon } from './Weapon.js';
 import { distance } from '../utils.js';
+import { KNOCKBACK } from '../config.js';
 
 export const WHIP_LEVELS = [
-  { damage: 14, cooldownMs: 750, range: 90, arcDeg: 100, bothSides: false },
-  { damage: 18, cooldownMs: 720, range: 95, arcDeg: 110, bothSides: false },
-  { damage: 18, cooldownMs: 690, range: 100, arcDeg: 120, bothSides: false },
-  { damage: 24, cooldownMs: 660, range: 105, arcDeg: 130, bothSides: false },
-  { damage: 24, cooldownMs: 630, range: 110, arcDeg: 140, bothSides: true },
-  { damage: 32, cooldownMs: 600, range: 115, arcDeg: 150, bothSides: true },
-  { damage: 32, cooldownMs: 560, range: 120, arcDeg: 160, bothSides: true },
-  { damage: 44, cooldownMs: 520, range: 130, arcDeg: 180, bothSides: true },
+  { damage: 14, cooldownMs: 750, range: 90, arcDeg: 100, bothSides: false, knockbackCm: 0 },
+  { damage: 18, cooldownMs: 720, range: 95, arcDeg: 110, bothSides: false, knockbackCm: 0 },
+  { damage: 18, cooldownMs: 690, range: 100, arcDeg: 120, bothSides: false, knockbackCm: 5 },
+  { damage: 24, cooldownMs: 660, range: 105, arcDeg: 130, bothSides: false, knockbackCm: 5 },
+  { damage: 24, cooldownMs: 630, range: 110, arcDeg: 140, bothSides: true, knockbackCm: 6 },
+  { damage: 32, cooldownMs: 600, range: 115, arcDeg: 150, bothSides: true, knockbackCm: 7 },
+  { damage: 32, cooldownMs: 560, range: 120, arcDeg: 160, bothSides: true, knockbackCm: 8 },
+  { damage: 44, cooldownMs: 520, range: 130, arcDeg: 180, bothSides: true, knockbackCm: 9 },
 ];
 
 export class Whip extends Weapon {
@@ -53,6 +54,7 @@ export class Whip extends Weapon {
 
       if (insideFrontArc || insideBackArc) {
         game.damageEnemy(enemy, s.damage, '#ffd9d9');
+        if (s.knockbackCm > 0) game.knockBackEnemy(enemy, s.knockbackCm * KNOCKBACK.pxPerCm);
       }
     });
 

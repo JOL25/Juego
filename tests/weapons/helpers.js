@@ -13,6 +13,8 @@ export function createEnemy({ x, y, radius = 10, active = true } = {}) {
 export function createWeaponGame({ player = {}, enemies = [] } = {}) {
   const events = {
     damage: [],
+    knockbacks: [],
+    slows: [],
     enemyQueries: [],
     targetQueries: [],
     projectiles: [],
@@ -43,6 +45,12 @@ export function createWeaponGame({ player = {}, enemies = [] } = {}) {
     },
     damageEnemy(enemy, amount, color) {
       events.damage.push({ enemy, amount, color });
+    },
+    knockBackEnemy(enemy, distancePx) {
+      events.knockbacks.push({ enemy, distancePx });
+    },
+    slowEnemy(enemy, percent, durationSeconds) {
+      events.slows.push({ enemy, percent, durationSeconds });
     },
     findNearestEnemy(x, y) {
       events.targetQueries.push({ x, y, count: 1 });

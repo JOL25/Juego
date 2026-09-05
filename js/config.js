@@ -98,6 +98,16 @@ export const DASH = {
   invulnMs: 160,
 };
 
+export const VAMPIRE_KISS = {
+  healingByLevel: [5, 10, 20],
+  cooldownMs: 5000,
+};
+
+export const KNOCKBACK = {
+  pxPerCm: 12,
+  durationSeconds: 0.15,
+};
+
 export const ULTIMATE = {
   unlockLevel: 5,
   maxLevel: 5,

@@ -4,6 +4,7 @@
 // ============================================================
 
 import { normalize } from '../utils.js';
+import { KNOCKBACK } from '../config.js';
 
 // Unique id per *spawn* (not per pool slot) so a piercing projectile
 // can't mistake a freshly-respawned enemy in a recycled slot for the
@@ -83,6 +84,11 @@ export class Enemy {
     this.active = true;
     this.isElite = false;
     this.frozen = false;
+    this.knockbackTimer = 0;
+    this.knockbackVx = 0;
+    this.knockbackVy = 0;
+    this.slowTimer = 0;
+    this.slowPercent = 0;
   }
 
   makeElite() {
@@ -96,9 +102,19 @@ export class Enemy {
   }
 
   update(dt, playerX, playerY) {
+    // Resolve displacement before the grid is rebuilt, so collisions stay in sync.
+    const pushedTime = Math.min(dt, this.knockbackTimer);
+    this.x += this.knockbackVx * pushedTime;
+    this.y += this.knockbackVy * pushedTime;
+    this.knockbackTimer = Math.max(0, this.knockbackTimer - dt);
+    const moveTime = dt - pushedTime;
     const dir = normalize(playerX - this.x, playerY - this.y);
-    this.x += dir.x * this.speed * dt;
-    this.y += dir.y * this.speed * dt;
+    const slowedTime = Math.min(moveTime, Math.max(0, this.slowTimer - pushedTime));
+    const moveDistance = this.speed * (moveTime - slowedTime * this.slowPercent / 100);
+    this.x += dir.x * moveDistance;
+    this.y += dir.y * moveDistance;
+    this.slowTimer = Math.max(0, this.slowTimer - dt);
+    if (this.slowTimer === 0) this.slowPercent = 0;
     if (this.contactCooldown > 0) this.contactCooldown -= dt * 1000;
     if (this.hitFlash > 0) this.hitFlash -= dt * 1000;
   }
@@ -107,6 +123,21 @@ export class Enemy {
     this.hp -= amount;
     this.hitFlash = 90;
     return this.hp <= 0;
+  }
+
+  knockBack(dx, dy, distancePx) {
+    if (!this.active || distancePx <= 0) return;
+    const dir = normalize(dx, dy);
+    const speed = distancePx / KNOCKBACK.durationSeconds;
+    this.knockbackVx = dir.x * speed;
+    this.knockbackVy = dir.y * speed;
+    this.knockbackTimer = KNOCKBACK.durationSeconds;
+  }
+
+  applySlow(percent, durationSeconds) {
+    if (!this.active) return;
+    this.slowPercent = Math.max(0, Math.min(100, percent));
+    this.slowTimer = Math.max(0, durationSeconds);
   }
 
   draw(ctx, screenX, screenY) {

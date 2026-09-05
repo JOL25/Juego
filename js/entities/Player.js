@@ -3,7 +3,7 @@
 // and handles movement, damage, and XP/leveling.
 // ============================================================
 
-import { PLAYER, WORLD, COLORS, DASH } from '../config.js';
+import { PLAYER, WORLD, COLORS, DASH, VAMPIRE_KISS } from '../config.js';
 import { clamp, normalize } from '../utils.js';
 
 export class Player {
@@ -18,6 +18,7 @@ export class Player {
     this.speed = PLAYER.baseSpeed;
     this.magnetRadius = PLAYER.magnetRadius;
     this.healOnKill = 0;
+    this.healOnKillCooldown = 0;
 
     // Base values passives scale from, so re-applying a passive at a
     // higher level is a clean recompute rather than a compounding stack.
@@ -57,6 +58,7 @@ export class Player {
 
   update(dt, moveVector) {
     this.survivalTime += dt;
+    this.healOnKillCooldown = Math.max(0, this.healOnKillCooldown - dt * 1000);
 
     if (moveVector.x !== 0 || moveVector.y !== 0) {
       this.moveDir = moveVector;
@@ -121,6 +123,13 @@ export class Player {
 
   heal(amount) {
     this.hp = Math.min(this.maxHp, this.hp + amount);
+  }
+
+  tryHealOnKill() {
+    if (!this.alive || this.healOnKill <= 0 || this.healOnKillCooldown > 0 || this.hp >= this.maxHp) return false;
+    this.heal(this.healOnKill);
+    this.healOnKillCooldown = VAMPIRE_KISS.cooldownMs;
+    return true;
   }
 
   gainXp(amount) {

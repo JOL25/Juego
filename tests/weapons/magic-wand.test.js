@@ -37,13 +37,16 @@ test('MagicWand nivel 1 apunta al enemigo más cercano y crea un proyectil homin
   assert.equal(projectile.lifespan, 1.6);
 });
 
-test('MagicWand nivel 8 dispara cuatro proyectiles con daño y perforación máximos', () => {
+test('MagicWand nivel 8 dispara siete proyectiles con daño y perforación máximos', () => {
   const enemies = [
     createEnemy({ x: 10, y: 0 }),
     createEnemy({ x: 0, y: 20 }),
     createEnemy({ x: -30, y: 0 }),
     createEnemy({ x: 0, y: -40 }),
     createEnemy({ x: 100, y: 100 }),
+    createEnemy({ x: 120, y: 100 }),
+    createEnemy({ x: 140, y: 100 }),
+    createEnemy({ x: 160, y: 100 }),
   ];
   const game = createWeaponGame({ enemies });
   const wand = new MagicWand();
@@ -51,10 +54,10 @@ test('MagicWand nivel 8 dispara cuatro proyectiles con daño y perforación máx
 
   wand.fire(game);
 
-  assert.deepEqual(game.events.targetQueries, [{ x: 0, y: 0, count: 4 }]);
-  assert.equal(game.events.projectiles.length, 4);
-  assert.ok(game.events.projectiles.every((projectile) => projectile.damage === 30));
-  assert.ok(game.events.projectiles.every((projectile) => projectile.pierce === 3));
+  assert.deepEqual(game.events.targetQueries, [{ x: 0, y: 0, count: 7 }]);
+  assert.equal(game.events.projectiles.length, 7);
+  assert.ok(game.events.projectiles.every((projectile) => projectile.damage === 38));
+  assert.ok(game.events.projectiles.every((projectile) => projectile.pierce === 2));
   assert.ok(
     game.events.projectiles.every((projectile) =>
       Math.abs(Math.hypot(projectile.vx, projectile.vy) - 480) < 1e-9
@@ -62,11 +65,11 @@ test('MagicWand nivel 8 dispara cuatro proyectiles con daño y perforación máx
   );
 });
 
-test('un proyectil de MagicWand nivel 8 perfora exactamente tres enemigos', () => {
+test('un proyectil de MagicWand nivel 4 perfora exactamente dos enemigos', () => {
   const target = createEnemy({ x: 20, y: 0 });
   const game = createWeaponGame({ enemies: [target] });
   const wand = new MagicWand();
-  wand.level = 8;
+  wand.level = 4;
   wand.fire(game);
   const colliders = [
     createEnemy({ x: 0, y: 0 }),
@@ -77,8 +80,8 @@ test('un proyectil de MagicWand nivel 8 perfora exactamente tres enemigos', () =
 
   const result = resolveProjectileCollision(game.events.projectiles[0], colliders);
 
-  assert.equal(result.events.damage.length, 3);
-  assert.ok(result.events.damage.every((event) => event.amount === 30));
+  assert.equal(result.events.damage.length, 2);
+  assert.ok(result.events.damage.every((event) => event.amount === 22));
   assert.equal(result.projectile.active, false);
   assert.equal(result.projectile.pierce, 0);
 });

@@ -8,12 +8,12 @@ import { normalize } from '../utils.js';
 export const MISSILE_LEVELS = [
   { damage: 36, cooldownMs: 10000, speed: 280, explodeRadius: 70, count: 1 },
   { damage: 42, cooldownMs: 9600, speed: 290, explodeRadius: 76, count: 1 },
-  { damage: 50, cooldownMs: 9200, speed: 300, explodeRadius: 82, count: 1 },
+  { damage: 50, cooldownMs: 9200, speed: 300, explodeRadius: 82, count: 2 },
   { damage: 50, cooldownMs: 8800, speed: 310, explodeRadius: 88, count: 2 },
-  { damage: 60, cooldownMs: 8400, speed: 320, explodeRadius: 94, count: 2 },
-  { damage: 72, cooldownMs: 8000, speed: 330, explodeRadius: 100, count: 2 },
-  { damage: 84, cooldownMs: 7600, speed: 340, explodeRadius: 110, count: 3 },
-  { damage: 100, cooldownMs: 7000, speed: 360, explodeRadius: 120, count: 3 },
+  { damage: 60, cooldownMs: 8400, speed: 320, explodeRadius: 94, count: 4 },
+  { damage: 72, cooldownMs: 8000, speed: 330, explodeRadius: 100, count: 4 },
+  { damage: 84, cooldownMs: 7600, speed: 340, explodeRadius: 110, count: 6 },
+  { damage: 100, cooldownMs: 7000, speed: 360, explodeRadius: 120, count: 6 },
 ];
 
 export class Missile extends Weapon {

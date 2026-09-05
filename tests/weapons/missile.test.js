@@ -46,12 +46,15 @@ test('Missile usa facing como dirección si coincide con el objetivo', () => {
   assert.equal(game.events.projectiles[0].vy, 0);
 });
 
-test('Missile nivel 8 selecciona tres objetivos y conserva sus propiedades explosivas', () => {
+test('Missile nivel 8 selecciona seis objetivos y conserva sus propiedades explosivas', () => {
   const enemies = [
     createEnemy({ x: 10, y: 0 }),
     createEnemy({ x: 20, y: 0 }),
     createEnemy({ x: 30, y: 0 }),
     createEnemy({ x: 40, y: 0 }),
+    createEnemy({ x: 50, y: 0 }),
+    createEnemy({ x: 60, y: 0 }),
+    createEnemy({ x: 70, y: 0 }),
   ];
   const game = createWeaponGame({ enemies });
   const missile = new Missile();
@@ -59,8 +62,8 @@ test('Missile nivel 8 selecciona tres objetivos y conserva sus propiedades explo
 
   missile.fire(game);
 
-  assert.deepEqual(game.events.targetQueries, [{ x: 0, y: 0, count: 3 }]);
-  assert.equal(game.events.projectiles.length, 3);
+  assert.deepEqual(game.events.targetQueries, [{ x: 0, y: 0, count: 6 }]);
+  assert.equal(game.events.projectiles.length, 6);
   assert.ok(game.events.projectiles.every((projectile) => projectile.damage === 100));
   assert.ok(game.events.projectiles.every((projectile) => projectile.explodeRadius === 120));
   assert.ok(game.events.projectiles.every((projectile) => projectile.pierce === 1));

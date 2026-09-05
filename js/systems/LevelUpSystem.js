@@ -58,7 +58,9 @@ export class LevelUpSystem {
           weapon,
           icon: weapon.icon,
           title: `${weapon.name} → Lv.${weapon.level + 1}`,
-          description: 'Más daño y mejor cadencia. Todas las armas disparan a la vez.',
+          description: weapon.id === 'garlic'
+            ? `Daño ${weapon.levels[weapon.level].damage}, radio ${weapon.levels[weapon.level].radius} px y ralentización ${weapon.levels[weapon.level].slowPercent}%.`
+            : 'Más daño y mejor cadencia. Todas las armas disparan a la vez.',
         });
       }
     }

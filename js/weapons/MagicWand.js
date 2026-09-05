@@ -7,13 +7,13 @@ import { normalize } from '../utils.js';
 
 export const MAGIC_WAND_LEVELS = [
   { damage: 10, cooldownMs: 900, count: 1, pierce: 1, speed: 420 },
-  { damage: 13, cooldownMs: 850, count: 1, pierce: 1, speed: 430 },
-  { damage: 13, cooldownMs: 850, count: 2, pierce: 1, speed: 430 },
-  { damage: 17, cooldownMs: 800, count: 2, pierce: 1, speed: 440 },
-  { damage: 17, cooldownMs: 750, count: 3, pierce: 1, speed: 450 },
-  { damage: 22, cooldownMs: 700, count: 3, pierce: 2, speed: 460 },
-  { damage: 22, cooldownMs: 650, count: 4, pierce: 2, speed: 470 },
-  { damage: 30, cooldownMs: 600, count: 4, pierce: 3, speed: 480 },
+  { damage: 14, cooldownMs: 850, count: 1, pierce: 1, speed: 430 },
+  { damage: 18, cooldownMs: 800, count: 2, pierce: 1, speed: 430 },
+  { damage: 22, cooldownMs: 750, count: 3, pierce: 2, speed: 440 },
+  { damage: 26, cooldownMs: 700, count: 4, pierce: 2, speed: 450 },
+  { damage: 30, cooldownMs: 650, count: 5, pierce: 2, speed: 460 },
+  { damage: 34, cooldownMs: 600, count: 6, pierce: 2, speed: 470 },
+  { damage: 38, cooldownMs: 550, count: 7, pierce: 2, speed: 480 },
 ];
 
 export class MagicWand extends Weapon {

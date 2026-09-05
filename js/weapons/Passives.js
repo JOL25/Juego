@@ -3,6 +3,8 @@
 // have no cooldown; `apply(player)` runs once when picked/leveled.
 // ============================================================
 
+import { VAMPIRE_KISS } from '../config.js';
+
 export const PASSIVE_DEFS = [
   {
     id: 'tome',
@@ -53,9 +55,9 @@ export const PASSIVE_DEFS = [
     name: "Vampire's Kiss",
     icon: '❤️',
     maxLevel: 3,
-    description: (lvl) => `Heal ${lvl * 2} HP per kill`,
+    description: (lvl) => `Cura ${VAMPIRE_KISS.healingByLevel[lvl - 1]} de vida al matar. Recarga: ${VAMPIRE_KISS.cooldownMs / 1000} s.`,
     apply(player, level) {
-      player.healOnKill = level * 2;
+      player.healOnKill = VAMPIRE_KISS.healingByLevel[level - 1];
     },
   },
 ];
