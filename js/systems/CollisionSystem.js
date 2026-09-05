@@ -89,6 +89,8 @@ export class CollisionSystem {
         game.activateMegaMagnet(pickup.value);
       } else if (pickup.kind === PICKUP_KIND.FREEZE_CLOCK) {
         game.activateEnemyFreeze(pickup.value);
+      } else if (pickup.kind === PICKUP_KIND.ULTIMATE_INFINITY) {
+        game.activateUltimateInfinity(pickup.value);
       }
       game.pickupPool.release(pickup);
     });

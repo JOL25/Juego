@@ -30,6 +30,12 @@ export class PowerUpSpawner {
         isKindActive,
         spawnPowerUp
       );
+      this._spawnIfMissing(
+        PICKUP_KIND.ULTIMATE_INFINITY,
+        this.config.ultimateInfinityDurationSeconds,
+        isKindActive,
+        spawnPowerUp
+      );
       this.nextSpawnTime += this.config.respawnIntervalSeconds;
     }
   }

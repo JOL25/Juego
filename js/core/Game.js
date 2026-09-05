@@ -57,6 +57,7 @@ export class Game {
     this.shockwaves = [];
     this.megaMagnetTimer = 0;
     this.enemyFreezeTimer = 0;
+    this.ultimateInfinityTimer = 0;
 
     this.state = STATE.MENU;
     this.shakeTimer = 0;
@@ -86,6 +87,7 @@ export class Game {
     this.shockwaves = [];
     this.megaMagnetTimer = 0;
     this.enemyFreezeTimer = 0;
+    this.ultimateInfinityTimer = 0;
 
     this.spawner.reset();
     this.powerUpSpawner.reset();
@@ -239,6 +241,8 @@ export class Game {
   _updatePowerUpTimers(dt) {
     this.megaMagnetTimer = Math.max(0, this.megaMagnetTimer - dt);
     this.enemyFreezeTimer = Math.max(0, this.enemyFreezeTimer - dt);
+    this.ultimateInfinityTimer = Math.max(0, (this.ultimateInfinityTimer || 0) - dt);
+    this.player?.ultimate?.setUnlimited(this.ultimateInfinityTimer > 0);
   }
 
   _updateEnemies(dt) {
@@ -281,6 +285,11 @@ export class Game {
 
   activateEnemyFreeze(duration = POWER_UPS.freezeDurationSeconds) {
     this.enemyFreezeTimer = Math.max(this.enemyFreezeTimer, duration);
+  }
+
+  activateUltimateInfinity(duration = POWER_UPS.ultimateInfinityDurationSeconds) {
+    this.ultimateInfinityTimer = Math.max(this.ultimateInfinityTimer, duration);
+    this.player.ultimate?.setUnlimited(true);
   }
 
   areEnemiesFrozen() {

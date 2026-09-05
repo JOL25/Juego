@@ -46,9 +46,10 @@ export const XP_GEM = {
 export const POWER_UPS = {
   startTimeSeconds: 5 * 60,
   respawnIntervalSeconds: 90,
-  megaMagnetDurationSeconds: 5,
+  megaMagnetDurationSeconds: 7,
   megaMagnetPullSpeed: 1200,
   freezeDurationSeconds: 10,
+  ultimateInfinityDurationSeconds: 3,
   radius: 15,
   cornerInset: 260,
   centerOffset: 320,
@@ -94,6 +95,7 @@ export const DASH = {
 export const ULTIMATE = {
   unlockLevel: 5,
   maxLevel: 5,
+  readyIconDurationSeconds: 2,
 };
 
 export const LEVEL_UP_WEIGHTS = {

@@ -5,6 +5,7 @@
 // ============================================================
 
 import { distPointToSegment } from '../utils.js';
+import { ULTIMATE } from '../config.js';
 
 export class Ultimate {
   constructor(def) {
@@ -17,6 +18,8 @@ export class Ultimate {
     this.maxLevel = def.levels.length;
     this.cooldownTimer = 0;
     this.active = false;
+    this.readyIconTimer = ULTIMATE.readyIconDurationSeconds;
+    this.unlimited = false;
   }
 
   get stats() {
@@ -32,18 +35,36 @@ export class Ultimate {
   }
 
   isReady() {
-    return this.cooldownTimer <= 0 && !this.active;
+    return this.unlimited || (this.cooldownTimer <= 0 && !this.active);
+  }
+
+  setUnlimited(enabled) {
+    if (this.unlimited === enabled) return;
+    this.unlimited = enabled;
+    if (enabled) this.cooldownTimer = 0;
+    this.readyIconTimer = !enabled && this.isReady() ? ULTIMATE.readyIconDurationSeconds : 0;
   }
 
   update(dt, game) {
+    const wasReady = this.isReady();
     if (this.cooldownTimer > 0) this.cooldownTimer -= dt * 1000;
     this.tick(dt, game);
+    if (this.unlimited) {
+      this.cooldownTimer = 0;
+      this.readyIconTimer = 0;
+      return;
+    }
+    // Play once on acquisition and each transition back to ready.
+    this.readyIconTimer = !this.isReady() ? 0 : !wasReady
+      ? ULTIMATE.readyIconDurationSeconds
+      : Math.max(0, this.readyIconTimer - dt);
   }
 
   tryActivate(game) {
     if (!this.isReady()) return false;
     this.activate(game);
-    this.cooldownTimer = this.stats.cooldownMs;
+    this.cooldownTimer = this.unlimited ? 0 : this.stats.cooldownMs;
+    this.readyIconTimer = 0;
     return true;
   }
 

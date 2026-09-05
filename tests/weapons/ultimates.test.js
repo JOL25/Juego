@@ -9,6 +9,37 @@ import {
 import { Game } from '../../js/core/Game.js';
 import { createEnemy, createWeaponGame, assertClose } from './helpers.js';
 
+test('el icono de ultimate dura dos segundos y reaparece solo al recargarse', () => {
+  const game = createWeaponGame();
+  const ultimate = new SuperPierceShot();
+  assert.equal(ultimate.readyIconTimer, 2);
+  ultimate.update(1, game);
+  assert.equal(ultimate.readyIconTimer, 1);
+  ultimate.update(1, game);
+  assert.equal(ultimate.readyIconTimer, 0);
+  ultimate.update(1, game);
+  assert.equal(ultimate.readyIconTimer, 0);
+
+  ultimate.tryActivate(game);
+  ultimate.update(11.9, game);
+  assert.equal(ultimate.readyIconTimer, 0);
+  ultimate.update(0.1, game);
+  assert.equal(ultimate.readyIconTimer, 2);
+  ultimate.tryActivate(game);
+  assert.equal(ultimate.readyIconTimer, 0);
+});
+
+test('el icono espera a que termine la ultimate activa aunque no tenga cooldown', () => {
+  const ultimate = new SuperPierceShot();
+  const game = createWeaponGame();
+  ultimate.active = true;
+  ultimate.update(0.1, game);
+  assert.equal(ultimate.readyIconTimer, 0);
+  ultimate.tick = () => { ultimate.active = false; };
+  ultimate.update(0.1, game);
+  assert.equal(ultimate.readyIconTimer, 2);
+});
+
 test('SuperPierceShot apunta al más cercano y genera un proyectil de perforación total', () => {
   const target = createEnemy({ x: 0, y: 100 });
   const game = createWeaponGame({ enemies: [target] });

@@ -1,6 +1,6 @@
 import { WORLD } from '../config.js';
 import { STATE } from '../core/GameState.js';
-import { drawHUD, drawJoystick, drawPlayerDashBars } from '../ui/HUD.js';
+import { drawHUD, drawJoystick, drawPlayerDashBars, drawUltimateReadyIcon } from '../ui/HUD.js';
 
 export class WorldRenderer {
   render(game) {
@@ -153,6 +153,7 @@ export class WorldRenderer {
     });
 
     drawPlayerDashBars(ctx, game.player, playerScreen.x, playerScreen.y);
+    drawUltimateReadyIcon(ctx, game.player, playerScreen.x, playerScreen.y, game.ultimateInfinityTimer);
   }
 
   drawArc(ctx, centerX, centerY, radius, centerAngle, halfArc) {

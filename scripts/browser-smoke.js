@@ -252,7 +252,7 @@ async function run() {
       game._update(1 / 60);
 
       const activePowerUps = game.pickupPool.items.filter((pickup) =>
-        pickup.active && (pickup.kind === 'mega_magnet' || pickup.kind === 'freeze_clock')
+        pickup.active && ['mega_magnet', 'freeze_clock', 'ultimate_infinity'].includes(pickup.kind)
       );
       const kinds = activePowerUps.map((pickup) => pickup.kind).sort();
       const clock = activePowerUps.find((pickup) => pickup.kind === 'freeze_clock');
@@ -281,13 +281,40 @@ async function run() {
       };
     })()`);
     if (
-      JSON.stringify(powerUpsWorked.kinds) !== JSON.stringify(['freeze_clock', 'mega_magnet']) ||
+      JSON.stringify(powerUpsWorked.kinds) !== JSON.stringify(['freeze_clock', 'mega_magnet', 'ultimate_infinity']) ||
       powerUpsWorked.freezeTimer <= 9.9 ||
-      powerUpsWorked.magnetTimer <= 4.9 ||
+      powerUpsWorked.magnetTimer <= 6.9 ||
       !powerUpsWorked.xpMoved
     ) {
       throw new Error(`Power-ups did not work correctly: ${JSON.stringify(powerUpsWorked)}`);
     }
+
+    const infinityWorked = await client.evaluate(`(async () => {
+      const { getGameInstance } = await import('./js/main.js');
+      const { SuperPierceShot } = await import('./js/weapons/Ultimates.js');
+      const game = getGameInstance();
+      const infinity = game.pickupPool.items.find((pickup) => pickup.active && pickup.kind === 'ultimate_infinity');
+      if (!infinity) return false;
+      game.player.ultimate = new SuperPierceShot();
+      game.player.ultimate.cooldownTimer = 10000;
+      game.player.x = infinity.x;
+      game.player.y = infinity.y;
+      game._update(1 / 60);
+      const collected = game.ultimateInfinityTimer === 3 && !infinity.active;
+      const before = game.projectilePool.activeCount;
+      for (let i = 0; i < 3; i++) {
+        document.getElementById('btn-ult').click();
+        game._update(1 / 60);
+      }
+      game._render();
+      const repeated = game.projectilePool.activeCount >= before + 3
+        && game.player.ultimate.cooldownTimer === 0 && game.player.ultimate.readyIconTimer === 0;
+      game._updatePowerUpTimers(3);
+      const restored = !game.player.ultimate.unlimited && game.player.ultimate.readyIconTimer === 2;
+      game.start();
+      return collected && repeated && restored && game.ultimateInfinityTimer === 0;
+    })()`);
+    if (!infinityWorked) throw new Error('Infinity pickup did not allow repeated ultimates or restore normal behavior');
 
     const initialPlayerY = await client.evaluate(`(async () => {
       const { getGameInstance } = await import('./js/main.js');

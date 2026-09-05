@@ -141,25 +141,43 @@ export function drawHUD(ctx, game) {
     ctx.fillStyle = ready ? '#e8b13a' : '#7ec6e0';
     ctx.fillRect(ultX - barW, ultY + 6, barW * pct, 8);
 
-    if (ready && player.alive) {
-      const bannerW = 232;
-      const bannerX = (w - bannerW) / 2;
-      ctx.fillStyle = 'rgba(24,16,12,0.94)';
-      ctx.fillRect(bannerX, 66, bannerW, 48);
-      ctx.strokeStyle = COLORS.gold;
-      ctx.lineWidth = 1;
-      ctx.strokeRect(bannerX, 66, bannerW, 48);
-      ctx.fillStyle = COLORS.gold;
-      ctx.fillRect(bannerX, 66, 3, 48);
-      ctx.textAlign = 'center';
-      ctx.font = 'bold 15px "Inter", sans-serif';
-      ctx.fillText('ULTIMATE LISTA', w / 2, 87);
-      ctx.fillStyle = COLORS.text;
-      ctx.font = '11px "Inter", sans-serif';
-      ctx.fillText('Q / E / R  ·  Botón Ult', w / 2, 104);
-    }
   }
 
+  ctx.restore();
+}
+
+export function drawUltimateReadyIcon(ctx, player, screenX, screenY, infinityRemaining = 0) {
+  if (!player.alive) return;
+  if (infinityRemaining > 0) {
+    ctx.save();
+    ctx.font = 'bold 34px "Inter", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#ff9a3c';
+    ctx.shadowColor = '#ff9a3c';
+    ctx.shadowBlur = 10 + Math.sin(infinityRemaining * 6) * 3;
+    ctx.fillText('∞', screenX, screenY - player.radius - 24);
+    ctx.restore();
+    return;
+  }
+  const ultimate = player.ultimate;
+  if (!player.alive || !ultimate?.isReady() || !(ultimate.readyIconTimer > 0)) return;
+
+  const progress = 1 - ultimate.readyIconTimer / ULTIMATE.readyIconDurationSeconds;
+  const rise = 1 - Math.pow(1 - progress, 3);
+  const scale = 0.55 + 0.45 * Math.min(1, progress / 0.2);
+  // Emerge from the body, ease upward, then fade out completely at two seconds.
+  ctx.save();
+  ctx.translate(screenX, screenY - (player.radius + 38) * rise);
+  ctx.scale(scale, scale);
+  ctx.globalAlpha = Math.min(1, (1 - progress) / 0.6);
+  ctx.font = '28px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = COLORS.gold;
+  ctx.shadowColor = COLORS.gold;
+  ctx.shadowBlur = 12;
+  ctx.fillText(ultimate.icon, 0, 0);
   ctx.restore();
 }
 
