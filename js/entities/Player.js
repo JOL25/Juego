@@ -161,10 +161,24 @@ export class Player {
     ctx.fill();
     ctx.stroke();
 
-    // Simple facing indicator (a little "nose")
-    ctx.fillStyle = COLORS.hpBar;
+    // Follow actual dash movement, otherwise retain the last movement direction.
+    const dir = this.dashActive > 0 ? this.dashDir : this.moveDir;
+    const angle = dir.x === 0 && dir.y === 0
+      ? (this.facing < 0 ? Math.PI : 0)
+      : Math.atan2(dir.y, dir.x);
+    ctx.translate(screenX, screenY);
+    ctx.rotate(angle);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#23131c';
     ctx.beginPath();
-    ctx.arc(screenX + this.facing * (this.radius - 4), screenY, 3, 0, Math.PI * 2);
+    ctx.moveTo(this.radius - 3, 0);
+    ctx.lineTo(0, -7);
+    ctx.lineTo(0, -3);
+    ctx.lineTo(-7, -3);
+    ctx.lineTo(-7, 3);
+    ctx.lineTo(0, 3);
+    ctx.lineTo(0, 7);
+    ctx.closePath();
     ctx.fill();
 
     ctx.restore();

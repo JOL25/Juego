@@ -1,6 +1,6 @@
 import { WORLD } from '../config.js';
 import { STATE } from '../core/GameState.js';
-import { drawHUD, drawJoystick } from '../ui/HUD.js';
+import { drawHUD, drawJoystick, drawPlayerDashBars } from '../ui/HUD.js';
 
 export class WorldRenderer {
   render(game) {
@@ -151,6 +151,8 @@ export class WorldRenderer {
       const screen = camera.worldToScreen(particle.x, particle.y);
       particle.draw(ctx, screen.x, screen.y);
     });
+
+    drawPlayerDashBars(ctx, game.player, playerScreen.x, playerScreen.y);
   }
 
   drawArc(ctx, centerX, centerY, radius, centerAngle, halfArc) {

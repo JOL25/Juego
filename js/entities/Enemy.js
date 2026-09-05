@@ -95,17 +95,20 @@ export class Enemy {
     ctx.strokeStyle = this.isElite ? '#ffd54a' : 'rgba(0,0,0,0.4)';
     ctx.lineWidth = this.isElite ? 3 : 1.5;
 
-    ctx.beginPath();
-    ctx.arc(screenX, screenY, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
+    const size = this.radius * 2;
+    ctx.fillRect(screenX - this.radius, screenY - this.radius, size, size);
+    ctx.strokeRect(screenX - this.radius, screenY - this.radius, size, size);
+
+    // Inset shading gives every archetype a readable square silhouette.
+    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    ctx.fillRect(screenX - this.radius + 3, screenY - this.radius + 3, size - 6, 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fillRect(screenX - this.radius + 3, screenY + this.radius - 5, size - 6, 2);
 
     if (this.frozen) {
       ctx.strokeStyle = 'rgba(220,250,255,0.9)';
       ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(screenX, screenY, this.radius + 3, 0, Math.PI * 2);
-      ctx.stroke();
+      ctx.strokeRect(screenX - this.radius - 3, screenY - this.radius - 3, size + 6, size + 6);
     }
 
     // Small HP sliver above the enemy (only when damaged, keeps clutter down)

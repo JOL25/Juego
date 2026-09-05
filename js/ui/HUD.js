@@ -3,7 +3,7 @@
 // Kept as pure draw functions: no state, just reads `game`.
 // ============================================================
 
-import { COLORS, ULTIMATE } from '../config.js';
+import { COLORS, DASH, ULTIMATE } from '../config.js';
 
 function formatTime(totalSeconds) {
   const m = Math.floor(totalSeconds / 60);
@@ -114,18 +114,6 @@ export function drawHUD(ctx, game) {
     iconX += 30;
   }
 
-  // Dash charges (after inventory icons)
-  iconX += 8;
-  ctx.fillStyle = COLORS.text;
-  ctx.font = 'bold 10px "Inter", sans-serif';
-  ctx.fillText('Dash', iconX, iconY - 2);
-  for (let i = 0; i < player.dashMaxCharges; i++) {
-    ctx.fillStyle = i < player.dashCharges ? '#7ec6e0' : 'rgba(255,255,255,0.18)';
-    ctx.beginPath();
-    ctx.arc(iconX + 8 + i * 14, iconY + 16, 5, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
   // Ultimate (bottom-right)
   ctx.textAlign = 'right';
   const ultX = canvas.width - 14;
@@ -152,8 +140,52 @@ export function drawHUD(ctx, game) {
     const pct = ready ? 1 : 1 - Math.max(0, player.ultimate.cooldownTimer) / cd;
     ctx.fillStyle = ready ? '#e8b13a' : '#7ec6e0';
     ctx.fillRect(ultX - barW, ultY + 6, barW * pct, 8);
+
+    if (ready && player.alive) {
+      const bannerW = 232;
+      const bannerX = (w - bannerW) / 2;
+      ctx.fillStyle = 'rgba(24,16,12,0.94)';
+      ctx.fillRect(bannerX, 66, bannerW, 48);
+      ctx.strokeStyle = COLORS.gold;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(bannerX, 66, bannerW, 48);
+      ctx.fillStyle = COLORS.gold;
+      ctx.fillRect(bannerX, 66, 3, 48);
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 15px "Inter", sans-serif';
+      ctx.fillText('ULTIMATE LISTA', w / 2, 87);
+      ctx.fillStyle = COLORS.text;
+      ctx.font = '11px "Inter", sans-serif';
+      ctx.fillText('Q / E / R  ·  Botón Ult', w / 2, 104);
+    }
   }
 
+  ctx.restore();
+}
+
+// Draw after world effects so charges remain visible next to the player.
+export function drawPlayerDashBars(ctx, player, screenX, screenY) {
+  if (!player.alive) return;
+  const barW = 18;
+  const barH = 5;
+  const gap = 4;
+  const x = screenX + player.radius + 10;
+  const totalHeight = player.dashMaxCharges * (barH + gap) - gap;
+  const top = screenY - totalHeight / 2;
+  ctx.save();
+  ctx.lineWidth = 1;
+  for (let i = 0; i < player.dashMaxCharges; i++) {
+    const y = top + i * (barH + gap);
+    const charged = i < player.dashCharges;
+    const progress = charged ? 1 : i === player.dashCharges
+      ? Math.max(0, Math.min(1, player.dashRecharge / DASH.rechargeMs)) : 0;
+    ctx.fillStyle = 'rgba(8,12,18,0.9)';
+    ctx.fillRect(x - 2, y - 2, barW + 4, barH + 4);
+    ctx.fillStyle = charged ? '#9de9ff' : '#467d96';
+    ctx.fillRect(x, y, barW * progress, barH);
+    ctx.strokeStyle = charged ? '#c9f4ff' : '#51616d';
+    ctx.strokeRect(x, y, barW, barH);
+  }
   ctx.restore();
 }
 

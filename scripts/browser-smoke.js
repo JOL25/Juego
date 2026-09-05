@@ -122,7 +122,14 @@ async function run() {
     socket = connection.socket;
     const client = connection.client;
     await client.send('Runtime.enable');
-    await delay(300);
+    // Wait for game initialization; remote fonts can delay DOMContentLoaded.
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      const initialized = await client.evaluate(
+        `document.getElementById('game-canvas')?.width === 960`
+      );
+      if (initialized) break;
+      await delay(100);
+    }
 
     const initialState = await client.evaluate(`({
       ready: document.readyState,
