@@ -23,31 +23,31 @@ export const ENEMY_TYPES = {
   triangle: {
     id: 'triangle', label: 'Triángulo', plural: 'Triángulos', color: '#8a6bb1', radius: 10,
     vertices: regularPolygon(3),
-    baseHp: 8, baseSpeed: 130, damage: 6, xpValue: 1,
+    baseHp: 8, baseSpeed: 130, damage: 6, xpValue: 3,
     weight: 10, minMinute: 0,
   },
   square: {
     id: 'square', label: 'Cuadrado', plural: 'Cuadrados', color: '#5a8a4a', radius: 14,
     vertices: [[-1, -1], [1, -1], [1, 1], [-1, 1]],
-    baseHp: 18, baseSpeed: 85, damage: 10, xpValue: 3,
+    baseHp: 18, baseSpeed: 85, damage: 10, xpValue: 9,
     weight: 8, minMinute: 3,
   },
   diamond: {
     id: 'diamond', label: 'Rombo', plural: 'Rombos', color: '#c9c2a8', radius: 12,
     vertices: [[0, -1], [0.8, 0], [0, 1], [-0.8, 0]],
-    baseHp: 14, baseSpeed: 105, damage: 8, xpValue: 2,
+    baseHp: 14, baseSpeed: 105, damage: 8, xpValue: 6,
     weight: 9, minMinute: 6,
   },
   pentagon: {
     id: 'pentagon', label: 'Pentágono', plural: 'Pentágonos', color: '#3fa9c9', radius: 13,
     vertices: regularPolygon(5),
-    baseHp: 26, baseSpeed: 150, damage: 12, xpValue: 5,
+    baseHp: 26, baseSpeed: 150, damage: 12, xpValue: 15,
     weight: 5, minMinute: 9,
   },
   hexagon: {
     id: 'hexagon', label: 'Hexágono', plural: 'Hexágonos', color: '#a1442b', radius: 22,
     vertices: regularPolygon(6),
-    baseHp: 90, baseSpeed: 60, damage: 22, xpValue: 15,
+    baseHp: 90, baseSpeed: 60, damage: 22, xpValue: 40,
     weight: 3, minMinute: 12,
   },
 };
