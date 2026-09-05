@@ -4,19 +4,38 @@
 // the camera view, with stats scaled by elapsed survival time.
 // ============================================================
 
-import { DIFFICULTY } from '../config.js';
+import { DIFFICULTY, ENEMY_ANNOUNCEMENT } from '../config.js';
 import { ENEMY_TYPES } from '../entities/Enemy.js';
 import { pickWeighted, randRange, clamp } from '../utils.js';
 
 export class Spawner {
   constructor() {
-    this.timeSinceSpawn = 0;
-    this.lastEliteMinute = -1;
+    this.reset();
   }
 
   reset() {
     this.timeSinceSpawn = 0;
     this.lastEliteMinute = -1;
+    this.introducedTypes = new Set();
+    this.pendingDebuts = [];
+    this.announcements = [];
+  }
+
+  get announcement() {
+    return this.announcements[0] || null;
+  }
+
+  updateIntroductions(dt, elapsedSec) {
+    if (this.announcement) {
+      this.announcement.age += dt;
+      if (this.announcement.age >= ENEMY_ANNOUNCEMENT.durationSeconds) this.announcements.shift();
+    }
+    for (const type of this._availableTypes(elapsedSec)) {
+      if (this.introducedTypes.has(type.id)) continue;
+      this.introducedTypes.add(type.id);
+      this.pendingDebuts.push(type);
+      this.announcements.push({ type, age: 0 });
+    }
   }
 
   _currentInterval(elapsedSec) {
@@ -46,6 +65,8 @@ export class Spawner {
    * @param spawnFn (type, x, y, hpMult, speedMult, isElite) => void
    */
   tick(dt, elapsedSec, camera, activeEnemyCount, spawnFn) {
+    // Announce on the time boundary, even when the enemy pool is full.
+    this.updateIntroductions(dt, elapsedSec);
     this.timeSinceSpawn += dt;
     const interval = this._currentInterval(elapsedSec);
     if (this.timeSinceSpawn < interval) return;
@@ -65,7 +86,7 @@ export class Spawner {
     if (isEliteWave) this.lastEliteMinute = Math.floor(minute / DIFFICULTY.eliteEveryMinutes);
 
     for (let i = 0; i < batch; i++) {
-      const type = pickWeighted(types);
+      const type = this.pendingDebuts.shift() || pickWeighted(types);
       const { x, y } = this._edgeSpawnPoint(camera);
       spawnFn(type, x, y, hpMult, speedMult, isEliteWave && i === 0);
     }

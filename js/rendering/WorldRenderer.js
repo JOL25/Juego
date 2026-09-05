@@ -1,6 +1,6 @@
 import { WORLD } from '../config.js';
 import { STATE } from '../core/GameState.js';
-import { drawHUD, drawJoystick, drawPlayerDashBars, drawUltimateReadyIcon } from '../ui/HUD.js';
+import { drawHUD, drawJoystick, drawPlayerDashBars, drawUltimateReadyIcon, drawEnemyAnnouncement } from '../ui/HUD.js';
 
 export class WorldRenderer {
   render(game) {
@@ -22,6 +22,7 @@ export class WorldRenderer {
 
     if (game.state === STATE.PLAYING || game.state === STATE.PAUSED) {
       drawHUD(ctx, game);
+      drawEnemyAnnouncement(ctx, game);
       drawJoystick(ctx, game.input.getJoystickVisual());
     }
   }

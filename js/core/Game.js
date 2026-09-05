@@ -90,6 +90,7 @@ export class Game {
     this.ultimateInfinityTimer = 0;
 
     this.spawner.reset();
+    this.spawner.updateIntroductions(0, 0);
     this.powerUpSpawner.reset();
     this.levelUpSystem.reset();
     this.enemyGrid.clear();

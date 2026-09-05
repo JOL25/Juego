@@ -10,35 +10,57 @@ import { normalize } from '../utils.js';
 // one it already hit.
 let NEXT_ENEMY_UID = 1;
 
+function regularPolygon(sides) {
+  return Array.from({ length: sides }, (_, index) => {
+    const angle = -Math.PI / 2 + index * Math.PI * 2 / sides;
+    return [Math.cos(angle), Math.sin(angle)];
+  });
+}
+
 // Enemy archetypes. `weight` controls spawn frequency; `minMinute`
 // gates when a type starts appearing, so early game stays easy.
 export const ENEMY_TYPES = {
-  bat: {
-    id: 'bat', label: 'Bat', color: '#8a6bb1', radius: 10,
+  triangle: {
+    id: 'triangle', label: 'Triángulo', plural: 'Triángulos', color: '#8a6bb1', radius: 10,
+    vertices: regularPolygon(3),
     baseHp: 8, baseSpeed: 130, damage: 6, xpValue: 1,
     weight: 10, minMinute: 0,
   },
-  ghoul: {
-    id: 'ghoul', label: 'Ghoul', color: '#5a8a4a', radius: 14,
+  square: {
+    id: 'square', label: 'Cuadrado', plural: 'Cuadrados', color: '#5a8a4a', radius: 14,
+    vertices: [[-1, -1], [1, -1], [1, 1], [-1, 1]],
     baseHp: 18, baseSpeed: 85, damage: 10, xpValue: 3,
-    weight: 8, minMinute: 0,
+    weight: 8, minMinute: 3,
   },
-  skeleton: {
-    id: 'skeleton', label: 'Skeleton', color: '#c9c2a8', radius: 12,
+  diamond: {
+    id: 'diamond', label: 'Rombo', plural: 'Rombos', color: '#c9c2a8', radius: 12,
+    vertices: [[0, -1], [0.8, 0], [0, 1], [-0.8, 0]],
     baseHp: 14, baseSpeed: 105, damage: 8, xpValue: 2,
-    weight: 9, minMinute: 1,
+    weight: 9, minMinute: 6,
   },
-  wraith: {
-    id: 'wraith', label: 'Wraith', color: '#3fa9c9', radius: 13,
+  pentagon: {
+    id: 'pentagon', label: 'Pentágono', plural: 'Pentágonos', color: '#3fa9c9', radius: 13,
+    vertices: regularPolygon(5),
     baseHp: 26, baseSpeed: 150, damage: 12, xpValue: 5,
-    weight: 5, minMinute: 3,
+    weight: 5, minMinute: 9,
   },
-  ogre: {
-    id: 'ogre', label: 'Ogre', color: '#a1442b', radius: 22,
+  hexagon: {
+    id: 'hexagon', label: 'Hexágono', plural: 'Hexágonos', color: '#a1442b', radius: 22,
+    vertices: regularPolygon(6),
     baseHp: 90, baseSpeed: 60, damage: 22, xpValue: 15,
-    weight: 3, minMinute: 5,
+    weight: 3, minMinute: 12,
   },
 };
+
+// Share silhouettes between enemies, frozen outlines, and announcement icons.
+export function traceEnemyShape(ctx, type, x, y, radius) {
+  ctx.beginPath();
+  type.vertices.forEach(([vx, vy], index) => {
+    if (index === 0) ctx.moveTo(x + vx * radius, y + vy * radius);
+    else ctx.lineTo(x + vx * radius, y + vy * radius);
+  });
+  ctx.closePath();
+}
 
 export class Enemy {
   constructor() {
@@ -95,20 +117,20 @@ export class Enemy {
     ctx.strokeStyle = this.isElite ? '#ffd54a' : 'rgba(0,0,0,0.4)';
     ctx.lineWidth = this.isElite ? 3 : 1.5;
 
-    const size = this.radius * 2;
-    ctx.fillRect(screenX - this.radius, screenY - this.radius, size, size);
-    ctx.strokeRect(screenX - this.radius, screenY - this.radius, size, size);
+    traceEnemyShape(ctx, this.type, screenX, screenY, this.radius);
+    ctx.fill();
+    ctx.stroke();
 
-    // Inset shading gives every archetype a readable square silhouette.
-    ctx.fillStyle = 'rgba(255,255,255,0.18)';
-    ctx.fillRect(screenX - this.radius + 3, screenY - this.radius + 3, size - 6, 2);
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.fillRect(screenX - this.radius + 3, screenY + this.radius - 5, size - 6, 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+    ctx.lineWidth = 1;
+    traceEnemyShape(ctx, this.type, screenX, screenY, this.radius * 0.68);
+    ctx.stroke();
 
     if (this.frozen) {
       ctx.strokeStyle = 'rgba(220,250,255,0.9)';
       ctx.lineWidth = 2;
-      ctx.strokeRect(screenX - this.radius - 3, screenY - this.radius - 3, size + 6, size + 6);
+      traceEnemyShape(ctx, this.type, screenX, screenY, this.radius + 3);
+      ctx.stroke();
     }
 
     // Small HP sliver above the enemy (only when damaged, keeps clutter down)

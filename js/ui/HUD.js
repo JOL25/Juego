@@ -3,7 +3,8 @@
 // Kept as pure draw functions: no state, just reads `game`.
 // ============================================================
 
-import { COLORS, DASH, ULTIMATE } from '../config.js';
+import { COLORS, DASH, ULTIMATE, ENEMY_ANNOUNCEMENT } from '../config.js';
+import { traceEnemyShape } from '../entities/Enemy.js';
 
 function formatTime(totalSeconds) {
   const m = Math.floor(totalSeconds / 60);
@@ -143,6 +144,43 @@ export function drawHUD(ctx, game) {
 
   }
 
+  ctx.restore();
+}
+
+export function drawEnemyAnnouncement(ctx, game) {
+  const announcement = game.spawner.announcement;
+  if (!announcement) return;
+  const { type, age } = announcement;
+  const { durationSeconds, fadeInSeconds, fadeOutSeconds } = ENEMY_ANNOUNCEMENT;
+  const opacity = Math.max(0, Math.min(1, age / fadeInSeconds, (durationSeconds - age) / fadeOutSeconds));
+  const width = Math.min(400, game.canvas.width - 28);
+  const x = (game.canvas.width - width) / 2;
+  const y = 68 - 6 * (1 - Math.min(1, age / fadeInSeconds));
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  ctx.fillStyle = type.color;
+  ctx.fillRect(x, y, width, 62);
+  ctx.fillStyle = 'rgba(8,5,12,0.58)';
+  ctx.fillRect(x, y, width, 62);
+  ctx.strokeStyle = type.color;
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x, y, width, 62);
+  ctx.fillStyle = type.color;
+  ctx.fillRect(x, y, 4, 62);
+  traceEnemyShape(ctx, type, x + 36, y + 31, 16);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = '#ffe45c';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = '#120a10';
+  ctx.shadowBlur = 3;
+  ctx.font = 'bold 11px "Inter", sans-serif';
+  ctx.fillText('HAN EMERGIDO LOS', x + width / 2 + 22, y + 19);
+  ctx.font = 'bold 21px "Cinzel", serif';
+  ctx.fillText(type.plural.toLocaleUpperCase('es'), x + width / 2 + 22, y + 42);
   ctx.restore();
 }
 

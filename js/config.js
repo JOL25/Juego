@@ -36,6 +36,12 @@ export const DIFFICULTY = {
   maxActiveEnemies: 260,
 };
 
+export const ENEMY_ANNOUNCEMENT = {
+  durationSeconds: 4,
+  fadeInSeconds: 0.35,
+  fadeOutSeconds: 1.2,
+};
+
 export const XP_GEM = {
   radius: 6,
   smallValue: 5,

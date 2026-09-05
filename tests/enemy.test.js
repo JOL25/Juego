@@ -5,7 +5,7 @@ import { Enemy, ENEMY_TYPES } from '../js/entities/Enemy.js';
 
 test('un enemigo informa su muerte al agotarse su vida', () => {
   const enemy = new Enemy();
-  enemy.reset(ENEMY_TYPES.ghoul, 0, 0, 1, 1);
+  enemy.reset(ENEMY_TYPES.square, 0, 0, 1, 1);
 
   assert.equal(enemy.takeDamage(enemy.maxHp - 1), false);
   assert.equal(enemy.hp, 1);
@@ -15,7 +15,7 @@ test('un enemigo informa su muerte al agotarse su vida', () => {
 
 test('un enemigo élite recibe correctamente sus multiplicadores', () => {
   const enemy = new Enemy();
-  enemy.reset(ENEMY_TYPES.ghoul, 0, 0, 1, 1);
+  enemy.reset(ENEMY_TYPES.square, 0, 0, 1, 1);
   const normalHp = enemy.maxHp;
   const normalDamage = enemy.damage;
   const normalRadius = enemy.radius;
