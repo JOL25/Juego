@@ -134,7 +134,7 @@ async function run() {
     // Wait for game initialization; remote fonts can delay DOMContentLoaded.
     for (let attempt = 0; attempt < 100; attempt += 1) {
       const initialized = await client.evaluate(
-        `document.getElementById('game-canvas')?.width === 960`
+        `document.getElementById('game-canvas')?.dataset.ready === 'true'`
       );
       if (initialized) break;
       await delay(100);
@@ -143,12 +143,14 @@ async function run() {
     const initialState = await client.evaluate(`({
       ready: document.readyState,
       menuVisible: !document.getElementById('screen-menu').classList.contains('hidden'),
-      canvasWidth: document.getElementById('game-canvas').width
+      canvasWidth: document.getElementById('game-canvas').width,
+      fillsWindow: document.getElementById('game-canvas').clientWidth === innerWidth
+        && document.getElementById('game-canvas').clientHeight === innerHeight
     })`);
     if (
       !['interactive', 'complete'].includes(initialState.ready) ||
       !initialState.menuVisible ||
-      initialState.canvasWidth !== 960
+      initialState.canvasWidth <= 0 || !initialState.fillsWindow
     ) {
       throw new Error(`Invalid initial state: ${JSON.stringify(initialState)}`);
     }
@@ -159,6 +161,23 @@ async function run() {
     })()`);
     if (!started) throw new Error('Start button did not enter gameplay');
     await delay(200);
+
+    for (const [width, height] of [[1280, 720], [600, 900]]) {
+      await client.send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: false });
+      await delay(100);
+      const fits = await client.evaluate(`(async () => {
+        const { getGameInstance } = await import('./js/main.js');
+        const game = getGameInstance();
+        const canvas = game.canvas;
+        return canvas.clientWidth === innerWidth && canvas.clientHeight === innerHeight
+          && Math.abs(canvas.width / canvas.height - innerWidth / innerHeight) < 0.005
+          && game.camera.viewWidth === canvas.width && game.camera.viewHeight === canvas.height
+          && game.renderer.worldCanvas.width === canvas.width / 2;
+      })()`);
+      if (!fits) throw new Error('Canvas or camera did not adapt to viewport size');
+    }
+    await client.send('Emulation.clearDeviceMetricsOverride');
+    await delay(100);
 
     const audioWorked = await client.evaluate(`(async () => {
       const { getGameInstance } = await import('./js/main.js');
@@ -209,7 +228,8 @@ async function run() {
     const dashWorked = await client.evaluate(`(async () => {
       const { getGameInstance } = await import('./js/main.js');
       const game = getGameInstance();
-      document.getElementById('btn-dash').click();
+      window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }));
+      window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space' }));
       await new Promise((resolve) => setTimeout(resolve, 50));
       return game.player.dashCharges === 0 && game.player.dashActive > 0;
     })()`);
@@ -260,7 +280,8 @@ async function run() {
     const ultimateActivated = await client.evaluate(`(async () => {
       const { getGameInstance } = await import('./js/main.js');
       const game = getGameInstance();
-      document.getElementById('btn-ult').click();
+      window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyQ' }));
+      window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyQ' }));
       await new Promise((resolve) => setTimeout(resolve, 50));
       return game.player.ultimate.cooldownTimer > 0;
     })()`);
@@ -346,7 +367,8 @@ async function run() {
       const collected = game.ultimateInfinityTimer === 3 && !infinity.active;
       const before = game.projectilePool.activeCount;
       for (let i = 0; i < 3; i++) {
-        document.getElementById('btn-ult').click();
+        window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyQ' }));
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyQ' }));
         game._update(1 / 60);
       }
       game._render();

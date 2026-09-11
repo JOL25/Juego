@@ -7,11 +7,13 @@ export class WorldRenderer {
     const { canvas } = game;
     if (!this.worldCanvas) {
       this.worldCanvas = document.createElement('canvas');
-      this.worldCanvas.width = canvas.width / PIXEL_ART.scale;
-      this.worldCanvas.height = canvas.height / PIXEL_ART.scale;
       this.worldCtx = this.worldCanvas.getContext('2d');
       this.worldView = Object.create(game);
       this.worldView.ctx = this.worldCtx;
+    }
+    if (this.worldCanvas.width !== canvas.width / PIXEL_ART.scale || this.worldCanvas.height !== canvas.height / PIXEL_ART.scale) {
+      this.worldCanvas.width = canvas.width / PIXEL_ART.scale;
+      this.worldCanvas.height = canvas.height / PIXEL_ART.scale;
     }
     const ctx = this.worldCtx;
     ctx.save();

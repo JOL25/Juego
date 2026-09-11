@@ -72,6 +72,20 @@ export class Game {
     requestAnimationFrame((timestamp) => this._loop(timestamp));
   }
 
+  resize(width, height) {
+    if (width <= 0 || height <= 0) return;
+    // Keep figures equally sized on different monitors and preserve their shape.
+    const scale = CANVAS.height / Math.min(width, height);
+    const viewWidth = Math.round(width * scale / 2) * 2;
+    const viewHeight = Math.round(height * scale / 2) * 2;
+    if (this.canvas.width === viewWidth && this.canvas.height === viewHeight) return;
+    this.canvas.width = viewWidth;
+    this.canvas.height = viewHeight;
+    this.camera.viewWidth = viewWidth;
+    this.camera.viewHeight = viewHeight;
+    this.input.reset();
+  }
+
   start() {
     this.sound?.stopAll();
     this.sound?.unlock();

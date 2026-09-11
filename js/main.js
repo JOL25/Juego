@@ -15,12 +15,34 @@ window.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('game-canvas');
   const game = new Game(canvas);
   gameInstance = game;
+  const wrap = document.getElementById('game-wrap');
+  const resize = () => game.resize(wrap.clientWidth, wrap.clientHeight);
+  resize();
+  canvas.dataset.ready = 'true';
+  window.addEventListener('resize', resize);
+  const fullscreenButton = document.getElementById('btn-fullscreen');
+  fullscreenButton.hidden = !document.fullscreenEnabled;
+  fullscreenButton.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await wrap.requestFullscreen();
+    } catch {
+      fullscreenButton.title = 'No se pudo activar. Puedes usar F11 en el navegador.';
+    }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    const label = document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa';
+    fullscreenButton.setAttribute('aria-label', label);
+    fullscreenButton.title = label;
+    resize();
+  });
 
   const soundVolume = document.getElementById('sound-volume');
   const soundPercent = document.getElementById('sound-percent');
   const updateSoundVolume = () => {
     const percent = Math.round(game.sound.volume * 100);
     soundVolume.value = String(percent);
+    soundVolume.style.setProperty('--volume', `${percent}%`);
     soundPercent.value = `${percent}%`;
     soundVolume.setAttribute('aria-valuetext', `${percent}%`);
   };
@@ -50,12 +72,4 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const pauseBtn = document.getElementById('btn-pause-touch');
   pauseBtn.addEventListener('click', () => game.togglePause());
-  document.getElementById('btn-dash').addEventListener('click', (e) => {
-    e.preventDefault();
-    game.input.queueDash();
-  });
-  document.getElementById('btn-ult').addEventListener('click', (e) => {
-    e.preventDefault();
-    game.input.queueUltimate();
-  });
 });

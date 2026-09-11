@@ -12,15 +12,14 @@
 
   <div id="game-wrap">
     <canvas id="game-canvas"></canvas>
+    <button type="button" id="btn-fullscreen" class="icon-button" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
 
     <!-- Touch pause button (visible always during play, styled via CSS) -->
     <button id="btn-pause-touch" class="icon-button" aria-label="Pausar">⏸</button>
-    <button type="button" id="btn-dash" class="action-button btn-dash" aria-label="Dash">Dash</button>
-    <button type="button" id="btn-ult" class="action-button btn-ult" aria-label="Definitiva">Ult</button>
 
     <!-- MAIN MENU -->
     <div id="screen-menu" class="screen">
-      <div class="panel panel-menu">
+      <div class="panel panel-menu panel-pixel">
         <h1 class="game-title">Circle vs Geometry</h1>
         <p class="subtitle">Sobrevive a la horda interminable. Sube de nivel. No mires atrás.</p>
         <button id="btn-start" class="btn-primary">Empezar</button>
@@ -35,7 +34,7 @@
 
     <!-- LEVEL UP -->
     <div id="screen-levelup" class="screen hidden">
-      <div class="panel panel-levelup">
+      <div class="panel panel-levelup panel-pixel">
         <h2 class="section-title">¡Subiste de nivel!</h2>
         <p class="subtitle">Elige una mejora</p>
         <div id="levelup-options" class="levelup-grid"></div>
@@ -44,7 +43,7 @@
 
     <!-- PAUSE -->
     <div id="screen-pause" class="screen hidden">
-      <div class="panel">
+      <div class="panel panel-pixel">
         <h2 class="section-title">Pausa</h2>
         <div id="sound-control">
           <label for="sound-volume">Sonido: <output id="sound-percent" for="sound-volume">100%</output></label>

@@ -138,6 +138,7 @@ export class LevelUpSystem {
     if (player.ultimate && player.ultimate.canLevelUp()) {
       candidates.push({
         kind: 'ultimate-upgrade',
+        id: player.ultimate.id,
         weight: LEVEL_UP_WEIGHTS['ultimate-upgrade'],
         icon: player.ultimate.icon,
         title: `${player.ultimate.name} → Lv.${player.ultimate.level + 1}`,

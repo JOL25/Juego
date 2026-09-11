@@ -5,6 +5,8 @@
 // simpler to lay out, style, and make accessible than canvas UI.
 // ============================================================
 
+import { createUpgradeIcon } from './UpgradeIcon.js';
+
 export class MenuManager {
   constructor() {
     this.screens = {
@@ -51,10 +53,10 @@ export class MenuManager {
       card.className = 'levelup-card';
       card.innerHTML = `
         ${opt.tag ? `<div class="levelup-tag">${opt.tag}</div>` : ''}
-        <div class="levelup-icon">${opt.icon}</div>
         <div class="levelup-title">${opt.title}</div>
         <div class="levelup-desc">${opt.description}</div>
       `;
+      card.insertBefore(createUpgradeIcon(opt), card.querySelector('.levelup-title'));
       card.addEventListener('click', async () => {
         if (this.picking) return;
         this.picking = true;
