@@ -4,7 +4,7 @@
 // ============================================================
 
 import { COLORS, DASH, ULTIMATE, ENEMY_ANNOUNCEMENT } from '../config.js';
-import { traceEnemyShape } from '../entities/Enemy.js';
+import { drawPixelSprite } from '../rendering/PixelArt.js';
 
 function formatTime(totalSeconds) {
   const m = Math.floor(totalSeconds / 60);
@@ -172,11 +172,7 @@ export function drawEnemyAnnouncement(ctx, game) {
   ctx.strokeRect(x, y, width, 62);
   ctx.fillStyle = type.color;
   ctx.fillRect(x, y, 4, 62);
-  traceEnemyShape(ctx, type, x + 36, y + 31, 16);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-  ctx.lineWidth = 1;
-  ctx.stroke();
+  drawPixelSprite(ctx, x + 36, y + 31, 16, type.color, '#eadbff', type.vertices);
   ctx.fillStyle = '#ffe45c';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';

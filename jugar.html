@@ -432,6 +432,10 @@ var CircleVsGeometry = (() => {
     width: 960,
     height: 540
   };
+  var PIXEL_ART = {
+    scale: 2
+    // Double-size world pixels; UI keeps its full resolution.
+  };
   var AUDIO = {
     volume: 0.35,
     maxVoices: 8
@@ -897,6 +901,52 @@ var CircleVsGeometry = (() => {
     }
   };
 
+  // js/rendering/PixelArt.js
+  var sprites = /* @__PURE__ */ new Map();
+  var STEP = 2;
+  function insidePolygon(x, y, vertices) {
+    let inside = false;
+    for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+      const [ax, ay] = vertices[i];
+      const [bx, by] = vertices[j];
+      if (ay > y !== by > y && x < (bx - ax) * (y - ay) / (by - ay) + ax) inside = !inside;
+    }
+    return inside;
+  }
+  function drawPixelSprite(ctx, x, y, radius, color, outline, vertices = null) {
+    const key = JSON.stringify([radius, color, outline, vertices]);
+    let sprite = sprites.get(key);
+    if (!sprite) {
+      const half = Math.ceil((radius + STEP) / STEP);
+      const size = half * 2;
+      sprite = document.createElement("canvas");
+      sprite.width = sprite.height = size;
+      const paint = sprite.getContext("2d");
+      const mask = (column, row) => {
+        const nx = (column - half + 0.5) * STEP / radius;
+        const ny = (row - half + 0.5) * STEP / radius;
+        return vertices ? insidePolygon(nx, ny, vertices) : nx * nx + ny * ny <= 1;
+      };
+      for (let row = 0; row < size; row++) {
+        for (let column = 0; column < size; column++) {
+          if (!mask(column, row)) continue;
+          const edge = !mask(column, row - 1) || !mask(column - 1, row) || !mask(column, row + 1) || !mask(column + 1, row);
+          paint.fillStyle = edge ? outline : color;
+          paint.fillRect(column, row, 1, 1);
+          if (!edge) {
+            paint.fillStyle = row < half - 2 ? "rgba(255,255,255,0.3)" : row > half + 1 ? "rgba(0,0,0,0.28)" : "rgba(0,0,0,0)";
+            paint.fillRect(column, row, 1, 1);
+          }
+        }
+      }
+      sprites.set(key, sprite);
+    }
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(sprite, Math.round(x / STEP) * STEP - sprite.width, Math.round(y / STEP) * STEP - sprite.height, sprite.width * STEP, sprite.height * STEP);
+    ctx.restore();
+  }
+
   // js/entities/Player.js
   var Player = class {
     constructor() {
@@ -1027,10 +1077,7 @@ var CircleVsGeometry = (() => {
       ctx.fillStyle = COLORS.player;
       ctx.strokeStyle = COLORS.playerOutline;
       ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(screenX, screenY, this.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
+      drawPixelSprite(ctx, screenX, screenY, this.radius, COLORS.player, COLORS.playerOutline);
       const dir = this.dashActive > 0 ? this.dashDir : this.moveDir;
       const angle = dir.x === 0 && dir.y === 0 ? this.facing < 0 ? Math.PI : 0 : Math.atan2(dir.y, dir.x);
       ctx.translate(screenX, screenY);
@@ -1065,7 +1112,7 @@ var CircleVsGeometry = (() => {
       label: "Triángulo",
       plural: "Triángulos",
       color: "#8a6bb1",
-      radius: 10,
+      radius: 14,
       vertices: regularPolygon(3),
       baseHp: 8,
       baseSpeed: 130,
@@ -1093,7 +1140,7 @@ var CircleVsGeometry = (() => {
       label: "Rombo",
       plural: "Rombos",
       color: "#c9c2a8",
-      radius: 12,
+      radius: 16,
       vertices: [[0, -1], [0.8, 0], [0, 1], [-0.8, 0]],
       baseHp: 14,
       baseSpeed: 105,
@@ -1214,13 +1261,15 @@ var CircleVsGeometry = (() => {
       ctx.fillStyle = flashing ? "#ffffff" : this.frozen ? "#78dff2" : this.type.color;
       ctx.strokeStyle = this.isElite ? "#ffd54a" : "rgba(0,0,0,0.4)";
       ctx.lineWidth = this.isElite ? 3 : 1.5;
-      traceEnemyShape(ctx, this.type, screenX, screenY, this.radius);
-      ctx.fill();
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(255,255,255,0.22)";
-      ctx.lineWidth = 1;
-      traceEnemyShape(ctx, this.type, screenX, screenY, this.radius * 0.68);
-      ctx.stroke();
+      drawPixelSprite(
+        ctx,
+        screenX,
+        screenY,
+        this.radius,
+        ctx.fillStyle,
+        this.isElite ? "#ffd54a" : "#241628",
+        this.type.vertices
+      );
       if (this.frozen) {
         ctx.strokeStyle = "rgba(220,250,255,0.9)";
         ctx.lineWidth = 2;
@@ -1327,13 +1376,19 @@ var CircleVsGeometry = (() => {
         const ang = Math.atan2(this.vy, this.vx);
         ctx.translate(screenX, screenY);
         ctx.rotate(ang);
-        ctx.beginPath();
-        ctx.moveTo(10, 0);
-        ctx.lineTo(-8, -5);
-        ctx.lineTo(-5, 0);
-        ctx.lineTo(-8, 5);
-        ctx.closePath();
-        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#ffcf5a";
+        ctx.fillRect(-12, -2, 6, 4);
+        ctx.fillStyle = "#ff693b";
+        ctx.fillRect(-10, -1, 4, 2);
+        ctx.fillStyle = "#412636";
+        ctx.fillRect(-6, -4, 14, 8);
+        ctx.fillStyle = "#e8d9c0";
+        ctx.fillRect(-6, -2, 12, 4);
+        ctx.fillStyle = "#ff8a4a";
+        ctx.fillRect(6, -2, 4, 4);
+        ctx.fillRect(-6, -6, 4, 2);
+        ctx.fillRect(-6, 4, 4, 2);
       } else if (this.shape === "bolt") {
         const ang = Math.atan2(this.vy, this.vx);
         ctx.translate(screenX, screenY);
@@ -1429,12 +1484,15 @@ var CircleVsGeometry = (() => {
         ctx.fill();
       } else {
         ctx.fillStyle = this.value >= XP_GEM.largeValue ? "#e8b13a" : this.value >= XP_GEM.mediumValue ? "#7ec6e0" : "#4fd1e0";
-        ctx.beginPath();
-        ctx.save();
-        ctx.translate(screenX, screenY);
-        ctx.rotate(Math.PI / 4);
-        ctx.fillRect(-this.radius, -this.radius, this.radius * 2, this.radius * 2);
-        ctx.restore();
+        drawPixelSprite(
+          ctx,
+          screenX,
+          screenY,
+          this.radius * Math.SQRT2,
+          ctx.fillStyle,
+          "#b9f4ee",
+          [[0, -1], [1, 0], [0, 1], [-1, 0]]
+        );
       }
       ctx.restore();
     }
@@ -3089,11 +3147,7 @@ Activar: Q / E / R`,
     ctx.strokeRect(x, y, width, 62);
     ctx.fillStyle = type.color;
     ctx.fillRect(x, y, 4, 62);
-    traceEnemyShape(ctx, type, x + 36, y + 31, 16);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.5)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    drawPixelSprite(ctx, x + 36, y + 31, 16, type.color, "#eadbff", type.vertices);
     ctx.fillStyle = "#ffe45c";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -3202,21 +3256,35 @@ Activar: Q / E / R`,
   // js/rendering/WorldRenderer.js
   var WorldRenderer = class {
     render(game) {
-      const { ctx, canvas } = game;
+      const { canvas } = game;
+      if (!this.worldCanvas) {
+        this.worldCanvas = document.createElement("canvas");
+        this.worldCanvas.width = canvas.width / PIXEL_ART.scale;
+        this.worldCanvas.height = canvas.height / PIXEL_ART.scale;
+        this.worldCtx = this.worldCanvas.getContext("2d");
+        this.worldView = Object.create(game);
+        this.worldView.ctx = this.worldCtx;
+      }
+      const ctx = this.worldCtx;
       ctx.save();
+      ctx.scale(1 / PIXEL_ART.scale, 1 / PIXEL_ART.scale);
       if (game.shakeTimer > 0) {
         const magnitude = 5 * (game.shakeTimer / 140);
         ctx.translate((Math.random() - 0.5) * magnitude, (Math.random() - 0.5) * magnitude);
       }
       ctx.fillStyle = "#120a10";
       ctx.fillRect(-10, -10, canvas.width + 20, canvas.height + 20);
-      this.drawGrid(game);
-      if (game.state !== STATE.MENU) this.drawWorld(game);
+      this.drawGrid(this.worldView);
+      if (game.state !== STATE.MENU) this.drawWorld(this.worldView);
       ctx.restore();
+      game.ctx.save();
+      game.ctx.imageSmoothingEnabled = false;
+      game.ctx.drawImage(this.worldCanvas, 0, 0, canvas.width, canvas.height);
+      game.ctx.restore();
       if (game.state === STATE.PLAYING || game.state === STATE.PAUSED) {
-        drawHUD(ctx, game);
-        drawEnemyAnnouncement(ctx, game);
-        drawJoystick(ctx, game.input.getJoystickVisual());
+        drawHUD(game.ctx, game);
+        drawEnemyAnnouncement(game.ctx, game);
+        drawJoystick(game.ctx, game.input.getJoystickVisual());
       }
     }
     drawGrid(game) {

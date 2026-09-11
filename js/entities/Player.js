@@ -5,6 +5,7 @@
 
 import { PLAYER, WORLD, COLORS, DASH, VAMPIRE_KISS } from '../config.js';
 import { clamp, normalize } from '../utils.js';
+import { drawPixelSprite } from '../rendering/PixelArt.js';
 
 export class Player {
   constructor() {
@@ -165,10 +166,7 @@ export class Player {
     ctx.fillStyle = COLORS.player;
     ctx.strokeStyle = COLORS.playerOutline;
     ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(screenX, screenY, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
+    drawPixelSprite(ctx, screenX, screenY, this.radius, COLORS.player, COLORS.playerOutline);
 
     // Follow actual dash movement, otherwise retain the last movement direction.
     const dir = this.dashActive > 0 ? this.dashDir : this.moveDir;

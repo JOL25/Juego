@@ -1,11 +1,21 @@
-import { WORLD } from '../config.js';
+import { WORLD, PIXEL_ART } from '../config.js';
 import { STATE } from '../core/GameState.js';
 import { drawHUD, drawJoystick, drawPlayerDashBars, drawUltimateReadyIcon, drawEnemyAnnouncement } from '../ui/HUD.js';
 
 export class WorldRenderer {
   render(game) {
-    const { ctx, canvas } = game;
+    const { canvas } = game;
+    if (!this.worldCanvas) {
+      this.worldCanvas = document.createElement('canvas');
+      this.worldCanvas.width = canvas.width / PIXEL_ART.scale;
+      this.worldCanvas.height = canvas.height / PIXEL_ART.scale;
+      this.worldCtx = this.worldCanvas.getContext('2d');
+      this.worldView = Object.create(game);
+      this.worldView.ctx = this.worldCtx;
+    }
+    const ctx = this.worldCtx;
     ctx.save();
+    ctx.scale(1 / PIXEL_ART.scale, 1 / PIXEL_ART.scale);
 
     if (game.shakeTimer > 0) {
       const magnitude = 5 * (game.shakeTimer / 140);
@@ -14,16 +24,21 @@ export class WorldRenderer {
 
     ctx.fillStyle = '#120a10';
     ctx.fillRect(-10, -10, canvas.width + 20, canvas.height + 20);
-    this.drawGrid(game);
+    this.drawGrid(this.worldView);
 
-    if (game.state !== STATE.MENU) this.drawWorld(game);
+    if (game.state !== STATE.MENU) this.drawWorld(this.worldView);
 
     ctx.restore();
 
+    game.ctx.save();
+    game.ctx.imageSmoothingEnabled = false;
+    game.ctx.drawImage(this.worldCanvas, 0, 0, canvas.width, canvas.height);
+    game.ctx.restore();
+
     if (game.state === STATE.PLAYING || game.state === STATE.PAUSED) {
-      drawHUD(ctx, game);
-      drawEnemyAnnouncement(ctx, game);
-      drawJoystick(ctx, game.input.getJoystickVisual());
+      drawHUD(game.ctx, game);
+      drawEnemyAnnouncement(game.ctx, game);
+      drawJoystick(game.ctx, game.input.getJoystickVisual());
     }
   }
 

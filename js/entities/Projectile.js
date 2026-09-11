@@ -90,13 +90,19 @@ export class Projectile {
       const ang = Math.atan2(this.vy, this.vx);
       ctx.translate(screenX, screenY);
       ctx.rotate(ang);
-      ctx.beginPath();
-      ctx.moveTo(10, 0);
-      ctx.lineTo(-8, -5);
-      ctx.lineTo(-5, 0);
-      ctx.lineTo(-8, 5);
-      ctx.closePath();
-      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#ffcf5a';
+      ctx.fillRect(-12, -2, 6, 4);
+      ctx.fillStyle = '#ff693b';
+      ctx.fillRect(-10, -1, 4, 2);
+      ctx.fillStyle = '#412636';
+      ctx.fillRect(-6, -4, 14, 8);
+      ctx.fillStyle = '#e8d9c0';
+      ctx.fillRect(-6, -2, 12, 4);
+      ctx.fillStyle = '#ff8a4a';
+      ctx.fillRect(6, -2, 4, 4);
+      ctx.fillRect(-6, -6, 4, 2);
+      ctx.fillRect(-6, 4, 4, 2);
     } else if (this.shape === 'bolt') {
       const ang = Math.atan2(this.vy, this.vx);
       ctx.translate(screenX, screenY);

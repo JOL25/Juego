@@ -8,6 +8,10 @@ export const CANVAS = {
   height: 540,
 };
 
+export const PIXEL_ART = {
+  scale: 2, // Double-size world pixels; UI keeps its full resolution.
+};
+
 export const AUDIO = {
   volume: 0.35,
   maxVoices: 8,

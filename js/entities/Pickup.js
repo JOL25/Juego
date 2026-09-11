@@ -5,6 +5,7 @@
 
 import { normalize, distance } from '../utils.js';
 import { POWER_UPS, XP_GEM } from '../config.js';
+import { drawPixelSprite } from '../rendering/PixelArt.js';
 
 export const PICKUP_KIND = Object.freeze({
   XP: 'xp',
@@ -93,12 +94,8 @@ export class Pickup {
       ctx.fillStyle = this.value >= XP_GEM.largeValue ? '#e8b13a'
         : this.value >= XP_GEM.mediumValue ? '#7ec6e0'
         : '#4fd1e0';
-      ctx.beginPath();
-      ctx.save();
-      ctx.translate(screenX, screenY);
-      ctx.rotate(Math.PI / 4);
-      ctx.fillRect(-this.radius, -this.radius, this.radius * 2, this.radius * 2);
-      ctx.restore();
+      drawPixelSprite(ctx, screenX, screenY, this.radius * Math.SQRT2,
+        ctx.fillStyle, '#b9f4ee', [[0, -1], [1, 0], [0, 1], [-1, 0]]);
     }
     ctx.restore();
   }

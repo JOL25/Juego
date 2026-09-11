@@ -5,6 +5,7 @@
 
 import { normalize } from '../utils.js';
 import { KNOCKBACK } from '../config.js';
+import { drawPixelSprite } from '../rendering/PixelArt.js';
 
 // Unique id per *spawn* (not per pool slot) so a piercing projectile
 // can't mistake a freshly-respawned enemy in a recycled slot for the
@@ -22,7 +23,7 @@ function regularPolygon(sides) {
 // gates when a type starts appearing, so early game stays easy.
 export const ENEMY_TYPES = {
   triangle: {
-    id: 'triangle', label: 'Triángulo', plural: 'Triángulos', color: '#8a6bb1', radius: 10,
+    id: 'triangle', label: 'Triángulo', plural: 'Triángulos', color: '#8a6bb1', radius: 14,
     vertices: regularPolygon(3),
     baseHp: 8, baseSpeed: 130, damage: 6, xpValue: 3,
     weight: 10, minMinute: 0,
@@ -34,7 +35,7 @@ export const ENEMY_TYPES = {
     weight: 8, minMinute: 3,
   },
   diamond: {
-    id: 'diamond', label: 'Rombo', plural: 'Rombos', color: '#c9c2a8', radius: 12,
+    id: 'diamond', label: 'Rombo', plural: 'Rombos', color: '#c9c2a8', radius: 16,
     vertices: [[0, -1], [0.8, 0], [0, 1], [-0.8, 0]],
     baseHp: 14, baseSpeed: 105, damage: 8, xpValue: 6,
     weight: 9, minMinute: 6,
@@ -148,14 +149,8 @@ export class Enemy {
     ctx.strokeStyle = this.isElite ? '#ffd54a' : 'rgba(0,0,0,0.4)';
     ctx.lineWidth = this.isElite ? 3 : 1.5;
 
-    traceEnemyShape(ctx, this.type, screenX, screenY, this.radius);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-    ctx.lineWidth = 1;
-    traceEnemyShape(ctx, this.type, screenX, screenY, this.radius * 0.68);
-    ctx.stroke();
+    drawPixelSprite(ctx, screenX, screenY, this.radius, ctx.fillStyle,
+      this.isElite ? '#ffd54a' : '#241628', this.type.vertices);
 
     if (this.frozen) {
       ctx.strokeStyle = 'rgba(220,250,255,0.9)';
