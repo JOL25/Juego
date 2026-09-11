@@ -63,6 +63,7 @@ export class Ultimate {
   tryActivate(game) {
     if (!this.isReady()) return false;
     this.activate(game);
+    game.sound?.play(this.id);
     this.cooldownTimer = this.unlimited ? 0 : this.stats.cooldownMs;
     this.readyIconTimer = 0;
     return true;
@@ -154,11 +155,11 @@ export class ExplosiveWave extends Ultimate {
 }
 
 const ORBIT_LASER_LEVELS = [
-  { damage: 16, cooldownMs: 14000, durationMs: 2200, length: 170, width: 22, beams: 1, turnRate: 2.4 },
-  { damage: 20, cooldownMs: 13000, durationMs: 2600, length: 190, width: 24, beams: 1, turnRate: 2.6 },
-  { damage: 26, cooldownMs: 12000, durationMs: 3000, length: 210, width: 26, beams: 1, turnRate: 2.8 },
-  { damage: 30, cooldownMs: 11000, durationMs: 3400, length: 230, width: 28, beams: 2, turnRate: 3.0 },
-  { damage: 38, cooldownMs: 9500, durationMs: 4000, length: 260, width: 32, beams: 2, turnRate: 3.3 },
+  { damage: 16, cooldownMs: 14000, durationMs: 3000, length: 170, width: 35, beams: 1, turnRate: 2.4 },
+  { damage: 20, cooldownMs: 13000, durationMs: 3500, length: 190, width: 40, beams: 1, turnRate: 2.6 },
+  { damage: 26, cooldownMs: 12000, durationMs: 4000, length: 210, width: 45, beams: 2, turnRate: 2.8 },
+  { damage: 30, cooldownMs: 11000, durationMs: 4500, length: 230, width: 50, beams: 3, turnRate: 3.0 },
+  { damage: 38, cooldownMs: 9500, durationMs: 5000, length: 260, width: 55, beams: 4, turnRate: 3.3 },
 ];
 
 export class OrbitLaser extends Ultimate {

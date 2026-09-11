@@ -20,6 +20,7 @@ import { CollisionSystem } from '../systems/CollisionSystem.js';
 import { LevelUpSystem } from '../systems/LevelUpSystem.js';
 import { SpatialGrid } from '../systems/SpatialGrid.js';
 import { PowerUpSpawner } from '../systems/PowerUpSpawner.js';
+import { SoundSystem } from '../systems/SoundSystem.js';
 import { MenuManager } from '../ui/MenuManager.js';
 import { WorldRenderer } from '../rendering/WorldRenderer.js';
 import { createWeapon } from '../weapons/registry.js';
@@ -45,6 +46,7 @@ export class Game {
     this.levelUpSystem = new LevelUpSystem();
     this.enemyGrid = new SpatialGrid(SPATIAL_GRID.cellSize);
     this.renderer = new WorldRenderer();
+    this.sound = new SoundSystem();
 
     this.enemyPool = new Pool(() => new Enemy(), POOL_SIZES.enemies);
     this.projectilePool = new Pool(() => new Projectile(), POOL_SIZES.projectiles);
@@ -71,6 +73,8 @@ export class Game {
   }
 
   start() {
+    this.sound?.stopAll();
+    this.sound?.unlock();
     this.input.reset();
     this.clock.reset();
     this._lastTimestamp = null;
@@ -100,10 +104,12 @@ export class Game {
 
   togglePause() {
     if (this.state === STATE.PLAYING) {
+      this.sound?.stopAll();
       this.input.reset();
       this.state = STATE.PAUSED;
       this.menu.showPause();
     } else if (this.state === STATE.PAUSED) {
+      this.sound?.unlock();
       this.input.reset();
       this.clock.reset();
       this.state = STATE.PLAYING;
@@ -112,6 +118,7 @@ export class Game {
   }
 
   _handleGameOver() {
+    this.sound?.stopAll();
     this.input.reset();
     this.state = STATE.GAME_OVER;
     const best = Number(localStorage.getItem(HIGH_SCORE_KEY) || 0);
@@ -335,6 +342,7 @@ export class Game {
   }
 
   explodeAt(x, y, radius, damage, textColor) {
+    this.sound?.play('explosion');
     this.forEachEnemyNear(x, y, radius, (enemy) => {
       if (distance(x, y, enemy.x, enemy.y) <= radius + enemy.radius) {
         this.damageEnemy(enemy, damage, textColor);
@@ -385,6 +393,7 @@ export class Game {
 
   _killEnemy(enemy) {
     if (!enemy.active) return;
+    this.sound?.play('defeat');
     this.player.kills += 1;
     this.player.tryHealOnKill();
     this.spawnDeathBurst(enemy.x, enemy.y, enemy.type.color);
@@ -393,6 +402,7 @@ export class Game {
   }
 
   onXpCollected(value) {
+    this.sound?.play('xp');
     const levels = this.player.gainXp(value);
     this.levelUpSystem.addLevels(levels, this);
   }

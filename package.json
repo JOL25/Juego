@@ -3,9 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "node scripts/build-standalone.js",
+    "test:standalone": "npm run build && node scripts/browser-smoke.js --standalone",
     "start": "node scripts/dev-server.js",
     "test": "node --test",
     "test:browser": "node scripts/browser-smoke.js",
     "benchmark": "node scripts/performance-benchmark.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
   }
 }

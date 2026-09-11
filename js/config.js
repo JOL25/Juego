@@ -8,6 +8,11 @@ export const CANVAS = {
   height: 540,
 };
 
+export const AUDIO = {
+  volume: 0.35,
+  maxVoices: 8,
+};
+
 export const WORLD = {
   // The world is a large bounded square the player roams inside.
   size: 4000,

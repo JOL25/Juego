@@ -29,6 +29,7 @@ export class PierceRay extends Weapon {
   }
 
   fire(game) {
+    game.sound?.play('ray');
     const { player } = game;
     const s = this.stats;
     const target = game.findNearestEnemy(player.x, player.y);

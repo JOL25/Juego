@@ -35,6 +35,7 @@ export class CollisionSystem {
         )) return;
 
         projectile.hitEnemyIds.add(enemy.uid);
+        game.sound?.play('hit');
 
         if (projectile.explodeRadius > 0) {
           if (!projectile.didExplode) {
@@ -93,6 +94,7 @@ export class CollisionSystem {
         game.activateUltimateInfinity(pickup.value);
       }
       game.pickupPool.release(pickup);
+      if (pickup.kind !== PICKUP_KIND.XP) game.sound?.play('powerUp');
     });
   }
 }

@@ -16,6 +16,26 @@ window.addEventListener('DOMContentLoaded', () => {
   const game = new Game(canvas);
   gameInstance = game;
 
+  const soundButton = document.getElementById('btn-sound');
+  const updateSoundButton = () => {
+    soundButton.textContent = game.sound.muted ? 'Sonido: OFF' : 'Sonido: ON';
+    soundButton.setAttribute('aria-pressed', String(!game.sound.muted));
+  };
+  updateSoundButton();
+  soundButton.addEventListener('click', () => {
+    game.sound.unlock();
+    game.sound.setMuted(!game.sound.muted);
+    updateSoundButton();
+  });
+  window.addEventListener('pointerdown', () => game.sound.unlock());
+  window.addEventListener('keydown', () => game.sound.unlock());
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      game.sound.stopAll();
+      if (game.state === 'playing') game.togglePause();
+    }
+  });
+
   document.getElementById('btn-start').addEventListener('click', () => game.start());
   document.getElementById('btn-resume').addEventListener('click', () => game.togglePause());
   document.getElementById('btn-restart-pause').addEventListener('click', () => game.start());

@@ -29,6 +29,7 @@ export class LevelUpSystem {
     if (this.pendingLevelUps <= 0) return;
     game.input.resetActions();
     game.state = STATE.LEVEL_UP;
+    game.sound?.play('levelUp');
     const options = this.buildOptions(game.player);
     game.menu.showLevelUp(
       options.map((opt) => ({ ...opt, onPick: () => this.applyChoice(opt, game) }))

@@ -6,6 +6,8 @@ import { spawn } from 'node:child_process';
 
 import { createStaticServer } from './dev-server.js';
 
+const standalone = process.argv.includes('--standalone');
+
 const EDGE_CANDIDATES = process.platform === 'win32'
   ? [
       'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
@@ -72,10 +74,16 @@ class CdpClient {
   }
 
   async evaluate(expression) {
+    if (standalone) {
+      expression = expression
+        .replaceAll("await import('./js/main.js')", 'window.CircleVsGeometry')
+        .replaceAll("await import('./js/weapons/Ultimates.js')", 'window.CircleVsGeometry.ultimates');
+    }
     const response = await this.send('Runtime.evaluate', {
       expression,
       awaitPromise: true,
       returnByValue: true,
+      userGesture: true,
     });
     if (response.exceptionDetails) {
       throw new Error(response.exceptionDetails.exception?.description || response.exceptionDetails.text);
@@ -99,9 +107,10 @@ async function run() {
     throw new Error('Microsoft Edge or Chromium was not found. Set NIGHTFALL_BROWSER_PATH to its executable.');
   }
 
-  const server = await createStaticServer({ port: 0 });
-  const serverPort = server.address().port;
-  const gameUrl = `http://127.0.0.1:${serverPort}/`;
+  const server = standalone ? null : await createStaticServer({ port: 0 });
+  const gameUrl = standalone
+    ? new URL('../jugar.html', import.meta.url).href
+    : `http://127.0.0.1:${server.address().port}/`;
   const debugPort = 9300 + Math.floor(Math.random() * 500);
   const browserDataDir = await mkdtemp(join(tmpdir(), 'nightfall-browser-'));
   const browser = spawn(browserPath, [
@@ -150,6 +159,26 @@ async function run() {
     })()`);
     if (!started) throw new Error('Start button did not enter gameplay');
     await delay(200);
+
+    const audioWorked = await client.evaluate(`(async () => {
+      const { getGameInstance } = await import('./js/main.js');
+      const game = getGameInstance();
+      game.sound.unlock();
+      await game.sound.context.resume();
+      const effects = ['hit', 'defeat', 'xp', 'levelUp', 'powerUp', 'ray', 'rocket', 'explosion', 'ult_pierce_shot', 'ult_wave', 'ult_orbit_laser'];
+      const played = effects.every((name) => {
+        game.sound.stopAll();
+        return game.sound.play(name);
+      });
+      document.getElementById('btn-sound').click();
+      const muted = game.sound.muted && game.sound.voices.size === 0
+        && document.getElementById('btn-sound').getAttribute('aria-pressed') === 'false';
+      document.getElementById('btn-sound').click();
+      const unmuted = !game.sound.muted && game.sound.play('xp');
+      game.sound.stopAll();
+      return played && muted && unmuted;
+    })()`);
+    if (!audioWorked) throw new Error('Retro audio playback or mute control failed');
 
     const gameplayState = await client.evaluate(`(async () => {
       const { getGameInstance } = await import('./js/main.js');
@@ -353,7 +382,7 @@ async function run() {
   } finally {
     if (socket) socket.close();
     browser.kill();
-    await new Promise((resolveClose) => server.close(resolveClose));
+    if (server) await new Promise((resolveClose) => server.close(resolveClose));
     await rm(browserDataDir, { recursive: true, force: true }).catch(() => {});
   }
 }

@@ -32,6 +32,7 @@ export class Missile extends Weapon {
     const s = this.stats;
     const targets = game.findNearestEnemies(player.x, player.y, s.count);
     if (targets.length === 0) return;
+    game.sound?.play('rocket');
 
     targets.forEach((target) => {
       const dir = normalize(target.x - player.x, target.y - player.y);

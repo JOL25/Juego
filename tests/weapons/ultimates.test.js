@@ -141,9 +141,9 @@ test('ExplosiveWave daña al cruzar cada enemigo y no repite impactos', () => {
 
 test('OrbitLaser golpea línea y borde, respeta hitCd y termina por duración', () => {
   const line = createEnemy({ x: 100, y: 0, radius: 5 });
-  const widthEdge = createEnemy({ x: 100, y: 16, radius: 5 });
-  const widthOutside = createEnemy({ x: 100, y: 16.01, radius: 5 });
-  const behind = createEnemy({ x: -20, y: 0, radius: 5 });
+  const widthEdge = createEnemy({ x: 100, y: 22.5, radius: 5 });
+  const widthOutside = createEnemy({ x: 100, y: 22.51, radius: 5 });
+  const behind = createEnemy({ x: -30, y: 0, radius: 5 });
   const game = createWeaponGame({ enemies: [line, widthEdge, widthOutside, behind] });
   const ultimate = new OrbitLaser();
 
@@ -154,46 +154,46 @@ test('OrbitLaser golpea línea y borde, respeta hitCd y termina por duración', 
   assert.ok(game.events.damage.every((event) => event.amount === 16));
   assert.deepEqual(game.events.enemyQueries, [{
     type: 'bounds',
-    minX: -11,
-    minY: -11,
-    maxX: 181,
-    maxY: 11,
+    minX: -17.5,
+    minY: -17.5,
+    maxX: 187.5,
+    maxY: 17.5,
   }]);
   ultimate.tick(0, game);
   assert.equal(game.events.damage.length, 2);
   assert.equal(game.events.enemyQueries.length, 2);
 
-  ultimate.tick(2.2, game);
+  ultimate.tick(3, game);
   assert.equal(game.events.enemyQueries.length, 3);
   assert.equal(ultimate.active, false);
   assert.equal(ultimate.hitCd.size, 0);
 });
 
-test('OrbitLaser nivel 4 usa dos haces opuestos', () => {
+test('OrbitLaser nivel 3 usa dos haces opuestos', () => {
   const right = createEnemy({ x: 100, y: 0, radius: 5 });
   const left = createEnemy({ x: -100, y: 0, radius: 5 });
   const up = createEnemy({ x: 0, y: -100, radius: 5 });
   const game = createWeaponGame({ enemies: [right, left, up] });
   const ultimate = new OrbitLaser();
-  ultimate.level = 4;
+  ultimate.level = 3;
 
   ultimate.activate(game);
   ultimate.tick(0, game);
 
   assert.deepEqual(game.events.damage.map((event) => event.enemy), [right, left]);
-  assert.ok(game.events.damage.every((event) => event.amount === 30));
+  assert.ok(game.events.damage.every((event) => event.amount === 26));
   assert.equal(game.events.enemyQueries.length, 2);
   const [rightQuery, leftQuery] = game.events.enemyQueries;
   assert.deepEqual(rightQuery, {
     type: 'bounds',
-    minX: -14,
-    minY: -14,
-    maxX: 244,
-    maxY: 14,
+    minX: -22.5,
+    minY: -22.5,
+    maxX: 232.5,
+    maxY: 22.5,
   });
   assert.equal(leftQuery.type, 'bounds');
-  assertClose(leftQuery.minX, -244);
-  assertClose(leftQuery.minY, -14);
-  assertClose(leftQuery.maxX, 14);
-  assertClose(leftQuery.maxY, 14);
+  assertClose(leftQuery.minX, -232.5);
+  assertClose(leftQuery.minY, -22.5);
+  assertClose(leftQuery.maxX, 22.5);
+  assertClose(leftQuery.maxY, 22.5);
 });

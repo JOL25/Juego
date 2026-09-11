@@ -5,6 +5,21 @@ HTML5 Canvas + ES modules — no build step, no external game framework.
 
 ## Run it locally
 
+For a standalone version, double-click `jugar.html`. It contains the JavaScript
+and CSS and works without a server or internet connection, using system fonts.
+You can copy this single file to another computer to play.
+
+After changing the source files, regenerate it with:
+
+```bash
+npm install
+npm run build
+```
+
+`jugar.html` is generated; edit `index.html`, `style.css`, and `js/` instead.
+Changes are included the next time you run `npm run build`. To verify the
+standalone game in Edge or Chromium, run `npm run test:standalone`.
+
 Browsers block `import` in files opened via `file://`, so serve the folder
 over HTTP. The project includes a dependency-free development server:
 
@@ -23,6 +38,16 @@ python3 -m http.server 8080
 
 In VS Code, the **Run Nightfall Survivors** launch configuration starts the
 development server automatically before opening Edge.
+
+## Sound
+
+Original 8-bit effects accompany projectile hits, enemy defeats, XP gems,
+level-up choices, map pickups (including healing), ray attacks, rocket launches
+and explosions, and each of the three ultimate activations. Audio is synthesized
+locally using Web Audio and works offline in `jugar.html`. Click **Empezar** to
+enable playback; **Sonido: ON/OFF** toggles sound and remembers your preference.
+Volume and simultaneous voice limits are in `AUDIO` in `js/config.js`.
+Repeated combat/pickup effects are throttled to keep large hordes comfortable.
 
 ## Tests
 

@@ -296,6 +296,22 @@ html, body {
   color: var(--bone-dim);
 }
 
+#btn-sound {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 30;
+  padding: 8px 10px;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  background: #1c1018;
+  color: var(--bone);
+  font: 600 12px Inter, sans-serif;
+  cursor: pointer;
+}
+
+#btn-sound:focus-visible { outline: 2px solid var(--gold); }
+
 /* --- Small screens: shrink panel padding, stack cards --- */
 @media (max-width: 520px) {
   .panel {
