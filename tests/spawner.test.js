@@ -5,6 +5,22 @@ import { Spawner } from '../js/systems/Spawner.js';
 import { DIFFICULTY, ENEMY_ANNOUNCEMENT } from '../js/config.js';
 
 const camera = { x: 0, y: 0, viewWidth: 960, viewHeight: 540 };
+
+test('el aviso sonoro ocurre una vez por cartel visible, incluyendo anuncios en cola', () => {
+  const announced = [];
+  const spawner = new Spawner((announcement) => announced.push(announcement.type.id));
+  spawner.updateIntroductions(0, 180);
+  assert.deepEqual(announced, ['triangle']);
+  spawner.updateIntroductions(1, 181);
+  assert.deepEqual(announced, ['triangle']);
+  spawner.updateIntroductions(3, 184);
+  assert.deepEqual(announced, ['triangle', 'square']);
+  spawner.updateIntroductions(4, 188);
+  assert.deepEqual(announced, ['triangle', 'square']);
+  spawner.reset();
+  spawner.updateIntroductions(0, 0);
+  assert.deepEqual(announced, ['triangle', 'square', 'triangle']);
+});
 const schedule = [
   [0, 'triangle'],
   [180, 'square'],

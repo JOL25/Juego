@@ -11,7 +11,7 @@ export const PASSIVE_DEFS = [
     name: 'Ancient Tome',
     icon: '📖',
     maxLevel: 5,
-    description: (lvl) => `+${lvl * 10}% max HP`,
+    description: (lvl) => `Vida máxima: +${lvl * 10}%`,
     apply(player, level) {
       // Reset to base then reapply — simplest way to keep stacking correct.
       const bonus = 1 + level * 0.10;
@@ -25,7 +25,7 @@ export const PASSIVE_DEFS = [
     name: 'Swift Boots',
     icon: '🥾',
     maxLevel: 5,
-    description: (lvl) => `+${lvl * 8}% move speed`,
+    description: (lvl) => `Velocidad: +${lvl * 8}%`,
     apply(player, level) {
       player.speed = player._baseSpeed * (1 + level * 0.08);
     },
@@ -35,7 +35,7 @@ export const PASSIVE_DEFS = [
     name: 'Bone Armor',
     icon: '🛡️',
     maxLevel: 5,
-    description: (lvl) => `+${lvl * 2} armor`,
+    description: (lvl) => `Armadura: +${lvl * 2}`,
     apply(player, level) {
       player.armor = player._baseArmor + level * 2;
     },
@@ -45,7 +45,7 @@ export const PASSIVE_DEFS = [
     name: 'Pull Amulet',
     icon: '🧲',
     maxLevel: 5,
-    description: (lvl) => `+${lvl * 25}% pickup radius`,
+    description: (lvl) => `Rango de recogida: +${lvl * 25}%`,
     apply(player, level) {
       player.magnetRadius = player._baseMagnetRadius * (1 + level * 0.25);
     },
@@ -55,7 +55,7 @@ export const PASSIVE_DEFS = [
     name: "Vampire's Kiss",
     icon: '❤️',
     maxLevel: 3,
-    description: (lvl) => `Cura ${VAMPIRE_KISS.healingByLevel[lvl - 1]} de vida al matar. Recarga: ${VAMPIRE_KISS.cooldownMs / 1000} s.`,
+    description: (lvl) => `Vida al matar: +${VAMPIRE_KISS.healingByLevel[lvl - 1]}\nRecarga: ${VAMPIRE_KISS.cooldownMs / 1000} s`,
     apply(player, level) {
       player.healOnKill = VAMPIRE_KISS.healingByLevel[level - 1];
     },

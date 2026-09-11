@@ -1,4 +1,4 @@
-import { POWER_UPS, WORLD } from '../config.js';
+import { POWER_UPS, WORLD, ENEMY_ANNOUNCEMENT } from '../config.js';
 import { PICKUP_KIND } from '../entities/Pickup.js';
 
 export class PowerUpSpawner {
@@ -10,11 +10,14 @@ export class PowerUpSpawner {
   }
 
   reset() {
+    this.announcementAge = null;
     this.nextSpawnTime = this.config.startTimeSeconds;
     this.nextPointIndex = 0;
   }
 
   tick(elapsedSeconds, isKindActive, spawnPowerUp) {
+    const age = elapsedSeconds - this.config.startTimeSeconds;
+    this.announcementAge = age >= 0 && age < ENEMY_ANNOUNCEMENT.durationSeconds ? age : null;
     if (elapsedSeconds < this.nextSpawnTime) return;
 
     while (elapsedSeconds >= this.nextSpawnTime) {

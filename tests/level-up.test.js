@@ -71,8 +71,8 @@ test('ofrece curación cuando todas las mejoras están maximizadas', () => {
   assert.deepEqual(system.buildOptions(player), [{
     kind: 'heal',
     icon: '🍷',
-    title: 'Healing Draught',
-    description: 'Restore 30 HP immediately.',
+    title: 'Poción curativa',
+    description: 'Recupera 30 de vida',
   }]);
 });
 

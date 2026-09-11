@@ -9,7 +9,8 @@ import { ENEMY_TYPES } from '../entities/Enemy.js';
 import { pickWeighted, randRange, clamp } from '../utils.js';
 
 export class Spawner {
-  constructor() {
+  constructor(onAnnouncement = () => {}) {
+    this.onAnnouncement = onAnnouncement;
     this.reset();
   }
 
@@ -26,6 +27,7 @@ export class Spawner {
   }
 
   updateIntroductions(dt, elapsedSec) {
+    const previous = this.announcement;
     if (this.announcement) {
       this.announcement.age += dt;
       if (this.announcement.age >= ENEMY_ANNOUNCEMENT.durationSeconds) this.announcements.shift();
@@ -36,6 +38,7 @@ export class Spawner {
       this.pendingDebuts.push(type);
       this.announcements.push({ type, age: 0 });
     }
+    if (this.announcement && this.announcement !== previous) this.onAnnouncement(this.announcement);
   }
 
   _currentInterval(elapsedSec) {

@@ -40,7 +40,7 @@ export class Game {
     this.clock = new FixedStepClock(TIMING);
     this.input = new InputManager(canvas);
     this.menu = new MenuManager();
-    this.spawner = new Spawner();
+    this.spawner = new Spawner(() => this.sound?.play('awakening'));
     this.powerUpSpawner = new PowerUpSpawner();
     this.collisions = new CollisionSystem();
     this.levelUpSystem = new LevelUpSystem();

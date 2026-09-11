@@ -2,6 +2,7 @@ import { AUDIO } from '../config.js';
 
 // Original chip-style effects, synthesized once and reused; no downloads needed.
 const EFFECTS = {
+  awakening: { cooldown: 0.5, priority: true, notes: [[0, 0.65, 55, 110, 0.26], [0.08, 0.6, 82, 123, 0.16], [0.35, 0.55, 165, 41, 0.22, 'noise']] },
   ray: { cooldown: 0.12, priority: true, notes: [[0, 0.18, 1760, 220, 0.22], [0.025, 0.12, 880, 110, 0.1]] },
   rocket: { cooldown: 0.12, priority: true, notes: [[0, 0.24, 90, 720, 0.24, 'noise']] },
   explosion: { cooldown: 0.09, priority: true, notes: [[0, 0.27, 110, 28, 0.3, 'noise'], [0, 0.15, 65, 32, 0.12]] },
@@ -25,8 +26,15 @@ export class SoundSystem {
     this.buffers = new Map();
     this.lastPlayed = new Map();
     this.voices = new Set();
-    this.muted = false;
-    try { this.muted = localStorage.getItem('vs_clone_muted') === 'true'; } catch { /* Storage is optional. */ }
+    this.volume = 1;
+    try {
+      const saved = localStorage.getItem('vs_clone_volume');
+      if (saved !== null && Number.isFinite(Number(saved))) {
+        this.volume = Math.max(0, Math.min(1, Number(saved)));
+      } else if (localStorage.getItem('vs_clone_muted') === 'true') {
+        this.volume = 0;
+      }
+    } catch { /* Storage is optional. */ }
   }
 
   // Called from a user gesture, including subsequent gestures after tab suspension.
@@ -36,7 +44,7 @@ export class SoundSystem {
         this.context = this.createContext();
         if (!this.context) return;
         this.master = this.context.createGain();
-        this.master.gain.value = this.muted ? 0 : AUDIO.volume;
+        this.master.gain.value = this.volume * AUDIO.volume;
         this.master.connect(this.context.destination);
         for (const [name, effect] of Object.entries(EFFECTS)) {
           this.buffers.set(name, this._synthesize(effect.notes));
@@ -47,10 +55,17 @@ export class SoundSystem {
   }
 
   setMuted(muted) {
-    this.muted = Boolean(muted);
-    if (this.master) this.master.gain.setTargetAtTime(this.muted ? 0 : AUDIO.volume, this.context.currentTime, 0.01);
+    this.setVolume(muted ? 0 : 1);
+  }
+
+  get muted() { return this.volume === 0; }
+
+  setVolume(volume) {
+    if (!Number.isFinite(volume)) return;
+    this.volume = Math.max(0, Math.min(1, volume));
+    if (this.master) this.master.gain.setTargetAtTime(this.volume * AUDIO.volume, this.context.currentTime, 0.01);
     if (this.muted) this.stopAll();
-    try { localStorage.setItem('vs_clone_muted', String(this.muted)); } catch { /* Storage is optional. */ }
+    try { localStorage.setItem('vs_clone_volume', String(this.volume)); } catch { /* Storage is optional. */ }
   }
 
   play(name) {

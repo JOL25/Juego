@@ -148,6 +148,11 @@ export function drawHUD(ctx, game) {
 }
 
 export function drawEnemyAnnouncement(ctx, game) {
+  const mysteryAge = game.powerUpSpawner?.announcementAge;
+  if (mysteryAge != null) {
+    drawMysteryAnnouncement(ctx, game.canvas, mysteryAge);
+    return;
+  }
   const announcement = game.spawner.announcement;
   if (!announcement) return;
   const { type, age } = announcement;
@@ -181,6 +186,29 @@ export function drawEnemyAnnouncement(ctx, game) {
   ctx.fillText('HAN EMERGIDO LOS', x + width / 2 + 22, y + 19);
   ctx.font = 'bold 21px "Cinzel", serif';
   ctx.fillText(type.plural.toLocaleUpperCase('es'), x + width / 2 + 22, y + 42);
+  ctx.restore();
+}
+
+function drawMysteryAnnouncement(ctx, canvas, age) {
+  const { durationSeconds, fadeInSeconds, fadeOutSeconds } = ENEMY_ANNOUNCEMENT;
+  const width = Math.min(540, canvas.width - 28);
+  const x = (canvas.width - width) / 2;
+  const y = 68 - 6 * (1 - Math.min(1, age / fadeInSeconds));
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, Math.min(1, age / fadeInSeconds, (durationSeconds - age) / fadeOutSeconds));
+  ctx.fillStyle = '#ffe45c';
+  ctx.fillRect(x, y, width, 62);
+  ctx.strokeStyle = '#b88a14';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x, y, width, 62);
+  ctx.fillStyle = '#000000';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = 'bold 40px "Inter", sans-serif';
+  ctx.fillText('?', x + 36, y + 32);
+  ctx.font = 'bold 17px "Inter", sans-serif';
+  ctx.fillText('Han aparecido beneficios', x + width / 2 + 26, y + 21, width - 90);
+  ctx.fillText('misteriosos en el mapa', x + width / 2 + 26, y + 43, width - 90);
   ctx.restore();
 }
 

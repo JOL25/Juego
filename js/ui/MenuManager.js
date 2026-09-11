@@ -15,9 +15,16 @@ export class MenuManager {
     };
     this.levelupOptionsEl = document.getElementById('levelup-options');
     this.gameoverStatsEl = document.getElementById('gameover-stats');
+    this.levelupAnimations = [];
+    this.levelupVersion = 0;
+    this.picking = false;
   }
 
   hideAll() {
+    this.levelupVersion += 1;
+    this.picking = false;
+    for (const animation of this.levelupAnimations) animation.cancel();
+    this.levelupAnimations = [];
     for (const el of Object.values(this.screens)) el.classList.add('hidden');
   }
 
@@ -48,9 +55,38 @@ export class MenuManager {
         <div class="levelup-title">${opt.title}</div>
         <div class="levelup-desc">${opt.description}</div>
       `;
-      card.addEventListener('click', () => opt.onPick());
+      card.addEventListener('click', async () => {
+        if (this.picking) return;
+        this.picking = true;
+        const version = this.levelupVersion;
+        for (const button of this.levelupOptionsEl.children) button.disabled = true;
+        await this.animateLevelUp(true);
+        if (version === this.levelupVersion) opt.onPick();
+      });
       this.levelupOptionsEl.appendChild(card);
     });
+    this.animateLevelUp(false);
+  }
+
+  animateLevelUp(leaving) {
+    const screen = this.screens.levelup;
+    const panel = screen.querySelector('.panel');
+    // Start the exit from the current position even if a card is picked during entry.
+    const opacity = getComputedStyle(screen).opacity;
+    const transform = getComputedStyle(panel).transform;
+    for (const animation of this.levelupAnimations) animation.cancel();
+    this.levelupAnimations = [];
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !panel.animate) {
+      return Promise.resolve();
+    }
+    const timing = { duration: leaving ? 220 : 320, easing: leaving ? 'ease-in' : 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'both' };
+    this.levelupAnimations = [
+      screen.animate(leaving ? [{ opacity }, { opacity: 0 }] : [{ opacity: 0 }, { opacity: 1 }], timing),
+      panel.animate(leaving
+        ? [{ transform }, { transform: 'translateY(70px)' }]
+        : [{ transform: 'translateY(90px)' }, { transform: 'translateY(0)' }], timing),
+    ];
+    return Promise.all(this.levelupAnimations.map((animation) => animation.finished.catch(() => {})));
   }
 
   showGameOver({ level, time, kills, isHighScore }) {

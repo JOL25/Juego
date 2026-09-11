@@ -16,17 +16,24 @@ window.addEventListener('DOMContentLoaded', () => {
   const game = new Game(canvas);
   gameInstance = game;
 
-  const soundButton = document.getElementById('btn-sound');
-  const updateSoundButton = () => {
-    soundButton.textContent = game.sound.muted ? 'Sonido: OFF' : 'Sonido: ON';
-    soundButton.setAttribute('aria-pressed', String(!game.sound.muted));
+  const soundVolume = document.getElementById('sound-volume');
+  const soundPercent = document.getElementById('sound-percent');
+  const updateSoundVolume = () => {
+    const percent = Math.round(game.sound.volume * 100);
+    soundVolume.value = String(percent);
+    soundPercent.value = `${percent}%`;
+    soundVolume.setAttribute('aria-valuetext', `${percent}%`);
   };
-  updateSoundButton();
-  soundButton.addEventListener('click', () => {
+  updateSoundVolume();
+  soundVolume.addEventListener('input', () => {
     game.sound.unlock();
-    game.sound.setMuted(!game.sound.muted);
-    updateSoundButton();
+    game.sound.setVolume(Number(soundVolume.value) / 100);
+    updateSoundVolume();
   });
+  // Arrow keys adjust volume without moving the player.
+  soundVolume.addEventListener('keydown', (event) => event.stopPropagation());
+  soundVolume.addEventListener('keyup', (event) => event.stopPropagation());
+  soundVolume.addEventListener('focus', () => game.input.reset());
   window.addEventListener('pointerdown', () => game.sound.unlock());
   window.addEventListener('keydown', () => game.sound.unlock());
   document.addEventListener('visibilitychange', () => {

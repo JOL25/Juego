@@ -45,7 +45,7 @@ Original 8-bit effects accompany projectile hits, enemy defeats, XP gems,
 level-up choices, map pickups (including healing), ray attacks, rocket launches
 and explosions, and each of the three ultimate activations. Audio is synthesized
 locally using Web Audio and works offline in `jugar.html`. Click **Empezar** to
-enable playback; **Sonido: ON/OFF** toggles sound and remembers your preference.
+enable playback; the **Sonido** slider adjusts volume from 0% to 100% and remembers your preference.
 Volume and simultaneous voice limits are in `AUDIO` in `js/config.js`.
 Repeated combat/pickup effects are throttled to keep large hordes comfortable.
 

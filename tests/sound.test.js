@@ -29,8 +29,8 @@ function setup() {
 
 test('all effects contain finite, audible samples and a quiet envelope', () => {
   const { sound } = setup();
-  assert.equal(sound.buffers.size, 11);
-  for (const name of ['hit', 'defeat', 'xp', 'levelUp', 'powerUp', 'ray', 'rocket', 'explosion', 'ult_pierce_shot', 'ult_wave', 'ult_orbit_laser']) {
+  assert.equal(sound.buffers.size, 12);
+  for (const name of ['awakening', 'hit', 'defeat', 'xp', 'levelUp', 'powerUp', 'ray', 'rocket', 'explosion', 'ult_pierce_shot', 'ult_wave', 'ult_orbit_laser']) {
     const data = sound.buffers.get(name).getChannelData(0);
     assert.ok(data.some((sample) => Math.abs(sample) > 0.05), name);
     assert.ok(data.every((sample) => Number.isFinite(sample) && Math.abs(sample) < 1), name);

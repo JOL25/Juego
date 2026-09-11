@@ -1,6 +1,7 @@
 import { LOADOUT, DASH, ULTIMATE, LEVEL_UP_WEIGHTS } from '../config.js';
 import { pickWeightedUnique } from '../utils.js';
 import { STATE } from '../core/GameState.js';
+import { upgradeDescription } from '../ui/upgradeDescription.js';
 import {
   createWeapon,
   WEAPON_CLASSES,
@@ -43,7 +44,7 @@ export class LevelUpSystem {
         id: ult.id,
         icon: ult.icon,
         title: ult.name,
-        description: `${ult.blurb} (Q / E para activar)`,
+        description: `${upgradeDescription(ult)}\nActivar: Q / E / R`,
         tag: 'Definitiva',
       }));
     }
@@ -59,9 +60,7 @@ export class LevelUpSystem {
           weapon,
           icon: weapon.icon,
           title: `${weapon.name} → Lv.${weapon.level + 1}`,
-          description: weapon.id === 'garlic'
-            ? `Daño ${weapon.levels[weapon.level].damage}, radio ${weapon.levels[weapon.level].radius} px y ralentización ${weapon.levels[weapon.level].slowPercent}%.`
-            : 'Más daño y mejor cadencia. Todas las armas disparan a la vez.',
+          description: upgradeDescription(weapon, weapon.levels[weapon.level]),
         });
       }
     }
@@ -76,7 +75,7 @@ export class LevelUpSystem {
             id,
             icon: weapon.icon,
             title: weapon.name,
-            description: weapon.description,
+            description: upgradeDescription(weapon),
           });
         }
       }
@@ -119,7 +118,7 @@ export class LevelUpSystem {
         weight: LEVEL_UP_WEIGHTS['dash-charge'],
         icon: '💨',
         title: `Dash extra (${player.dashMaxCharges + 1}/${DASH.maxCharges})`,
-        description: `Una carga más de dash (máximo ${DASH.maxCharges}). Espacio / Shift.`,
+        description: '+1 carga de dash',
         tag: 'Dash',
       });
     }
@@ -131,7 +130,7 @@ export class LevelUpSystem {
         weight: LEVEL_UP_WEIGHTS['dash-range'],
         icon: '↔️',
         title: `Alcance de dash → ${nextCm} cm`,
-        description: `+${DASH.rangePerUpgradeCm} cm de avance por dash (base ${DASH.baseDistanceCm} cm).`,
+        description: `+${DASH.rangePerUpgradeCm} cm de alcance`,
         tag: 'Dash',
       });
     }
@@ -142,7 +141,7 @@ export class LevelUpSystem {
         weight: LEVEL_UP_WEIGHTS['ultimate-upgrade'],
         icon: player.ultimate.icon,
         title: `${player.ultimate.name} → Lv.${player.ultimate.level + 1}`,
-        description: 'Mejora daño, duración o recarga de tu definitiva.',
+        description: upgradeDescription(player.ultimate, player.ultimate.levels[player.ultimate.level]),
         tag: 'Definitiva',
       });
     }
@@ -151,8 +150,8 @@ export class LevelUpSystem {
       return [{
         kind: 'heal',
         icon: '🍷',
-        title: 'Healing Draught',
-        description: 'Restore 30 HP immediately.',
+        title: 'Poción curativa',
+        description: 'Recupera 30 de vida',
       }];
     }
 

@@ -165,18 +165,27 @@ async function run() {
       const game = getGameInstance();
       game.sound.unlock();
       await game.sound.context.resume();
-      const effects = ['hit', 'defeat', 'xp', 'levelUp', 'powerUp', 'ray', 'rocket', 'explosion', 'ult_pierce_shot', 'ult_wave', 'ult_orbit_laser'];
+      const effects = ['awakening', 'hit', 'defeat', 'xp', 'levelUp', 'powerUp', 'ray', 'rocket', 'explosion', 'ult_pierce_shot', 'ult_wave', 'ult_orbit_laser'];
       const played = effects.every((name) => {
         game.sound.stopAll();
         return game.sound.play(name);
       });
-      document.getElementById('btn-sound').click();
+      const slider = document.getElementById('sound-volume');
+      const setVolume = (value) => {
+        slider.value = String(value);
+        slider.dispatchEvent(new Event('input', { bubbles: true }));
+      };
+      setVolume(0);
       const muted = game.sound.muted && game.sound.voices.size === 0
-        && document.getElementById('btn-sound').getAttribute('aria-pressed') === 'false';
-      document.getElementById('btn-sound').click();
+        && document.getElementById('sound-percent').value === '0%';
+      setVolume(37);
+      const partial = game.sound.volume === 0.37
+        && document.getElementById('sound-percent').value === '37%'
+        && localStorage.getItem('vs_clone_volume') === '0.37';
+      setVolume(100);
       const unmuted = !game.sound.muted && game.sound.play('xp');
       game.sound.stopAll();
-      return played && muted && unmuted;
+      return played && muted && partial && unmuted;
     })()`);
     if (!audioWorked) throw new Error('Retro audio playback or mute control failed');
 
@@ -239,6 +248,11 @@ async function run() {
       const { getGameInstance } = await import('./js/main.js');
       const game = getGameInstance();
       document.querySelector('#levelup-options .levelup-card').click();
+      if (game.state !== 'level_up') throw new Error('Gameplay resumed before the exit animation');
+      if (![...document.querySelectorAll('#levelup-options .levelup-card')].every((card) => card.disabled)) {
+        throw new Error('Cards must be locked during the exit animation');
+      }
+      await new Promise((resolve) => setTimeout(resolve, 400));
       return Boolean(game.player.ultimate) && game.state === 'playing';
     })()`);
     if (!ultimateSelected) throw new Error('Ultimate selection did not resume gameplay');
