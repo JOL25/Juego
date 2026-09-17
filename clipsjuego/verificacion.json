@@ -1,0 +1,45 @@
+[
+  {
+    "filename": "01-horizontal.mp4",
+    "bytes": 16476260,
+    "simulationSeconds": 15.150000000000333,
+    "hp": 172,
+    "kills": 409,
+    "state": "playing",
+    "width": 1920,
+    "height": 1080,
+    "duration": 15.013,
+    "tracks": [
+      "vide"
+    ],
+    "frames": 445,
+    "averageFps": 29.64097781922334
+  },
+  {
+    "filename": "02-vertical.mp4",
+    "bytes": 17700306,
+    "simulationSeconds": 15.000000000000325,
+    "hp": 138,
+    "kills": 284,
+    "state": "playing",
+    "width": 1080,
+    "height": 1620,
+    "duration": 15.009567,
+    "tracks": [
+      "vide"
+    ],
+    "frames": 449,
+    "averageFps": 29.914254022118026
+  },
+  {
+    "filename": "03-cuadrado-extra.mp4",
+    "bytes": 17828537,
+    "simulationSeconds": 15.133333333333665,
+    "hp": 157,
+    "kills": 172,
+    "state": "playing",
+    "width": 1080,
+    "height": 1080,
+    "duration": 15.0141
+  }
+]

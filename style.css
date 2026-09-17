@@ -56,7 +56,6 @@ html, body {
 }
 
 /* --- Touch pause button --- */
-#btn-fullscreen { right: 62px; z-index: 20; }
 
 .icon-button {
   position: absolute;

@@ -144,12 +144,14 @@ async function run() {
       ready: document.readyState,
       menuVisible: !document.getElementById('screen-menu').classList.contains('hidden'),
       canvasWidth: document.getElementById('game-canvas').width,
+      english: document.documentElement.lang === 'en',
+      noFullscreenButton: !document.getElementById('btn-fullscreen'),
       fillsWindow: document.getElementById('game-canvas').clientWidth === innerWidth
         && document.getElementById('game-canvas').clientHeight === innerHeight
     })`);
     if (
       !['interactive', 'complete'].includes(initialState.ready) ||
-      !initialState.menuVisible ||
+      !initialState.menuVisible || !initialState.english || !initialState.noFullscreenButton ||
       initialState.canvasWidth <= 0 || !initialState.fillsWindow
     ) {
       throw new Error(`Invalid initial state: ${JSON.stringify(initialState)}`);
@@ -358,7 +360,7 @@ async function run() {
     const powerUpsWorked = await client.evaluate(`(async () => {
       const { getGameInstance } = await import('./js/main.js');
       const game = getGameInstance();
-      game.player.survivalTime = 300;
+      game.player.survivalTime = 120;
       game._update(1 / 60);
 
       const activePowerUps = game.pickupPool.items.filter((pickup) =>
@@ -467,13 +469,13 @@ async function run() {
     let preferencesRestored = false;
     for (let attempt = 0; attempt < 100; attempt++) {
       preferencesRestored = await client.evaluate(`document.getElementById('game-canvas')?.dataset.ready === 'true'
-        && document.documentElement.lang === 'es'
-        && document.getElementById('btn-start').textContent === 'Empezar'
+        && document.documentElement.lang === 'en'
+        && document.getElementById('btn-start').textContent === 'Play'
         && document.getElementById('sound-volume').value === '42'`);
       if (preferencesRestored) break;
       await delay(100);
     }
-    if (!preferencesRestored) throw new Error('Language and volume were not restored after reload');
+    if (!preferencesRestored) throw new Error('English entry language or saved volume failed after reload');
 
     if (client.runtimeErrors.length > 0) {
       throw new Error(`Browser runtime errors:\n${client.runtimeErrors.join('\n')}`);

@@ -11,13 +11,13 @@ test('language switches in both directions and translates numeric upgrade descri
   player.weapons.push(createWeapon('garlic'));
   setLanguage('en');
   let option = system.buildOptions(player).find((option) => option.kind === 'weapon-upgrade');
-  assert.equal(option.title, 'Garlic Aura → Lv.2');
+  assert.equal(option.title, 'Repulsion Field → Lv.2');
   assert.equal(option.description, 'Damage: 5\nLonger reach\nSlows enemies');
   assert.equal(t('Misiles:'), 'Missiles:');
   assert.equal(t('Definitiva al Nv.'), 'Ultimate at Lv.');
   setLanguage('es');
   option = system.buildOptions(player).find((option) => option.kind === 'weapon-upgrade');
-  assert.equal(option.title, 'Aura de ajo → Lv.2');
+  assert.equal(option.title, 'Campo de repulsión → Lv.2');
   assert.match(option.description, /Daño: 5/);
   assert.equal(t('Enemies slain'), 'Enemigos derrotados');
   setLanguage('fr');
@@ -35,8 +35,8 @@ test('every weapon, passive, ultimate and dash level is translated into English'
   };
   system.buildOptions(player).forEach(check);
   const names = {
-    magic_wand: 'Magic Wand', garlic: 'Garlic Aura', whip: 'Whip',
-    pierce_ray: 'Pierce Ray', missile: 'Missile',
+    magic_wand: 'Vector Cannon', garlic: 'Repulsion Field', whip: 'Arc Slash',
+    pierce_ray: 'Prism Ray', missile: 'Polygon Missile',
   };
   for (const id of Object.keys(WEAPON_CLASSES)) {
     const weapon = createWeapon(id);

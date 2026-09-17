@@ -1,6 +1,6 @@
 # Circle vs Geometry
 
-Endless top-down survival shooter (Vampire Survivors–like), built with vanilla
+A geometric arena survival shooter: a lone circle fights polygon hordes with vector weapons, built with vanilla
 HTML5 Canvas + ES modules — no build step, no external game framework.
 
 ## Run it locally
@@ -155,3 +155,26 @@ tests/                       Gameplay, timing, input, spatial-grid, and collisio
      which you may want to self-host for reliability.
    - Test the touch joystick on an actual mobile device; CrazyGames traffic
      skews heavily mobile.
+
+## Geometry identity and encounter schedule
+
+Weapons: Vector Cannon, Arc Slash, Repulsion Field, Prism Ray, Polygon Missile.
+Passive upgrades: Vital Core, Velocity Vector, Polygon Shell, Attraction Field, Energy Recycle.
+English opens every new visit; Spanish remains available in Options. Volume is saved.
+The shared web and standalone versions omit the custom fullscreen button so the host platform controls fullscreen.
+Internal weapon IDs and module names remain stable for compatibility.
+
+| Time | Event |
+| --- | --- |
+| 0:00 | Triangles |
+| 0:45 | Squares |
+| 1:30 | First elite |
+| 2:00 | Special power-ups and mystery announcement |
+| 2:30 | Diamonds |
+| 4:00 | Second, stronger elite |
+| 5:00 | Pentagons |
+| 7:00 | Hexagons |
+
+Elite squares repeat every 150 seconds after the first. Each wave gains an additional
+50% of base health on top of the normal time scaling and elite multiplier.
+Special power-ups refill every 90 seconds when missing.

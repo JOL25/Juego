@@ -41,7 +41,9 @@ export const DIFFICULTY = {
   enemiesPerTickMax: 6,
   enemyHpScalePerMin: 0.14,  // +14% enemy hp per minute survived
   enemySpeedScalePerMin: 0.03,
-  eliteEveryMinutes: 2,      // spawn a tougher "elite" wave marker
+  firstEliteSeconds: 90,
+  eliteIntervalSeconds: 150, // 1:30, 4:00, then every 2:30.
+  eliteHpBonusPerWave: 0.5,
   maxActiveEnemies: 260,
 };
 
@@ -59,7 +61,7 @@ export const XP_GEM = {
 };
 
 export const POWER_UPS = {
-  startTimeSeconds: 5 * 60,
+  startTimeSeconds: 2 * 60,
   respawnIntervalSeconds: 90,
   megaMagnetDurationSeconds: 7,
   megaMagnetPullSpeed: 1200,

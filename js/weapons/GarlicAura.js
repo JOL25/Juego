@@ -22,7 +22,7 @@ export class GarlicAura extends Weapon {
   constructor() {
     super({
       id: 'garlic',
-      name: 'Garlic Aura',
+      name: 'Repulsion Field',
       icon: '🧄',
       levels: GARLIC_LEVELS,
       description: 'Aura que pulsa daño y ralentiza un 10%. La ralentización aumenta en los niveles 3, 5 y 7.',

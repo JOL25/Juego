@@ -23,10 +23,10 @@ export class Whip extends Weapon {
   constructor() {
     super({
       id: 'whip',
-      name: 'Whip',
+      name: 'Arc Slash',
       icon: '🩸',
       levels: WHIP_LEVELS,
-      description: 'Latigazo cuerpo a cuerpo. Se usa a la vez que el resto de armas.',
+      description: 'Corte en arco a corta distancia. Se usa a la vez que el resto de armas.',
     });
   }
 

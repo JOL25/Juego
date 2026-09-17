@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -63,7 +63,6 @@ html, body {
 }
 
 /* --- Touch pause button --- */
-#btn-fullscreen { right: 62px; z-index: 20; }
 
 .icon-button {
   position: absolute;
@@ -493,7 +492,6 @@ html, body {
 
   <div id="game-wrap">
     <canvas id="game-canvas"></canvas>
-    <button type="button" id="btn-fullscreen" class="icon-button" data-i18n-aria-label="Pantalla completa" data-i18n-title="Pantalla completa" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
 
     <!-- Touch pause button (visible always during play, styled via CSS) -->
     <button id="btn-pause-touch" class="icon-button" data-i18n-aria-label="Pausar" aria-label="Pausar">⏸</button>
@@ -631,8 +629,10 @@ var CircleVsGeometry = (() => {
     enemyHpScalePerMin: 0.14,
     // +14% enemy hp per minute survived
     enemySpeedScalePerMin: 0.03,
-    eliteEveryMinutes: 2,
-    // spawn a tougher "elite" wave marker
+    firstEliteSeconds: 90,
+    eliteIntervalSeconds: 150,
+    // 1:30, 4:00, then every 2:30.
+    eliteHpBonusPerWave: 0.5,
     maxActiveEnemies: 260
   };
   var ENEMY_ANNOUNCEMENT = {
@@ -647,7 +647,7 @@ var CircleVsGeometry = (() => {
     largeValue: 50
   };
   var POWER_UPS = {
-    startTimeSeconds: 5 * 60,
+    startTimeSeconds: 2 * 60,
     respawnIntervalSeconds: 90,
     megaMagnetDurationSeconds: 7,
     megaMagnetPullSpeed: 1200,
@@ -1296,7 +1296,7 @@ var CircleVsGeometry = (() => {
       damage: 10,
       xpValue: 9,
       weight: 8,
-      minMinute: 3
+      minMinute: 0.75
     },
     diamond: {
       id: "diamond",
@@ -1310,7 +1310,7 @@ var CircleVsGeometry = (() => {
       damage: 8,
       xpValue: 6,
       weight: 9,
-      minMinute: 6
+      minMinute: 2.5
     },
     pentagon: {
       id: "pentagon",
@@ -1324,7 +1324,7 @@ var CircleVsGeometry = (() => {
       damage: 12,
       xpValue: 15,
       weight: 5,
-      minMinute: 9
+      minMinute: 5
     },
     hexagon: {
       id: "hexagon",
@@ -1338,7 +1338,7 @@ var CircleVsGeometry = (() => {
       damage: 22,
       xpValue: 40,
       weight: 3,
-      minMinute: 12
+      minMinute: 7
     }
   };
   function traceEnemyShape(ctx, type, x, y, radius) {
@@ -1747,7 +1747,8 @@ var CircleVsGeometry = (() => {
     }
     reset() {
       this.timeSinceSpawn = 0;
-      this.lastEliteMinute = -1;
+      this.eliteWave = 0;
+      this.nextEliteTime = DIFFICULTY.firstEliteSeconds;
       this.introducedTypes = /* @__PURE__ */ new Set();
       this.pendingDebuts = [];
       this.announcements = [];
@@ -1794,7 +1795,8 @@ var CircleVsGeometry = (() => {
       this.updateIntroductions(dt, elapsedSec);
       this.timeSinceSpawn += dt;
       const interval = this._currentInterval(elapsedSec);
-      if (this.timeSinceSpawn < interval) return;
+      const eliteDue = elapsedSec >= this.nextEliteTime;
+      if (this.timeSinceSpawn < interval && !eliteDue && !this.pendingDebuts.length) return;
       this.timeSinceSpawn = 0;
       if (activeEnemyCount >= DIFFICULTY.maxActiveEnemies) return;
       const minute = elapsedSec / 60;
@@ -1802,12 +1804,17 @@ var CircleVsGeometry = (() => {
       const speedMult = 1 + minute * DIFFICULTY.enemySpeedScalePerMin;
       const batch = this._currentBatchSize(elapsedSec);
       const types = this._availableTypes(elapsedSec);
-      const isEliteWave = Math.floor(minute / DIFFICULTY.eliteEveryMinutes) > this.lastEliteMinute && minute >= DIFFICULTY.eliteEveryMinutes;
-      if (isEliteWave) this.lastEliteMinute = Math.floor(minute / DIFFICULTY.eliteEveryMinutes);
-      for (let i = 0; i < batch; i++) {
-        const type = this.pendingDebuts.shift() || pickWeighted(types);
+      if (eliteDue) {
+        this.eliteWave += 1;
+        this.nextEliteTime += DIFFICULTY.eliteIntervalSeconds;
+      }
+      const count = Math.min(batch + (eliteDue ? 1 : 0), DIFFICULTY.maxActiveEnemies - activeEnemyCount);
+      for (let i = 0; i < count; i++) {
+        const isElite = eliteDue && i === count - 1;
+        const type = isElite ? ENEMY_TYPES.square : this.pendingDebuts.shift() || pickWeighted(types);
         const { x, y } = this._edgeSpawnPoint(camera);
-        spawnFn(type, x, y, hpMult, speedMult, isEliteWave && i === 0);
+        const health = isElite ? hpMult * (1 + (this.eliteWave - 1) * DIFFICULTY.eliteHpBonusPerWave) : hpMult;
+        spawnFn(type, x, y, health, speedMult, isElite);
       }
     }
     _edgeSpawnPoint(camera) {
@@ -1990,6 +1997,16 @@ var CircleVsGeometry = (() => {
     "misteriosos en el mapa": "have appeared on the map"
   };
   var ES = {
+    "Vector Cannon": "Cañón vectorial",
+    "Arc Slash": "Corte de arco",
+    "Repulsion Field": "Campo de repulsión",
+    "Prism Ray": "Rayo prisma",
+    "Polygon Missile": "Misil poligonal",
+    "Vital Core": "Núcleo vital",
+    "Velocity Vector": "Vector de velocidad",
+    "Polygon Shell": "Coraza poligonal",
+    "Attraction Field": "Campo de atracción",
+    "Energy Recycle": "Reciclaje de energía",
     "English": "Inglés",
     "New best time!": "¡Nuevo récord!",
     "Survived": "Tiempo sobrevivido",
@@ -2005,11 +2022,6 @@ var CircleVsGeometry = (() => {
     "Vampire's Kiss": "Beso vampírico"
   };
   var language = "en";
-  try {
-    const saved = localStorage.getItem("vs_clone_language");
-    if (saved === "es" || saved === "en") language = saved;
-  } catch {
-  }
   function getLanguage() {
     return language;
   }
@@ -2132,7 +2144,7 @@ ${cooldown}`;
     constructor() {
       super({
         id: "magic_wand",
-        name: "Magic Wand",
+        name: "Vector Cannon",
         icon: "🪄",
         levels: MAGIC_WAND_LEVELS,
         description: "Dispara proyectiles teledirigidos. Se usa a la vez que el resto de armas."
@@ -2177,10 +2189,10 @@ ${cooldown}`;
     constructor() {
       super({
         id: "whip",
-        name: "Whip",
+        name: "Arc Slash",
         icon: "🩸",
         levels: WHIP_LEVELS,
-        description: "Latigazo cuerpo a cuerpo. Se usa a la vez que el resto de armas."
+        description: "Corte en arco a corta distancia. Se usa a la vez que el resto de armas."
       });
     }
     fire(game) {
@@ -2224,7 +2236,7 @@ ${cooldown}`;
     constructor() {
       super({
         id: "garlic",
-        name: "Garlic Aura",
+        name: "Repulsion Field",
         icon: "🧄",
         levels: GARLIC_LEVELS,
         description: "Aura que pulsa daño y ralentiza un 10%. La ralentización aumenta en los niveles 3, 5 y 7."
@@ -2258,7 +2270,7 @@ ${cooldown}`;
     constructor() {
       super({
         id: "pierce_ray",
-        name: "Rayo perforante",
+        name: "Prism Ray",
         icon: "⚡",
         levels: PIERCE_RAY_LEVELS,
         description: "Cada 5 s un rayo atraviesa a todos los enemigos en línea."
@@ -2304,7 +2316,7 @@ ${cooldown}`;
     constructor() {
       super({
         id: "missile",
-        name: "Misil",
+        name: "Polygon Missile",
         icon: "🚀",
         levels: MISSILE_LEVELS,
         description: "Cada 10 s un misil busca un enemigo y explota."
@@ -2345,7 +2357,7 @@ ${cooldown}`;
   var PASSIVE_DEFS = [
     {
       id: "tome",
-      name: "Ancient Tome",
+      name: "Vital Core",
       icon: "📖",
       maxLevel: 5,
       description: (lvl) => `${t("Vida máxima:")} +${lvl * 10}%`,
@@ -2358,7 +2370,7 @@ ${cooldown}`;
     },
     {
       id: "boots",
-      name: "Swift Boots",
+      name: "Velocity Vector",
       icon: "🥾",
       maxLevel: 5,
       description: (lvl) => `${t("Velocidad:")} +${lvl * 8}%`,
@@ -2368,7 +2380,7 @@ ${cooldown}`;
     },
     {
       id: "armor",
-      name: "Bone Armor",
+      name: "Polygon Shell",
       icon: "🛡️",
       maxLevel: 5,
       description: (lvl) => `${t("Armadura:")} +${lvl * 2}`,
@@ -2378,7 +2390,7 @@ ${cooldown}`;
     },
     {
       id: "amulet",
-      name: "Pull Amulet",
+      name: "Attraction Field",
       icon: "🧲",
       maxLevel: 5,
       description: (lvl) => `${t("Rango de recogida:")} +${lvl * 25}%`,
@@ -2388,7 +2400,7 @@ ${cooldown}`;
     },
     {
       id: "heart",
-      name: "Vampire's Kiss",
+      name: "Energy Recycle",
       icon: "❤️",
       maxLevel: 3,
       description: (lvl) => `${t("Vida al matar:")} +${VAMPIRE_KISS.healingByLevel[lvl - 1]}
@@ -4225,22 +4237,7 @@ ${t("+1 carga")} · ${t("Más alcance")}`,
     resize();
     canvas.dataset.ready = "true";
     window.addEventListener("resize", resize);
-    const fullscreenButton = document.getElementById("btn-fullscreen");
-    fullscreenButton.hidden = !document.fullscreenEnabled;
-    fullscreenButton.addEventListener("click", async () => {
-      try {
-        if (document.fullscreenElement) await document.exitFullscreen();
-        else await wrap.requestFullscreen();
-      } catch {
-        fullscreenButton.title = t("No se pudo activar. Puedes usar F11 en el navegador.");
-      }
-    });
-    document.addEventListener("fullscreenchange", () => {
-      const label = t(document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa");
-      fullscreenButton.setAttribute("aria-label", label);
-      fullscreenButton.title = label;
-      resize();
-    });
+    document.addEventListener("fullscreenchange", resize);
     const soundVolume = document.getElementById("sound-volume");
     const soundPercent = document.getElementById("sound-percent");
     const updateSoundVolume = () => {
@@ -4257,9 +4254,6 @@ ${t("+1 carga")} · ${t("Más alcance")}`,
       setLanguage(languageSelect.value);
       translateStatic();
       updateSoundVolume();
-      const label = t(document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa");
-      fullscreenButton.title = label;
-      fullscreenButton.setAttribute("aria-label", label);
     });
     languageSelect.addEventListener("keydown", (event) => event.stopPropagation());
     languageSelect.addEventListener("keyup", (event) => event.stopPropagation());

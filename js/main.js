@@ -4,7 +4,7 @@
 // ============================================================
 
 import { Game } from './core/Game.js';
-import { t, getLanguage, setLanguage, bindStaticTranslations } from './ui/i18n.js';
+import { getLanguage, setLanguage, bindStaticTranslations } from './ui/i18n.js';
 
 let gameInstance = null;
 
@@ -23,22 +23,7 @@ window.addEventListener('DOMContentLoaded', () => {
   resize();
   canvas.dataset.ready = 'true';
   window.addEventListener('resize', resize);
-  const fullscreenButton = document.getElementById('btn-fullscreen');
-  fullscreenButton.hidden = !document.fullscreenEnabled;
-  fullscreenButton.addEventListener('click', async () => {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await wrap.requestFullscreen();
-    } catch {
-      fullscreenButton.title = t('No se pudo activar. Puedes usar F11 en el navegador.');
-    }
-  });
-  document.addEventListener('fullscreenchange', () => {
-    const label = t(document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa');
-    fullscreenButton.setAttribute('aria-label', label);
-    fullscreenButton.title = label;
-    resize();
-  });
+  document.addEventListener('fullscreenchange', resize);
 
   const soundVolume = document.getElementById('sound-volume');
   const soundPercent = document.getElementById('sound-percent');
@@ -56,9 +41,6 @@ window.addEventListener('DOMContentLoaded', () => {
     setLanguage(languageSelect.value);
     translateStatic();
     updateSoundVolume();
-    const label = t(document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa');
-    fullscreenButton.title = label;
-    fullscreenButton.setAttribute('aria-label', label);
   });
   languageSelect.addEventListener('keydown', (event) => event.stopPropagation());
   languageSelect.addEventListener('keyup', (event) => event.stopPropagation());

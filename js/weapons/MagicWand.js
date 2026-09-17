@@ -20,7 +20,7 @@ export class MagicWand extends Weapon {
   constructor() {
     super({
       id: 'magic_wand',
-      name: 'Magic Wand',
+      name: 'Vector Cannon',
       icon: '🪄',
       levels: MAGIC_WAND_LEVELS,
       description: 'Dispara proyectiles teledirigidos. Se usa a la vez que el resto de armas.',

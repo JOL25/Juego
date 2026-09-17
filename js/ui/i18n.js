@@ -36,6 +36,11 @@ const EN = {
   'Han aparecido beneficios': 'Mysterious power-ups', 'misteriosos en el mapa': 'have appeared on the map',
 };
 const ES = {
+  'Vector Cannon': 'Cañón vectorial', 'Arc Slash': 'Corte de arco',
+  'Repulsion Field': 'Campo de repulsión', 'Prism Ray': 'Rayo prisma',
+  'Polygon Missile': 'Misil poligonal', 'Vital Core': 'Núcleo vital',
+  'Velocity Vector': 'Vector de velocidad', 'Polygon Shell': 'Coraza poligonal',
+  'Attraction Field': 'Campo de atracción', 'Energy Recycle': 'Reciclaje de energía',
   'English': 'Inglés',
   'New best time!': '¡Nuevo récord!', 'Survived': 'Tiempo sobrevivido',
   'Level reached': 'Nivel alcanzado', 'Enemies slain': 'Enemigos derrotados',
@@ -44,10 +49,7 @@ const ES = {
   'Pull Amulet': 'Amuleto de atracción', "Vampire's Kiss": 'Beso vampírico',
 };
 let language = 'en';
-try {
-  const saved = localStorage.getItem('vs_clone_language');
-  if (saved === 'es' || saved === 'en') language = saved;
-} catch { /* Optional storage. */ }
+// Every new visit starts in English; the menu can change language during play.
 
 export function getLanguage() { return language; }
 export function setLanguage(value) {

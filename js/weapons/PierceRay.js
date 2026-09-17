@@ -21,7 +21,7 @@ export class PierceRay extends Weapon {
   constructor() {
     super({
       id: 'pierce_ray',
-      name: 'Rayo perforante',
+      name: 'Prism Ray',
       icon: '⚡',
       levels: PIERCE_RAY_LEVELS,
       description: 'Cada 5 s un rayo atraviesa a todos los enemigos en línea.',

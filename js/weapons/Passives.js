@@ -9,7 +9,7 @@ import { t } from '../ui/i18n.js';
 export const PASSIVE_DEFS = [
   {
     id: 'tome',
-    name: 'Ancient Tome',
+    name: 'Vital Core',
     icon: '📖',
     maxLevel: 5,
     description: (lvl) => `${t('Vida máxima:')} +${lvl * 10}%`,
@@ -23,7 +23,7 @@ export const PASSIVE_DEFS = [
   },
   {
     id: 'boots',
-    name: 'Swift Boots',
+    name: 'Velocity Vector',
     icon: '🥾',
     maxLevel: 5,
     description: (lvl) => `${t('Velocidad:')} +${lvl * 8}%`,
@@ -33,7 +33,7 @@ export const PASSIVE_DEFS = [
   },
   {
     id: 'armor',
-    name: 'Bone Armor',
+    name: 'Polygon Shell',
     icon: '🛡️',
     maxLevel: 5,
     description: (lvl) => `${t('Armadura:')} +${lvl * 2}`,
@@ -43,7 +43,7 @@ export const PASSIVE_DEFS = [
   },
   {
     id: 'amulet',
-    name: 'Pull Amulet',
+    name: 'Attraction Field',
     icon: '🧲',
     maxLevel: 5,
     description: (lvl) => `${t('Rango de recogida:')} +${lvl * 25}%`,
@@ -53,7 +53,7 @@ export const PASSIVE_DEFS = [
   },
   {
     id: 'heart',
-    name: "Vampire's Kiss",
+    name: "Energy Recycle",
     icon: '❤️',
     maxLevel: 3,
     description: (lvl) => `${t('Vida al matar:')} +${VAMPIRE_KISS.healingByLevel[lvl - 1]}\n${t('Recarga:')} ${VAMPIRE_KISS.cooldownMs / 1000} s`,

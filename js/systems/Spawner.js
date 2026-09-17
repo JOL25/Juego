@@ -16,7 +16,8 @@ export class Spawner {
 
   reset() {
     this.timeSinceSpawn = 0;
-    this.lastEliteMinute = -1;
+    this.eliteWave = 0;
+    this.nextEliteTime = DIFFICULTY.firstEliteSeconds;
     this.introducedTypes = new Set();
     this.pendingDebuts = [];
     this.announcements = [];
@@ -72,7 +73,8 @@ export class Spawner {
     this.updateIntroductions(dt, elapsedSec);
     this.timeSinceSpawn += dt;
     const interval = this._currentInterval(elapsedSec);
-    if (this.timeSinceSpawn < interval) return;
+    const eliteDue = elapsedSec >= this.nextEliteTime;
+    if (this.timeSinceSpawn < interval && !eliteDue && !this.pendingDebuts.length) return;
     this.timeSinceSpawn = 0;
 
     if (activeEnemyCount >= DIFFICULTY.maxActiveEnemies) return;
@@ -83,15 +85,19 @@ export class Spawner {
     const batch = this._currentBatchSize(elapsedSec);
     const types = this._availableTypes(elapsedSec);
 
-    const isEliteWave =
-      Math.floor(minute / DIFFICULTY.eliteEveryMinutes) > this.lastEliteMinute &&
-      minute >= DIFFICULTY.eliteEveryMinutes;
-    if (isEliteWave) this.lastEliteMinute = Math.floor(minute / DIFFICULTY.eliteEveryMinutes);
+    if (eliteDue) {
+      this.eliteWave += 1;
+      this.nextEliteTime += DIFFICULTY.eliteIntervalSeconds;
+    }
 
-    for (let i = 0; i < batch; i++) {
-      const type = this.pendingDebuts.shift() || pickWeighted(types);
+    const count = Math.min(batch + (eliteDue ? 1 : 0), DIFFICULTY.maxActiveEnemies - activeEnemyCount);
+    for (let i = 0; i < count; i++) {
+      const isElite = eliteDue && i === count - 1;
+      const type = isElite ? ENEMY_TYPES.square : this.pendingDebuts.shift() || pickWeighted(types);
       const { x, y } = this._edgeSpawnPoint(camera);
-      spawnFn(type, x, y, hpMult, speedMult, isEliteWave && i === 0);
+      // Use a consistent archetype so later elites cannot roll weaker base stats.
+      const health = isElite ? hpMult * (1 + (this.eliteWave - 1) * DIFFICULTY.eliteHpBonusPerWave) : hpMult;
+      spawnFn(type, x, y, health, speedMult, isElite);
     }
   }
 

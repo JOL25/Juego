@@ -32,25 +32,25 @@ export const ENEMY_TYPES = {
     id: 'square', label: 'Cuadrado', plural: 'Cuadrados', color: '#5a8a4a', radius: 14,
     vertices: [[-1, -1], [1, -1], [1, 1], [-1, 1]],
     baseHp: 18, baseSpeed: 85, damage: 10, xpValue: 9,
-    weight: 8, minMinute: 3,
+    weight: 8, minMinute: 0.75,
   },
   diamond: {
     id: 'diamond', label: 'Rombo', plural: 'Rombos', color: '#c9c2a8', radius: 16,
     vertices: [[0, -1], [0.8, 0], [0, 1], [-0.8, 0]],
     baseHp: 14, baseSpeed: 105, damage: 8, xpValue: 6,
-    weight: 9, minMinute: 6,
+    weight: 9, minMinute: 2.5,
   },
   pentagon: {
     id: 'pentagon', label: 'Pentágono', plural: 'Pentágonos', color: '#3fa9c9', radius: 13,
     vertices: regularPolygon(5),
     baseHp: 26, baseSpeed: 150, damage: 12, xpValue: 15,
-    weight: 5, minMinute: 9,
+    weight: 5, minMinute: 5,
   },
   hexagon: {
     id: 'hexagon', label: 'Hexágono', plural: 'Hexágonos', color: '#a1442b', radius: 22,
     vertices: regularPolygon(6),
     baseHp: 90, baseSpeed: 60, damage: 22, xpValue: 40,
-    weight: 3, minMinute: 12,
+    weight: 3, minMinute: 7,
   },
 };
 

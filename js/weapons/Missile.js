@@ -20,7 +20,7 @@ export class Missile extends Weapon {
   constructor() {
     super({
       id: 'missile',
-      name: 'Misil',
+      name: 'Polygon Missile',
       icon: '🚀',
       levels: MISSILE_LEVELS,
       description: 'Cada 10 s un misil busca un enemigo y explota.',

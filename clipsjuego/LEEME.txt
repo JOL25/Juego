@@ -1,0 +1,19 @@
+CLIPS DE CIRCLE VS GEOMETRY
+
+01-horizontal.mp4: 1920 x 1080, formato 16:9, laser orbital.
+02-vertical.mp4: 1080 x 1620, formato 2:3, onda explosiva.
+03-cuadrado-extra.mp4: 1080 x 1080, formato 1:1, disparo perforante.
+
+Duracion objetivo: 15 segundos cada uno. MP4/H.264, sin pista de audio.
+Captura directa del juego en Edge, a velocidad normal, sin cursor ni barras externas.
+Escenas de muestra preparadas con armas avanzadas y movimiento automatico.
+La configuracion de estas escenas solo afecta al navegador de grabacion temporal.
+
+CrazyGames exige videos horizontal y vertical; el cuadrado es un extra.
+Los tres formatos obligatorios corresponden a las imagenes de portada.
+Pendiente para el envio: incorporar la portada definitiva como primer fotograma.
+No se encontraron portadas finales en el proyecto y no se ha inventado una.
+Requisitos: https://docs.crazygames.com/requirements/game-covers/
+
+verificacion.json contiene resolucion, duracion y tamano de las capturas.
+Para volver a grabar: node scripts/record-clips.js (reemplaza estos videos).

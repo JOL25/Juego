@@ -5,25 +5,25 @@ import { drawEnemyAnnouncement } from '../js/ui/HUD.js';
 import { setLanguage } from '../js/ui/i18n.js';
 setLanguage('es');
 
-test('el cartel aparece con los beneficios a los 5 minutos y no se repite al reaparecer', () => {
+test('el cartel aparece con los beneficios a los 2 minutos y no se repite al reaparecer', () => {
   const spawner = new PowerUpSpawner();
   const spawned = [];
   const tick = (time) => spawner.tick(time, () => false, (...args) => spawned.push(args));
-  tick(299.99);
+  tick(119.99);
   assert.equal(spawner.announcementAge, null);
   assert.equal(spawned.length, 0);
-  tick(300);
+  tick(120);
   assert.equal(spawner.announcementAge, 0);
   assert.equal(spawned.length, 3);
-  tick(302);
+  tick(122);
   assert.equal(spawner.announcementAge, 2);
-  tick(304);
+  tick(124);
   assert.equal(spawner.announcementAge, null);
-  tick(390);
+  tick(210);
   assert.equal(spawner.announcementAge, null);
   spawner.reset();
   assert.equal(spawner.announcementAge, null);
-  tick(300);
+  tick(120);
   assert.equal(spawner.announcementAge, 0);
 });
 

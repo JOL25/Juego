@@ -8,7 +8,7 @@ import { CollisionSystem } from '../js/systems/CollisionSystem.js';
 import { SuperPierceShot, ExplosiveWave, OrbitLaser } from '../js/weapons/Ultimates.js';
 import { createWeaponGame } from './weapons/helpers.js';
 
-test('los power-ups aparecen desde el minuto 5 cerca de una esquina y del centro', () => {
+test('los power-ups aparecen desde el minuto 2 cerca de una esquina y del centro', () => {
   const spawner = new PowerUpSpawner();
   const activeKinds = new Set();
   const spawned = [];
@@ -17,10 +17,10 @@ test('los power-ups aparecen desde el minuto 5 cerca de una esquina y del centro
     spawned.push({ x, y, kind, duration });
   };
 
-  spawner.tick(299.99, (kind) => activeKinds.has(kind), spawn);
+  spawner.tick(119.99, (kind) => activeKinds.has(kind), spawn);
   assert.deepEqual(spawned, []);
 
-  spawner.tick(300, (kind) => activeKinds.has(kind), spawn);
+  spawner.tick(120, (kind) => activeKinds.has(kind), spawn);
 
   assert.deepEqual(spawned, [
     { x: -1740, y: -1740, kind: PICKUP_KIND.MEGA_MAGNET, duration: 7 },
@@ -38,9 +38,9 @@ test('el spawner no duplica power-ups activos y repone los recogidos', () => {
     spawned.push({ x, y, kind, duration });
   };
 
-  spawner.tick(300, (kind) => activeKinds.has(kind), spawn);
+  spawner.tick(120, (kind) => activeKinds.has(kind), spawn);
   activeKinds.delete(PICKUP_KIND.MEGA_MAGNET);
-  spawner.tick(390, (kind) => activeKinds.has(kind), spawn);
+  spawner.tick(210, (kind) => activeKinds.has(kind), spawn);
 
   assert.equal(spawned.length, 4);
   assert.deepEqual(spawned[3], {
