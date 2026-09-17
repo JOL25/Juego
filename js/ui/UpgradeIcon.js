@@ -26,9 +26,9 @@ const PATTERNS = {
   garlic: ['...##...', '...##...', '..####..', '.######.', '##.##.##', '##.##.##', '.######.', '..####..'],
   missile: ['.....###', '....####', '...#####', '..#####.', '.#####..', '..###...', '##.#....', '#.......'],
   heart: ['.##..##.', '########', '########', '.######.', '..####..', '...##...', '........', '........'],
-  shield: ['.######.', '.######.', '.######.', '.######.', '..####..', '..####..', '...##...', '........'],
+  shield: ['.######.', '.##..##.', '.##..##.', '.######.', '..####..', '..####..', '...##...', '........'],
   book: ['.######.', '.#....#.', '.#.##.#.', '.#....#.', '.#.##.#.', '.#....#.', '.######.', '........'],
-  boot: ['..###...', '..###...', '..###...', '..###...', '..#####.', '.######.', '.######.', '........'],
+  boot: ['..####..', '..#..#..', '..####..', '..#..#..', '..#####.', '.######.', '.######.', '........'],
   magnet: ['.##..##.', '.##..##.', '.##..##.', '.##..##.', '.##..##.', '.######.', '..####..', '........'],
   whip: ['.....##.', '....#..#', '....#..#', '...#..#.', '..#.....', '.##.....', '##......', '#.......'],
 };
@@ -59,9 +59,9 @@ export function getMagicWandSprite() {
     ctx.fillRect(2 + i, 19 - i, 4, 4);
   }
   for (let i = 0; i < 14; i++) {
-    ctx.fillStyle = '#ac5c29';
+    ctx.fillStyle = '#902a3d';
     ctx.fillRect(3 + i, 20 - i, 2, 2);
-    ctx.fillStyle = '#d28a46';
+    ctx.fillStyle = '#d46570';
     ctx.fillRect(3 + i, 20 - i, 1, 1);
   }
   const star = [
@@ -76,14 +76,14 @@ export function getMagicWandSprite() {
   }));
   star.forEach((row, y) => [...row].forEach((pixel, x) => {
     if (pixel !== '#') return;
-    ctx.fillStyle = x === 5 || y === 5 ? '#ffe5a0' : y < 5 ? '#ffca62' : '#ed941e';
+    ctx.fillStyle = x === 5 || y === 5 ? '#fff0dc' : y < 5 ? '#ffa0a4' : '#df4058';
     ctx.fillRect(x + 10, y + 1, 1, 1);
   }));
   for (const [x, y] of [[4, 3], [20, 17], [9, 21]]) {
-    ctx.fillStyle = '#f6a52c';
+    ctx.fillStyle = '#df4058';
     ctx.fillRect(x, y - 1, 1, 3);
     ctx.fillRect(x - 1, y, 3, 1);
-    ctx.fillStyle = '#ffe5a0';
+    ctx.fillStyle = '#fff0dc';
     ctx.fillRect(x, y, 1, 1);
   }
   return wandSprite;
@@ -99,13 +99,22 @@ export function createUpgradeIcon(option) {
     armor: 'shield', tome: 'book', boots: 'boot', amulet: 'magnet',
   };
   const pattern = PATTERNS[shapes[id] || 'bolt'];
+  const passive = ['tome', 'boots', 'armor', 'amulet', 'heart', 'heal'].includes(id);
+  const ultimate = id?.startsWith('ult_');
+  const palette = passive
+    ? ['#fff0dc', '#d9b4af', '#976571']
+    : ultimate ? ['#fff0dc', '#ff657e', '#c52348']
+      : ['#ffe0d8', '#ed8990', '#b83c52'];
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = Math.max(pattern.length, ...pattern.map((row) => row.length)) + 2;
   canvas.className = 'levelup-icon';
   canvas.setAttribute('aria-hidden', 'true');
+  const displaySize = Math.floor(56 / canvas.width) * canvas.width;
+  canvas.style.width = canvas.style.height = `${displaySize}px`;
   if (id === 'magic_wand') {
     const sprite = getMagicWandSprite();
     canvas.width = canvas.height = sprite.width;
+    canvas.style.width = canvas.style.height = '48px';
     canvas.getContext('2d').drawImage(sprite, 0, 0);
     return canvas;
   }
@@ -117,7 +126,7 @@ export function createUpgradeIcon(option) {
   }));
   pattern.forEach((row, y) => [...row].forEach((pixel, x) => {
     if (pixel !== '#') return;
-    ctx.fillStyle = y < pattern.length * 0.375 ? '#ffc0c3' : y < pattern.length * 0.625 ? '#f45c68' : '#b8273c';
+    ctx.fillStyle = y < pattern.length * 0.375 ? palette[0] : y < pattern.length * 0.625 ? palette[1] : palette[2];
     ctx.fillRect(x + 1, y + 1, 1, 1);
   }));
   return canvas;

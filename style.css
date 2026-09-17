@@ -116,6 +116,8 @@ html, body {
 
 .panel-levelup {
   width: min(94vw, 780px);
+  scrollbar-color: #a43149 #100b10;
+  scrollbar-width: thin;
 }
 
 .panel-pixel {
@@ -260,24 +262,60 @@ html, body {
 .levelup-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
+  gap: 16px;
   margin-top: 10px;
 }
 
 .levelup-card {
+  --card-accent: #ed8990;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
   background: #160d11;
   border: 3px solid #7e2230;
   border-top-color: #d34853;
   border-left-color: #d34853;
   border-radius: 0;
   box-shadow: 4px 4px 0 #000000, inset 0 0 0 2px #3e1520;
-  padding: 18px 10px;
+  padding: 16px 14px 0;
   font-family: 'Courier New', monospace;
   color: var(--bone);
   cursor: pointer;
   text-align: center;
   transition: transform 0.1s steps(2);
 }
+
+.levelup-card[data-category="passive"] { --card-accent: #d9b4af; }
+.levelup-card[data-category="ultimate"] { --card-accent: #ff657e; border-top-color: #ff657e; }
+.levelup-card[data-category="dash"] { --card-accent: #ffe0d8; }
+
+.levelup-icon-frame {
+  width: 80px;
+  height: 80px;
+  display: grid;
+  place-items: center;
+  margin: 12px auto 16px;
+  background: #0c090d;
+  border: 2px solid #68313f;
+  box-shadow: 3px 3px 0 #050306, inset 3px 3px 0 #21121b;
+}
+
+.levelup-select {
+  margin: auto -14px 0;
+  padding: 11px 14px;
+  border-top: 2px solid #582331;
+  background: #0c090d;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  color: var(--card-accent);
+  display: flex;
+  justify-content: space-between;
+}
+
+.levelup-card:not(:disabled):hover .levelup-select,
+.levelup-card:focus-visible .levelup-select { background: #8e2337; color: #fff0dc; }
 
 .levelup-card:not(:disabled):hover, .levelup-card:focus-visible {
   border-color: var(--gold);
@@ -291,7 +329,7 @@ html, body {
   display: block;
   width: 50px;
   height: 50px;
-  margin: 10px auto 12px;
+  margin: 0;
   image-rendering: pixelated;
 }
 
@@ -299,24 +337,26 @@ html, body {
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--card-accent);
   margin-bottom: 6px;
   font-weight: 700;
 }
 
 .levelup-title {
   font-weight: 700;
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.35;
-  margin-bottom: 6px;
-  color: var(--gold);
+  min-height: 2.7em;
+  margin-bottom: 12px;
+  color: #fff0dc;
 }
 
 .levelup-desc {
+  padding-bottom: 18px;
   white-space: pre-line;
   font-size: 13px;
   color: var(--bone-dim);
-  line-height: 1.4;
+  line-height: 1.6;
 }
 
 .levelup-card:disabled { cursor: default; }
@@ -410,6 +450,16 @@ html, body {
 #sound-volume:focus-visible { outline: 2px solid var(--gold); }
 
 /* --- Small screens: shrink panel padding, stack cards --- */
+@media (max-height: 650px) and (min-width: 521px) {
+  .panel-levelup { padding: 20px 28px; }
+  .panel-levelup .subtitle { margin-bottom: 12px; }
+  .levelup-card { padding-top: 10px; }
+  .levelup-icon-frame { width: 60px; height: 60px; margin: 6px auto 10px; }
+  .levelup-title { font-size: 13px; margin-bottom: 8px; }
+  .levelup-desc { font-size: 12px; line-height: 1.4; padding-bottom: 12px; }
+  .levelup-select { padding-top: 8px; padding-bottom: 8px; }
+}
+
 @media (max-width: 520px) {
   .panel {
     padding: 24px 20px;

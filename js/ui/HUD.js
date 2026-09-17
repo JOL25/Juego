@@ -98,7 +98,7 @@ export function drawHUD(ctx, game) {
     ctx.strokeRect(iconX, iconY, 26, 26);
     drawUpgradeIcon(ctx, weapon.id, iconX + 1, iconY + 1);
     ctx.font = 'bold 9px "Inter", sans-serif';
-    ctx.fillStyle = COLORS.gold;
+    ctx.fillStyle = '#ed8990';
     ctx.fillText(String(weapon.level), iconX + 18, iconY + 25);
     iconX += 30;
   }
@@ -109,7 +109,7 @@ export function drawHUD(ctx, game) {
     ctx.strokeRect(iconX, iconY, 26, 26);
     drawUpgradeIcon(ctx, passive.id, iconX + 1, iconY + 1);
     ctx.font = 'bold 9px "Inter", sans-serif';
-    ctx.fillStyle = '#9fd3e8';
+    ctx.fillStyle = '#d9b4af';
     ctx.fillText(String(passive.level), iconX + 18, iconY + 25);
     iconX += 30;
   }
@@ -132,6 +132,7 @@ export function drawHUD(ctx, game) {
     ctx.fillStyle = COLORS.gold;
     ctx.font = 'bold 11px "Inter", sans-serif';
     drawUpgradeIcon(ctx, player.ultimate.id, ultX - 80, ultY - 20, 20);
+    ctx.fillStyle = '#ff899a';
     ctx.fillText(`Lv.${player.ultimate.level}`, ultX, ultY);
     const barW = 120;
     ctx.fillStyle = 'rgba(255,255,255,0.12)';
@@ -139,7 +140,7 @@ export function drawHUD(ctx, game) {
     const ready = player.ultimate.isReady();
     const cd = player.ultimate.stats.cooldownMs;
     const pct = ready ? 1 : 1 - Math.max(0, player.ultimate.cooldownTimer) / cd;
-    ctx.fillStyle = ready ? '#e8b13a' : '#7ec6e0';
+    ctx.fillStyle = ready ? '#ff657e' : '#80364b';
     ctx.fillRect(ultX - barW, ultY + 6, barW * pct, 8);
 
   }
@@ -237,9 +238,8 @@ export function drawUltimateReadyIcon(ctx, player, screenX, screenY, infinityRem
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = COLORS.gold;
-  ctx.shadowColor = COLORS.gold;
-  ctx.shadowBlur = 12;
-  ctx.fillText(ultimate.icon, 0, 0);
+  ctx.shadowBlur = 0;
+  drawUpgradeIcon(ctx, ultimate.id, -16, -16, 32);
   ctx.restore();
 }
 

@@ -123,6 +123,8 @@ html, body {
 
 .panel-levelup {
   width: min(94vw, 780px);
+  scrollbar-color: #a43149 #100b10;
+  scrollbar-width: thin;
 }
 
 .panel-pixel {
@@ -267,24 +269,60 @@ html, body {
 .levelup-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
+  gap: 16px;
   margin-top: 10px;
 }
 
 .levelup-card {
+  --card-accent: #ed8990;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
   background: #160d11;
   border: 3px solid #7e2230;
   border-top-color: #d34853;
   border-left-color: #d34853;
   border-radius: 0;
   box-shadow: 4px 4px 0 #000000, inset 0 0 0 2px #3e1520;
-  padding: 18px 10px;
+  padding: 16px 14px 0;
   font-family: 'Courier New', monospace;
   color: var(--bone);
   cursor: pointer;
   text-align: center;
   transition: transform 0.1s steps(2);
 }
+
+.levelup-card[data-category="passive"] { --card-accent: #d9b4af; }
+.levelup-card[data-category="ultimate"] { --card-accent: #ff657e; border-top-color: #ff657e; }
+.levelup-card[data-category="dash"] { --card-accent: #ffe0d8; }
+
+.levelup-icon-frame {
+  width: 80px;
+  height: 80px;
+  display: grid;
+  place-items: center;
+  margin: 12px auto 16px;
+  background: #0c090d;
+  border: 2px solid #68313f;
+  box-shadow: 3px 3px 0 #050306, inset 3px 3px 0 #21121b;
+}
+
+.levelup-select {
+  margin: auto -14px 0;
+  padding: 11px 14px;
+  border-top: 2px solid #582331;
+  background: #0c090d;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  color: var(--card-accent);
+  display: flex;
+  justify-content: space-between;
+}
+
+.levelup-card:not(:disabled):hover .levelup-select,
+.levelup-card:focus-visible .levelup-select { background: #8e2337; color: #fff0dc; }
 
 .levelup-card:not(:disabled):hover, .levelup-card:focus-visible {
   border-color: var(--gold);
@@ -298,7 +336,7 @@ html, body {
   display: block;
   width: 50px;
   height: 50px;
-  margin: 10px auto 12px;
+  margin: 0;
   image-rendering: pixelated;
 }
 
@@ -306,24 +344,26 @@ html, body {
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--card-accent);
   margin-bottom: 6px;
   font-weight: 700;
 }
 
 .levelup-title {
   font-weight: 700;
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.35;
-  margin-bottom: 6px;
-  color: var(--gold);
+  min-height: 2.7em;
+  margin-bottom: 12px;
+  color: #fff0dc;
 }
 
 .levelup-desc {
+  padding-bottom: 18px;
   white-space: pre-line;
   font-size: 13px;
   color: var(--bone-dim);
-  line-height: 1.4;
+  line-height: 1.6;
 }
 
 .levelup-card:disabled { cursor: default; }
@@ -417,6 +457,16 @@ html, body {
 #sound-volume:focus-visible { outline: 2px solid var(--gold); }
 
 /* --- Small screens: shrink panel padding, stack cards --- */
+@media (max-height: 650px) and (min-width: 521px) {
+  .panel-levelup { padding: 20px 28px; }
+  .panel-levelup .subtitle { margin-bottom: 12px; }
+  .levelup-card { padding-top: 10px; }
+  .levelup-icon-frame { width: 60px; height: 60px; margin: 6px auto 10px; }
+  .levelup-title { font-size: 13px; margin-bottom: 8px; }
+  .levelup-desc { font-size: 12px; line-height: 1.4; padding-bottom: 12px; }
+  .levelup-select { padding-top: 8px; padding-bottom: 8px; }
+}
+
 @media (max-width: 520px) {
   .panel {
     padding: 24px 20px;
@@ -3016,9 +3066,9 @@ Activar: Q / E / R`,
     garlic: ["...##...", "...##...", "..####..", ".######.", "##.##.##", "##.##.##", ".######.", "..####.."],
     missile: [".....###", "....####", "...#####", "..#####.", ".#####..", "..###...", "##.#....", "#......."],
     heart: [".##..##.", "########", "########", ".######.", "..####..", "...##...", "........", "........"],
-    shield: [".######.", ".######.", ".######.", ".######.", "..####..", "..####..", "...##...", "........"],
+    shield: [".######.", ".##..##.", ".##..##.", ".######.", "..####..", "..####..", "...##...", "........"],
     book: [".######.", ".#....#.", ".#.##.#.", ".#....#.", ".#.##.#.", ".#....#.", ".######.", "........"],
-    boot: ["..###...", "..###...", "..###...", "..###...", "..#####.", ".######.", ".######.", "........"],
+    boot: ["..####..", "..#..#..", "..####..", "..#..#..", "..#####.", ".######.", ".######.", "........"],
     magnet: [".##..##.", ".##..##.", ".##..##.", ".##..##.", ".##..##.", ".######.", "..####..", "........"],
     whip: [".....##.", "....#..#", "....#..#", "...#..#.", "..#.....", ".##.....", "##......", "#......."]
   };
@@ -3045,9 +3095,9 @@ Activar: Q / E / R`,
       ctx.fillRect(2 + i, 19 - i, 4, 4);
     }
     for (let i = 0; i < 14; i++) {
-      ctx.fillStyle = "#ac5c29";
+      ctx.fillStyle = "#902a3d";
       ctx.fillRect(3 + i, 20 - i, 2, 2);
-      ctx.fillStyle = "#d28a46";
+      ctx.fillStyle = "#d46570";
       ctx.fillRect(3 + i, 20 - i, 1, 1);
     }
     const star = [
@@ -3070,14 +3120,14 @@ Activar: Q / E / R`,
     }));
     star.forEach((row, y) => [...row].forEach((pixel, x) => {
       if (pixel !== "#") return;
-      ctx.fillStyle = x === 5 || y === 5 ? "#ffe5a0" : y < 5 ? "#ffca62" : "#ed941e";
+      ctx.fillStyle = x === 5 || y === 5 ? "#fff0dc" : y < 5 ? "#ffa0a4" : "#df4058";
       ctx.fillRect(x + 10, y + 1, 1, 1);
     }));
     for (const [x, y] of [[4, 3], [20, 17], [9, 21]]) {
-      ctx.fillStyle = "#f6a52c";
+      ctx.fillStyle = "#df4058";
       ctx.fillRect(x, y - 1, 1, 3);
       ctx.fillRect(x - 1, y, 3, 1);
-      ctx.fillStyle = "#ffe5a0";
+      ctx.fillStyle = "#fff0dc";
       ctx.fillRect(x, y, 1, 1);
     }
     return wandSprite;
@@ -3100,13 +3150,19 @@ Activar: Q / E / R`,
       amulet: "magnet"
     };
     const pattern = PATTERNS[shapes[id] || "bolt"];
+    const passive = ["tome", "boots", "armor", "amulet", "heart", "heal"].includes(id);
+    const ultimate = id?.startsWith("ult_");
+    const palette = passive ? ["#fff0dc", "#d9b4af", "#976571"] : ultimate ? ["#fff0dc", "#ff657e", "#c52348"] : ["#ffe0d8", "#ed8990", "#b83c52"];
     const canvas = document.createElement("canvas");
     canvas.width = canvas.height = Math.max(pattern.length, ...pattern.map((row) => row.length)) + 2;
     canvas.className = "levelup-icon";
     canvas.setAttribute("aria-hidden", "true");
+    const displaySize = Math.floor(56 / canvas.width) * canvas.width;
+    canvas.style.width = canvas.style.height = `${displaySize}px`;
     if (id === "magic_wand") {
       const sprite = getMagicWandSprite();
       canvas.width = canvas.height = sprite.width;
+      canvas.style.width = canvas.style.height = "48px";
       canvas.getContext("2d").drawImage(sprite, 0, 0);
       return canvas;
     }
@@ -3118,7 +3174,7 @@ Activar: Q / E / R`,
     }));
     pattern.forEach((row, y) => [...row].forEach((pixel, x) => {
       if (pixel !== "#") return;
-      ctx.fillStyle = y < pattern.length * 0.375 ? "#ffc0c3" : y < pattern.length * 0.625 ? "#f45c68" : "#b8273c";
+      ctx.fillStyle = y < pattern.length * 0.375 ? palette[0] : y < pattern.length * 0.625 ? palette[1] : palette[2];
       ctx.fillRect(x + 1, y + 1, 1, 1);
     }));
     return canvas;
@@ -3164,12 +3220,17 @@ Activar: Q / E / R`,
       options.forEach((opt) => {
         const card = document.createElement("button");
         card.className = "levelup-card";
+        const category = opt.kind.startsWith("ultimate") ? "ultimate" : opt.kind.startsWith("passive") ? "passive" : opt.kind.startsWith("dash") ? "dash" : opt.kind === "heal" ? "heal" : "weapon";
+        card.dataset.category = category;
+        const categoryLabel = { ultimate: "Definitiva", passive: "Pasiva", dash: "Dash", heal: "Curación", weapon: "Arma" }[category];
         card.innerHTML = `
-        ${opt.tag ? `<div class="levelup-tag">${opt.tag}</div>` : ""}
+        <div class="levelup-tag">${categoryLabel}</div>
+        <div class="levelup-icon-frame"></div>
         <div class="levelup-title">${opt.title}</div>
         <div class="levelup-desc">${opt.description}</div>
+        <div class="levelup-select" aria-hidden="true">ELEGIR <span>→</span></div>
       `;
-        card.insertBefore(createUpgradeIcon(opt), card.querySelector(".levelup-title"));
+        card.querySelector(".levelup-icon-frame").appendChild(createUpgradeIcon(opt));
         card.addEventListener("click", async () => {
           if (this.picking) return;
           this.picking = true;
@@ -3289,7 +3350,7 @@ Activar: Q / E / R`,
       ctx.strokeRect(iconX, iconY, 26, 26);
       drawUpgradeIcon(ctx, weapon.id, iconX + 1, iconY + 1);
       ctx.font = 'bold 9px "Inter", sans-serif';
-      ctx.fillStyle = COLORS.gold;
+      ctx.fillStyle = "#ed8990";
       ctx.fillText(String(weapon.level), iconX + 18, iconY + 25);
       iconX += 30;
     }
@@ -3300,7 +3361,7 @@ Activar: Q / E / R`,
       ctx.strokeRect(iconX, iconY, 26, 26);
       drawUpgradeIcon(ctx, passive.id, iconX + 1, iconY + 1);
       ctx.font = 'bold 9px "Inter", sans-serif';
-      ctx.fillStyle = "#9fd3e8";
+      ctx.fillStyle = "#d9b4af";
       ctx.fillText(String(passive.level), iconX + 18, iconY + 25);
       iconX += 30;
     }
@@ -3319,6 +3380,7 @@ Activar: Q / E / R`,
       ctx.fillStyle = COLORS.gold;
       ctx.font = 'bold 11px "Inter", sans-serif';
       drawUpgradeIcon(ctx, player.ultimate.id, ultX - 80, ultY - 20, 20);
+      ctx.fillStyle = "#ff899a";
       ctx.fillText(`Lv.${player.ultimate.level}`, ultX, ultY);
       const barW = 120;
       ctx.fillStyle = "rgba(255,255,255,0.12)";
@@ -3326,7 +3388,7 @@ Activar: Q / E / R`,
       const ready = player.ultimate.isReady();
       const cd = player.ultimate.stats.cooldownMs;
       const pct = ready ? 1 : 1 - Math.max(0, player.ultimate.cooldownTimer) / cd;
-      ctx.fillStyle = ready ? "#e8b13a" : "#7ec6e0";
+      ctx.fillStyle = ready ? "#ff657e" : "#80364b";
       ctx.fillRect(ultX - barW, ultY + 6, barW * pct, 8);
     }
     ctx.restore();
@@ -3417,9 +3479,8 @@ Activar: Q / E / R`,
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = COLORS.gold;
-    ctx.shadowColor = COLORS.gold;
-    ctx.shadowBlur = 12;
-    ctx.fillText(ultimate.icon, 0, 0);
+    ctx.shadowBlur = 0;
+    drawUpgradeIcon(ctx, ultimate.id, -16, -16, 32);
     ctx.restore();
   }
   function drawPlayerDashBars(ctx, player, screenX, screenY) {

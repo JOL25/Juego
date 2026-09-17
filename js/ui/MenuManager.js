@@ -51,12 +51,19 @@ export class MenuManager {
     options.forEach((opt) => {
       const card = document.createElement('button');
       card.className = 'levelup-card';
+      const category = opt.kind.startsWith('ultimate') ? 'ultimate'
+        : opt.kind.startsWith('passive') ? 'passive'
+          : opt.kind.startsWith('dash') ? 'dash' : opt.kind === 'heal' ? 'heal' : 'weapon';
+      card.dataset.category = category;
+      const categoryLabel = { ultimate: 'Definitiva', passive: 'Pasiva', dash: 'Dash', heal: 'Curación', weapon: 'Arma' }[category];
       card.innerHTML = `
-        ${opt.tag ? `<div class="levelup-tag">${opt.tag}</div>` : ''}
+        <div class="levelup-tag">${categoryLabel}</div>
+        <div class="levelup-icon-frame"></div>
         <div class="levelup-title">${opt.title}</div>
         <div class="levelup-desc">${opt.description}</div>
+        <div class="levelup-select" aria-hidden="true">ELEGIR <span>→</span></div>
       `;
-      card.insertBefore(createUpgradeIcon(opt), card.querySelector('.levelup-title'));
+      card.querySelector('.levelup-icon-frame').appendChild(createUpgradeIcon(opt));
       card.addEventListener('click', async () => {
         if (this.picking) return;
         this.picking = true;
