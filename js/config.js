@@ -96,10 +96,9 @@ export const LOADOUT = {
 
 export const DASH = {
   baseCharges: 1,
-  maxCharges: 4,
+  maxLevel: 4,
   baseDistanceCm: 5,
-  rangePerUpgradeCm: 2,
-  maxRangeUpgrades: 6,
+  rangePerUpgradeCm: 5,
   // ~12 px per in-game cm so a 5 cm dash is a readable dodge on the 960×540 canvas.
   pxPerCm: 12,
   durationMs: 130,
@@ -128,8 +127,7 @@ export const LEVEL_UP_WEIGHTS = {
   'weapon-upgrade': 3.6,
   'passive-new': 2.2,
   'passive-upgrade': 2.6,
-  'dash-charge': 2.4,
-  'dash-range': 2.2,
+  'dash-upgrade': 2.4,
   'ultimate-upgrade': 3.0,
 };
 

@@ -112,25 +112,13 @@ export class LevelUpSystem {
       }
     }
 
-    if (player.dashMaxCharges < DASH.maxCharges) {
+    if (player.dashLevel < DASH.maxLevel) {
       candidates.push({
-        kind: 'dash-charge',
-        weight: LEVEL_UP_WEIGHTS['dash-charge'],
+        kind: 'dash-upgrade',
+        weight: LEVEL_UP_WEIGHTS['dash-upgrade'],
         icon: '💨',
-        title: `Dash extra (${player.dashMaxCharges + 1}/${DASH.maxCharges})`,
-        description: '+1 carga de dash',
-        tag: 'Dash',
-      });
-    }
-
-    if (player.dashRangeUpgrades < DASH.maxRangeUpgrades) {
-      const nextCm = DASH.baseDistanceCm + (player.dashRangeUpgrades + 1) * DASH.rangePerUpgradeCm;
-      candidates.push({
-        kind: 'dash-range',
-        weight: LEVEL_UP_WEIGHTS['dash-range'],
-        icon: '↔️',
-        title: `Alcance de dash → ${nextCm} cm`,
-        description: `+${DASH.rangePerUpgradeCm} cm de alcance`,
+        title: `Dash → Nv. ${player.dashLevel + 1}/${DASH.maxLevel}`,
+        description: `Cargas: ${player.dashMaxCharges + 1}\n+1 carga · Más alcance`,
         tag: 'Dash',
       });
     }
@@ -188,15 +176,11 @@ export class LevelUpSystem {
       case 'ultimate-upgrade':
         game.player.ultimate.levelUp();
         break;
-      case 'dash-charge':
-        game.player.dashMaxCharges = Math.min(DASH.maxCharges, game.player.dashMaxCharges + 1);
-        game.player.dashCharges = Math.min(game.player.dashMaxCharges, game.player.dashCharges + 1);
-        break;
-      case 'dash-range':
-        game.player.dashRangeUpgrades = Math.min(
-          DASH.maxRangeUpgrades,
-          game.player.dashRangeUpgrades + 1
-        );
+      case 'dash-upgrade':
+        if (game.player.dashLevel < DASH.maxLevel) {
+          game.player.dashLevel += 1;
+          game.player.dashCharges = Math.min(game.player.dashMaxCharges, game.player.dashCharges + 1);
+        }
         break;
       case 'heal':
         game.player.heal(30);

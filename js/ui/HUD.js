@@ -5,6 +5,7 @@
 
 import { COLORS, DASH, ULTIMATE, ENEMY_ANNOUNCEMENT } from '../config.js';
 import { drawPixelSprite } from '../rendering/PixelArt.js';
+import { drawUpgradeIcon } from './UpgradeIcon.js';
 
 function formatTime(totalSeconds) {
   const m = Math.floor(totalSeconds / 60);
@@ -95,8 +96,7 @@ export function drawHUD(ctx, game) {
     ctx.fillRect(iconX, iconY, 26, 26);
     ctx.strokeStyle = 'rgba(255,255,255,0.25)';
     ctx.strokeRect(iconX, iconY, 26, 26);
-    ctx.font = '16px sans-serif';
-    ctx.fillText(weapon.icon, iconX + 4, iconY + 19);
+    drawUpgradeIcon(ctx, weapon.id, iconX + 1, iconY + 1);
     ctx.font = 'bold 9px "Inter", sans-serif';
     ctx.fillStyle = COLORS.gold;
     ctx.fillText(String(weapon.level), iconX + 18, iconY + 25);
@@ -107,8 +107,7 @@ export function drawHUD(ctx, game) {
     ctx.fillRect(iconX, iconY, 26, 26);
     ctx.strokeStyle = 'rgba(255,255,255,0.15)';
     ctx.strokeRect(iconX, iconY, 26, 26);
-    ctx.font = '16px sans-serif';
-    ctx.fillText(passive.icon, iconX + 4, iconY + 19);
+    drawUpgradeIcon(ctx, passive.id, iconX + 1, iconY + 1);
     ctx.font = 'bold 9px "Inter", sans-serif';
     ctx.fillStyle = '#9fd3e8';
     ctx.fillText(String(passive.level), iconX + 18, iconY + 25);
@@ -132,7 +131,8 @@ export function drawHUD(ctx, game) {
   } else {
     ctx.fillStyle = COLORS.gold;
     ctx.font = 'bold 11px "Inter", sans-serif';
-    ctx.fillText(`${player.ultimate.icon} Lv.${player.ultimate.level}`, ultX, ultY);
+    drawUpgradeIcon(ctx, player.ultimate.id, ultX - 80, ultY - 20, 20);
+    ctx.fillText(`Lv.${player.ultimate.level}`, ultX, ultY);
     const barW = 120;
     ctx.fillStyle = 'rgba(255,255,255,0.12)';
     ctx.fillRect(ultX - barW, ultY + 6, barW, 8);

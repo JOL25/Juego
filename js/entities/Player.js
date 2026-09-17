@@ -41,9 +41,8 @@ export class Player {
     this.passives = [];  // { id, name, level, apply() }
     this.ultimate = null;
 
-    this.dashMaxCharges = DASH.baseCharges;
+    this.dashLevel = 1;
     this.dashCharges = DASH.baseCharges;
-    this.dashRangeUpgrades = 0;
     this.dashRecharge = 0;
     this.dashActive = 0;
     this.dashDir = { x: 1, y: 0 };
@@ -54,7 +53,11 @@ export class Player {
   }
 
   get dashDistancePx() {
-    return (DASH.baseDistanceCm + this.dashRangeUpgrades * DASH.rangePerUpgradeCm) * DASH.pxPerCm;
+    return (DASH.baseDistanceCm + (this.dashLevel - 1) * DASH.rangePerUpgradeCm) * DASH.pxPerCm;
+  }
+
+  get dashMaxCharges() {
+    return DASH.baseCharges + this.dashLevel - 1;
   }
 
   update(dt, moveVector) {
@@ -67,11 +70,12 @@ export class Player {
     }
 
     if (this.dashActive > 0) {
-      this.dashActive -= dt;
+      const dashTime = Math.min(dt, this.dashActive);
+      this.dashActive = Math.max(0, this.dashActive - dt);
       const duration = DASH.durationMs / 1000;
       const speed = this.dashDistancePx / duration;
-      this.x += this.dashDir.x * speed * dt;
-      this.y += this.dashDir.y * speed * dt;
+      this.x += this.dashDir.x * speed * dashTime;
+      this.y += this.dashDir.y * speed * dashTime;
     } else {
       this.x += moveVector.x * this.speed * dt;
       this.y += moveVector.y * this.speed * dt;
