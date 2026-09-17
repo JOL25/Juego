@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PowerUpSpawner } from '../js/systems/PowerUpSpawner.js';
 import { drawEnemyAnnouncement } from '../js/ui/HUD.js';
+import { setLanguage } from '../js/ui/i18n.js';
+setLanguage('es');
 
 test('el cartel aparece con los beneficios a los 5 minutos y no se repite al reaparecer', () => {
   const spawner = new PowerUpSpawner();

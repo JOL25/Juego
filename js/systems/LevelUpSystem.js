@@ -2,6 +2,7 @@ import { LOADOUT, DASH, ULTIMATE, LEVEL_UP_WEIGHTS } from '../config.js';
 import { pickWeightedUnique } from '../utils.js';
 import { STATE } from '../core/GameState.js';
 import { upgradeDescription } from '../ui/upgradeDescription.js';
+import { t } from '../ui/i18n.js';
 import {
   createWeapon,
   WEAPON_CLASSES,
@@ -43,9 +44,9 @@ export class LevelUpSystem {
         kind: 'ultimate-new',
         id: ult.id,
         icon: ult.icon,
-        title: ult.name,
-        description: `${upgradeDescription(ult)}\nActivar: Q / E / R`,
-        tag: 'Definitiva',
+        title: t(ult.name),
+        description: `${upgradeDescription(ult)}\n${t('Activar:')} Q / E / R`,
+        tag: t('Definitiva'),
       }));
     }
 
@@ -59,7 +60,7 @@ export class LevelUpSystem {
           weight: LEVEL_UP_WEIGHTS['weapon-upgrade'],
           weapon,
           icon: weapon.icon,
-          title: `${weapon.name} → Lv.${weapon.level + 1}`,
+          title: `${t(weapon.name)} → Lv.${weapon.level + 1}`,
           description: upgradeDescription(weapon, weapon.levels[weapon.level]),
         });
       }
@@ -74,7 +75,7 @@ export class LevelUpSystem {
             weight: LEVEL_UP_WEIGHTS['weapon-new'],
             id,
             icon: weapon.icon,
-            title: weapon.name,
+            title: t(weapon.name),
             description: upgradeDescription(weapon),
           });
         }
@@ -91,7 +92,7 @@ export class LevelUpSystem {
           instance: passive,
           def,
           icon: def.icon,
-          title: `${def.name} → Lv.${passive.level + 1}`,
+          title: `${t(def.name)} → Lv.${passive.level + 1}`,
           description: def.description(passive.level + 1),
         });
       }
@@ -105,7 +106,7 @@ export class LevelUpSystem {
             weight: LEVEL_UP_WEIGHTS['passive-new'],
             def,
             icon: def.icon,
-            title: def.name,
+            title: t(def.name),
             description: def.description(1),
           });
         }
@@ -117,8 +118,8 @@ export class LevelUpSystem {
         kind: 'dash-upgrade',
         weight: LEVEL_UP_WEIGHTS['dash-upgrade'],
         icon: '💨',
-        title: `Dash → Nv. ${player.dashLevel + 1}/${DASH.maxLevel}`,
-        description: `Cargas: ${player.dashMaxCharges + 1}\n+1 carga · Más alcance`,
+        title: `Dash → ${t('Nv.')} ${player.dashLevel + 1}/${DASH.maxLevel}`,
+        description: `${t('Cargas:')} ${player.dashMaxCharges + 1}\n${t('+1 carga')} · ${t('Más alcance')}`,
         tag: 'Dash',
       });
     }
@@ -129,9 +130,9 @@ export class LevelUpSystem {
         id: player.ultimate.id,
         weight: LEVEL_UP_WEIGHTS['ultimate-upgrade'],
         icon: player.ultimate.icon,
-        title: `${player.ultimate.name} → Lv.${player.ultimate.level + 1}`,
+        title: `${t(player.ultimate.name)} → Lv.${player.ultimate.level + 1}`,
         description: upgradeDescription(player.ultimate, player.ultimate.levels[player.ultimate.level]),
-        tag: 'Definitiva',
+        tag: t('Definitiva'),
       });
     }
 
@@ -139,8 +140,8 @@ export class LevelUpSystem {
       return [{
         kind: 'heal',
         icon: '🍷',
-        title: 'Poción curativa',
-        description: 'Recupera 30 de vida',
+        title: t('Poción curativa'),
+        description: t('Recupera 30 de vida'),
       }];
     }
 

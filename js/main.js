@@ -4,6 +4,7 @@
 // ============================================================
 
 import { Game } from './core/Game.js';
+import { t, getLanguage, setLanguage, bindStaticTranslations } from './ui/i18n.js';
 
 let gameInstance = null;
 
@@ -12,6 +13,8 @@ export function getGameInstance() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  const translateStatic = bindStaticTranslations();
+  translateStatic();
   const canvas = document.getElementById('game-canvas');
   const game = new Game(canvas);
   gameInstance = game;
@@ -27,11 +30,11 @@ window.addEventListener('DOMContentLoaded', () => {
       if (document.fullscreenElement) await document.exitFullscreen();
       else await wrap.requestFullscreen();
     } catch {
-      fullscreenButton.title = 'No se pudo activar. Puedes usar F11 en el navegador.';
+      fullscreenButton.title = t('No se pudo activar. Puedes usar F11 en el navegador.');
     }
   });
   document.addEventListener('fullscreenchange', () => {
-    const label = document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa';
+    const label = t(document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa');
     fullscreenButton.setAttribute('aria-label', label);
     fullscreenButton.title = label;
     resize();
@@ -47,6 +50,25 @@ window.addEventListener('DOMContentLoaded', () => {
     soundVolume.setAttribute('aria-valuetext', `${percent}%`);
   };
   updateSoundVolume();
+  const languageSelect = document.getElementById('language-select');
+  languageSelect.value = getLanguage();
+  languageSelect.addEventListener('change', () => {
+    setLanguage(languageSelect.value);
+    translateStatic();
+    updateSoundVolume();
+    const label = t(document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa');
+    fullscreenButton.title = label;
+    fullscreenButton.setAttribute('aria-label', label);
+  });
+  languageSelect.addEventListener('keydown', (event) => event.stopPropagation());
+  languageSelect.addEventListener('keyup', (event) => event.stopPropagation());
+  languageSelect.addEventListener('focus', () => game.input.reset());
+  document.getElementById('btn-options').addEventListener('click', () => game.menu.showOptions());
+  document.getElementById('btn-pause-options').addEventListener('click', () => game.menu.showOptions());
+  document.getElementById('btn-options-back').addEventListener('click', () => {
+    if (game.state === 'paused') game.menu.showPause();
+    else game.menu.showMenu();
+  });
   soundVolume.addEventListener('input', () => {
     game.sound.unlock();
     game.sound.setVolume(Number(soundVolume.value) / 100);

@@ -6,6 +6,7 @@
 import { COLORS, DASH, ULTIMATE, ENEMY_ANNOUNCEMENT } from '../config.js';
 import { drawPixelSprite } from '../rendering/PixelArt.js';
 import { drawUpgradeIcon, getUpgradePalette } from './UpgradeIcon.js';
+import { t, getLanguage } from './i18n.js';
 
 function formatTime(totalSeconds) {
   const m = Math.floor(totalSeconds / 60);
@@ -60,10 +61,10 @@ export function drawHUD(ctx, game) {
 
   const activePowerUps = [];
   if (game.megaMagnetTimer > 0) {
-    activePowerUps.push({ label: `IMAN ${game.megaMagnetTimer.toFixed(1)}s`, color: '#d69cff' });
+    activePowerUps.push({ label: `${t('IMAN')} ${game.megaMagnetTimer.toFixed(1)}s`, color: '#d69cff' });
   }
   if (game.enemyFreezeTimer > 0) {
-    activePowerUps.push({ label: `HIELO ${game.enemyFreezeTimer.toFixed(1)}s`, color: '#78e7ff' });
+    activePowerUps.push({ label: `${t('HIELO')} ${game.enemyFreezeTimer.toFixed(1)}s`, color: '#78e7ff' });
   }
   if (activePowerUps.length > 0) {
     ctx.font = 'bold 10px "Inter", sans-serif';
@@ -123,8 +124,8 @@ export function drawHUD(ctx, game) {
     ctx.font = 'bold 11px "Inter", sans-serif';
     ctx.fillText(
       player.level < ULTIMATE.unlockLevel
-        ? `Definitiva al Nv. ${ULTIMATE.unlockLevel}`
-        : 'Elige definitiva',
+        ? `${t('Definitiva al Nv.')} ${ULTIMATE.unlockLevel}`
+        : t('Elige definitiva'),
       ultX,
       ultY + 16
     );
@@ -180,9 +181,9 @@ export function drawEnemyAnnouncement(ctx, game) {
   ctx.shadowColor = '#120a10';
   ctx.shadowBlur = 3;
   ctx.font = 'bold 11px "Inter", sans-serif';
-  ctx.fillText('HAN EMERGIDO LOS', x + width / 2 + 22, y + 19);
+  ctx.fillText(t('HAN EMERGIDO LOS'), x + width / 2 + 22, y + 19, width - 80);
   ctx.font = 'bold 21px "Cinzel", serif';
-  ctx.fillText(type.plural.toLocaleUpperCase('es'), x + width / 2 + 22, y + 42);
+  ctx.fillText(t(type.plural).toLocaleUpperCase(getLanguage()), x + width / 2 + 22, y + 42);
   ctx.restore();
 }
 
@@ -204,8 +205,8 @@ function drawMysteryAnnouncement(ctx, canvas, age) {
   ctx.font = 'bold 40px "Inter", sans-serif';
   ctx.fillText('?', x + 36, y + 32);
   ctx.font = 'bold 17px "Inter", sans-serif';
-  ctx.fillText('Han aparecido beneficios', x + width / 2 + 26, y + 21, width - 90);
-  ctx.fillText('misteriosos en el mapa', x + width / 2 + 26, y + 43, width - 90);
+  ctx.fillText(t('Han aparecido beneficios'), x + width / 2 + 26, y + 21, width - 90);
+  ctx.fillText(t('misteriosos en el mapa'), x + width / 2 + 26, y + 43, width - 90);
   ctx.restore();
 }
 

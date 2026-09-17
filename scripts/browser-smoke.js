@@ -155,6 +155,43 @@ async function run() {
       throw new Error(`Invalid initial state: ${JSON.stringify(initialState)}`);
     }
 
+    const optionsWorked = await client.evaluate(`(() => {
+      document.getElementById('btn-options').click();
+      if (document.getElementById('screen-options').classList.contains('hidden')) return false;
+      const language = document.getElementById('language-select');
+      language.value = 'es';
+      language.dispatchEvent(new Event('change'));
+      if (document.getElementById('btn-start').textContent !== 'Empezar' || document.documentElement.lang !== 'es') return false;
+      language.value = 'en';
+      language.dispatchEvent(new Event('change'));
+      if (document.getElementById('btn-start').textContent !== 'Play' || localStorage.getItem('vs_clone_language') !== 'en') return false;
+      for (const next of ['es', 'en', 'es', 'en']) {
+        language.value = next;
+        language.dispatchEvent(new Event('change'));
+      }
+      const expected = {
+        '#screen-menu .subtitle': 'Survive the endless horde. Level up. Never look back.',
+        '#btn-options': 'Options', '#screen-levelup .section-title': 'Level up!',
+        '#screen-levelup .subtitle': 'Choose an upgrade', '#screen-options .section-title': 'Options',
+        'label[for="language-select"]': 'Language', '#language-select option[value="es"]': 'Spanish',
+        '#sound-control label span': 'Sound:', '#btn-options-back': 'Back',
+        '#screen-pause .section-title': 'Pause', '#btn-resume': 'Resume',
+        '#btn-pause-options': 'Options', '#btn-restart-pause': 'Restart',
+        '#screen-gameover .section-title': 'Game over', '#btn-restart-gameover': 'Try again',
+      };
+      for (const [selector, text] of Object.entries(expected)) {
+        const actual = document.querySelector(selector).textContent;
+        if (actual !== text) throw new Error(selector + ': ' + actual);
+      }
+      const hints = document.querySelector('.controls-hint').textContent;
+      if (!hints.includes('Movement:') || !hints.includes('Space or Shift')
+        || !hints.includes('unlocks at level 5') || !hints.includes('Pause: Esc or P')) return false;
+      if (document.getElementById('sound-volume').getAttribute('aria-label') !== 'Sound volume') return false;
+      document.getElementById('btn-options-back').click();
+      return !document.getElementById('screen-menu').classList.contains('hidden');
+    })()`);
+    if (!optionsWorked) throw new Error('Options navigation or language switching failed');
+
     const started = await client.evaluate(`(() => {
       document.getElementById('btn-start').click();
       return document.getElementById('screen-menu').classList.contains('hidden');
@@ -240,6 +277,15 @@ async function run() {
       return !document.getElementById('screen-pause').classList.contains('hidden');
     })()`);
     if (!paused) throw new Error('Pause button did not open the pause screen');
+    const pauseOptionsWorked = await client.evaluate(`(async () => {
+      const { getGameInstance } = await import('./js/main.js');
+      document.getElementById('btn-pause-options').click();
+      const visible = !document.getElementById('screen-options').classList.contains('hidden');
+      document.getElementById('btn-options-back').click();
+      return visible && getGameInstance().state === 'paused'
+        && !document.getElementById('screen-pause').classList.contains('hidden');
+    })()`);
+    if (!pauseOptionsWorked) throw new Error('Options did not return to pause');
 
     const resumed = await client.evaluate(`(() => {
       document.getElementById('btn-resume').click();
@@ -407,6 +453,27 @@ async function run() {
     if (simulationActivity.survivalTime < 1 || simulationActivity.activity < 1) {
       throw new Error(`Simulation did not advance correctly: ${JSON.stringify(simulationActivity)}`);
     }
+
+    await client.evaluate(`(() => {
+      const language = document.getElementById('language-select');
+      language.value = 'es';
+      language.dispatchEvent(new Event('change'));
+      const volume = document.getElementById('sound-volume');
+      volume.value = '42';
+      volume.dispatchEvent(new Event('input'));
+    })()`);
+    await client.send('Page.reload');
+    await delay(200);
+    let preferencesRestored = false;
+    for (let attempt = 0; attempt < 100; attempt++) {
+      preferencesRestored = await client.evaluate(`document.getElementById('game-canvas')?.dataset.ready === 'true'
+        && document.documentElement.lang === 'es'
+        && document.getElementById('btn-start').textContent === 'Empezar'
+        && document.getElementById('sound-volume').value === '42'`);
+      if (preferencesRestored) break;
+      await delay(100);
+    }
+    if (!preferencesRestored) throw new Error('Language and volume were not restored after reload');
 
     if (client.runtimeErrors.length > 0) {
       throw new Error(`Browser runtime errors:\n${client.runtimeErrors.join('\n')}`);

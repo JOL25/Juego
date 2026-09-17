@@ -144,6 +144,10 @@ html, body {
 
 #screen-menu .panel-pixel { --menu-accent: #e8b13a; --menu-edge: #71502e; }
 #screen-pause .panel-pixel { --menu-accent: #7ec6e0; --menu-edge: #36586b; }
+#screen-options .panel-pixel { --menu-accent: #7ec6e0; --menu-edge: #36586b; }
+.language-control { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+#language-select { padding: 12px; font: bold 15px 'Courier New', monospace; color: #f4ece0; background: #201927; border: 2px solid #36586b; border-radius: 0; }
+#language-select:focus-visible { outline: 2px solid #7ec6e0; outline-offset: 2px; }
 #screen-levelup .panel-pixel { --menu-accent: #b89bcc; --menu-edge: #574369; }
 
 .panel-pixel::before {
@@ -170,7 +174,7 @@ html, body {
   color: #cbbfcf;
 }
 
-#screen-levelup, #screen-menu, #screen-pause {
+#screen-levelup, #screen-menu, #screen-pause, #screen-options {
   backdrop-filter: none;
   background: repeating-linear-gradient(0deg, #000000b8 0 2px, #15101fcc 2px 4px);
 }
@@ -489,22 +493,23 @@ html, body {
 
   <div id="game-wrap">
     <canvas id="game-canvas"></canvas>
-    <button type="button" id="btn-fullscreen" class="icon-button" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
+    <button type="button" id="btn-fullscreen" class="icon-button" data-i18n-aria-label="Pantalla completa" data-i18n-title="Pantalla completa" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
 
     <!-- Touch pause button (visible always during play, styled via CSS) -->
-    <button id="btn-pause-touch" class="icon-button" aria-label="Pausar">⏸</button>
+    <button id="btn-pause-touch" class="icon-button" data-i18n-aria-label="Pausar" aria-label="Pausar">⏸</button>
 
     <!-- MAIN MENU -->
     <div id="screen-menu" class="screen">
       <div class="panel panel-menu panel-pixel">
         <h1 class="game-title">Circle vs Geometry</h1>
-        <p class="subtitle">Sobrevive a la horda interminable. Sube de nivel. No mires atrás.</p>
-        <button id="btn-start" class="btn-primary">Empezar</button>
+        <p class="subtitle" data-i18n="Sobrevive a la horda interminable. Sube de nivel. No mires atrás.">Sobrevive a la horda interminable. Sube de nivel. No mires atrás.</p>
+        <button id="btn-start" class="btn-primary" data-i18n="Empezar">Empezar</button>
+        <button id="btn-options" class="btn-secondary" data-i18n="Opciones">Opciones</button>
         <div class="controls-hint">
-          <strong>Movimiento:</strong> WASD / Flechas / Joystick táctil<br/>
-          <strong>Dash:</strong> Espacio o Shift<br/>
-          <strong>Definitiva:</strong> Q, E o R (se desbloquea al nivel 5)<br/>
-          <strong>Pausa:</strong> Esc o P
+          <strong data-i18n="Movimiento:">Movimiento:</strong> <span data-i18n="WASD / Flechas / Joystick táctil">WASD / Flechas / Joystick táctil</span><br/>
+          <strong>Dash:</strong> <span data-i18n="Espacio o Shift">Espacio o Shift</span><br/>
+          <strong data-i18n="Definitiva:">Definitiva:</strong> <span data-i18n="Q, E o R (se desbloquea al nivel 5)">Q, E o R (se desbloquea al nivel 5)</span><br/>
+          <strong data-i18n="Pausa:">Pausa:</strong> <span data-i18n="Esc o P">Esc o P</span>
         </div>
       </div>
     </div>
@@ -512,31 +517,46 @@ html, body {
     <!-- LEVEL UP -->
     <div id="screen-levelup" class="screen hidden">
       <div class="panel panel-levelup panel-pixel">
-        <h2 class="section-title">¡Subiste de nivel!</h2>
-        <p class="subtitle">Elige una mejora</p>
+        <h2 class="section-title" data-i18n="¡Subiste de nivel!">¡Subiste de nivel!</h2>
+        <p class="subtitle" data-i18n="Elige una mejora">Elige una mejora</p>
         <div id="levelup-options" class="levelup-grid"></div>
+      </div>
+    </div>
+
+    <div id="screen-options" class="screen hidden">
+      <div class="panel panel-pixel">
+        <h2 class="section-title" data-i18n="Opciones">Opciones</h2>
+        <div class="language-control">
+          <label for="language-select" data-i18n="Idioma">Idioma</label>
+          <select id="language-select">
+            <option value="en" data-i18n="English">English</option>
+            <option value="es" data-i18n="Español">Español</option>
+          </select>
+        </div>
+        <div id="sound-control">
+          <label for="sound-volume"><span data-i18n="Sonido:">Sonido:</span> <output id="sound-percent" for="sound-volume">100%</output></label>
+          <input id="sound-volume" type="range" min="0" max="100" step="1" value="100" aria-label="Volumen del sonido" data-i18n-aria-label="Volumen del sonido" />
+        </div>
+        <button id="btn-options-back" class="btn-primary" data-i18n="Volver">Volver</button>
       </div>
     </div>
 
     <!-- PAUSE -->
     <div id="screen-pause" class="screen hidden">
       <div class="panel panel-pixel">
-        <h2 class="section-title">Pausa</h2>
-        <div id="sound-control">
-          <label for="sound-volume">Sonido: <output id="sound-percent" for="sound-volume">100%</output></label>
-          <input id="sound-volume" type="range" min="0" max="100" step="1" value="100" aria-label="Volumen del sonido" />
-        </div>
-        <button id="btn-resume" class="btn-primary">Continuar</button>
-        <button id="btn-restart-pause" class="btn-secondary">Reiniciar</button>
+        <h2 class="section-title" data-i18n="Pausa">Pausa</h2>
+        <button id="btn-resume" class="btn-primary" data-i18n="Continuar">Continuar</button>
+        <button id="btn-pause-options" class="btn-secondary" data-i18n="Opciones">Opciones</button>
+        <button id="btn-restart-pause" class="btn-secondary" data-i18n="Reiniciar">Reiniciar</button>
       </div>
     </div>
 
     <!-- GAME OVER -->
     <div id="screen-gameover" class="screen hidden">
       <div class="panel">
-        <h2 class="section-title danger">Has caído</h2>
+        <h2 class="section-title danger" data-i18n="Has caído">Has caído</h2>
         <div id="gameover-stats" class="gameover-stats"></div>
-        <button id="btn-restart-gameover" class="btn-primary">Volver a intentar</button>
+        <button id="btn-restart-gameover" class="btn-primary" data-i18n="Volver a intentar">Volver a intentar</button>
       </div>
     </div>
 
@@ -741,9 +761,9 @@ var CircleVsGeometry = (() => {
     const aby = by - ay;
     const lenSq = abx * abx + aby * aby;
     if (lenSq === 0) return distance(px, py, ax, ay);
-    let t = ((px - ax) * abx + (py - ay) * aby) / lenSq;
-    t = clamp(t, 0, 1);
-    return distance(px, py, ax + abx * t, ay + aby * t);
+    let t2 = ((px - ax) * abx + (py - ay) * aby) / lenSq;
+    t2 = clamp(t2, 0, 1);
+    return distance(px, py, ax + abx * t2, ay + aby * t2);
   }
   function pickWeightedUnique(items, count) {
     const pool = items.slice();
@@ -1750,18 +1770,18 @@ var CircleVsGeometry = (() => {
       if (this.announcement && this.announcement !== previous) this.onAnnouncement(this.announcement);
     }
     _currentInterval(elapsedSec) {
-      const t = clamp(elapsedSec / DIFFICULTY.spawnRampDuration, 0, 1);
-      return DIFFICULTY.spawnIntervalStart + (DIFFICULTY.spawnIntervalMin - DIFFICULTY.spawnIntervalStart) * t;
+      const t2 = clamp(elapsedSec / DIFFICULTY.spawnRampDuration, 0, 1);
+      return DIFFICULTY.spawnIntervalStart + (DIFFICULTY.spawnIntervalMin - DIFFICULTY.spawnIntervalStart) * t2;
     }
     _currentBatchSize(elapsedSec) {
-      const t = clamp(elapsedSec / DIFFICULTY.spawnRampDuration, 0, 1);
+      const t2 = clamp(elapsedSec / DIFFICULTY.spawnRampDuration, 0, 1);
       return Math.round(
-        DIFFICULTY.enemiesPerTickStart + (DIFFICULTY.enemiesPerTickMax - DIFFICULTY.enemiesPerTickStart) * t
+        DIFFICULTY.enemiesPerTickStart + (DIFFICULTY.enemiesPerTickMax - DIFFICULTY.enemiesPerTickStart) * t2
       );
     }
     _availableTypes(elapsedSec) {
       const minute = elapsedSec / 60;
-      return Object.values(ENEMY_TYPES).filter((t) => minute >= t.minMinute);
+      return Object.values(ENEMY_TYPES).filter((t2) => minute >= t2.minMinute);
     }
     /**
      * @param dt seconds since last frame
@@ -1883,43 +1903,180 @@ var CircleVsGeometry = (() => {
     }
   };
 
+  // js/ui/i18n.js
+  var EN = {
+    "Sobrevive a la horda interminable. Sube de nivel. No mires atrás.": "Survive the endless horde. Level up. Never look back.",
+    "Empezar": "Play",
+    "Opciones": "Options",
+    "Idioma": "Language",
+    "Volver": "Back",
+    "Movimiento:": "Movement:",
+    "WASD / Flechas / Joystick táctil": "WASD / Arrow keys / Touch joystick",
+    "Espacio o Shift": "Space or Shift",
+    "Definitiva:": "Ultimate:",
+    "Q, E o R (se desbloquea al nivel 5)": "Q, E or R (unlocks at level 5)",
+    "Esc o P": "Esc or P",
+    "Pausa:": "Pause:",
+    "Pausa": "Pause",
+    "Pausar": "Pause",
+    "Español": "Spanish",
+    "¡Subiste de nivel!": "Level up!",
+    "Elige una mejora": "Choose an upgrade",
+    "Sonido:": "Sound:",
+    "Volumen del sonido": "Sound volume",
+    "Continuar": "Resume",
+    "Reiniciar": "Restart",
+    "Has caído": "Game over",
+    "Volver a intentar": "Try again",
+    "Salir de pantalla completa": "Exit fullscreen",
+    "Pantalla completa": "Fullscreen",
+    "No se pudo activar. Puedes usar F11 en el navegador.": "Could not enter fullscreen. You can use F11 in your browser.",
+    "Súper disparo perforante": "Super Pierce Shot",
+    "Onda explosiva grande": "Explosive Wave",
+    "Láser orbital": "Orbit Laser",
+    "Rayo perforante": "Pierce Ray",
+    "Misil": "Missile",
+    "Poción curativa": "Healing Potion",
+    "Recupera 30 de vida": "Restore 30 health",
+    "Vida máxima:": "Max health:",
+    "Velocidad:": "Speed:",
+    "Armadura:": "Armor:",
+    "Rango de recogida:": "Pickup range:",
+    "Vida al matar:": "Health on kill:",
+    "Daño:": "Damage:",
+    "Recarga:": "Cooldown:",
+    "Más alcance": "Longer reach",
+    "Daña a enemigos cercanos": "Damages nearby enemies",
+    "Mayor ralentización": "Stronger slow",
+    "Ralentiza enemigos": "Slows enemies",
+    "Ataque cercano": "Close-range attack",
+    "Empuja enemigos": "Knocks enemies back",
+    "Ambos lados": "Both sides",
+    "Proyectiles:": "Projectiles:",
+    "Perforación:": "Pierce:",
+    "Atraviesa enemigos": "Pierces enemies",
+    "Rayo más ancho": "Wider beam",
+    "Ataque en línea": "Line attack",
+    "Misiles:": "Missiles:",
+    "Explosión más grande": "Larger explosion",
+    "Explota al impactar": "Explodes on impact",
+    "Perforación total": "Unlimited piercing",
+    "Onda más grande": "Larger shockwave",
+    "Daña a tu alrededor": "Damages surrounding enemies",
+    "Haces:": "Beams:",
+    "Gira a tu alrededor": "Rotates around you",
+    "Láser más grueso": "Thicker laser",
+    "Duración:": "Duration:",
+    "Activar:": "Activate:",
+    "Cargas:": "Charges:",
+    "+1 carga": "+1 charge",
+    "Definitiva al Nv.": "Ultimate at Lv.",
+    "Elige definitiva": "Choose an ultimate",
+    "Definitiva": "Ultimate",
+    "Pasiva": "Passive",
+    "Curación": "Healing",
+    "Arma": "Weapon",
+    "ELEGIR": "CHOOSE",
+    "Nv.": "Lv.",
+    "IMAN": "MAGNET",
+    "HIELO": "FREEZE",
+    "HAN EMERGIDO LOS": "NEW ENEMIES HAVE EMERGED",
+    "Triángulos": "Triangles",
+    "Cuadrados": "Squares",
+    "Rombos": "Diamonds",
+    "Pentágonos": "Pentagons",
+    "Hexágonos": "Hexagons",
+    "Han aparecido beneficios": "Mysterious power-ups",
+    "misteriosos en el mapa": "have appeared on the map"
+  };
+  var ES = {
+    "English": "Inglés",
+    "New best time!": "¡Nuevo récord!",
+    "Survived": "Tiempo sobrevivido",
+    "Level reached": "Nivel alcanzado",
+    "Enemies slain": "Enemigos derrotados",
+    "Magic Wand": "Varita mágica",
+    "Garlic Aura": "Aura de ajo",
+    "Whip": "Látigo",
+    "Ancient Tome": "Tomo antiguo",
+    "Swift Boots": "Botas veloces",
+    "Bone Armor": "Armadura de hueso",
+    "Pull Amulet": "Amuleto de atracción",
+    "Vampire's Kiss": "Beso vampírico"
+  };
+  var language = "en";
+  try {
+    const saved = localStorage.getItem("vs_clone_language");
+    if (saved === "es" || saved === "en") language = saved;
+  } catch {
+  }
+  function getLanguage() {
+    return language;
+  }
+  function setLanguage(value) {
+    if (!["es", "en"].includes(value)) return;
+    language = value;
+    try {
+      localStorage.setItem("vs_clone_language", value);
+    } catch {
+    }
+  }
+  function t(text) {
+    const dictionary = language === "en" ? EN : ES;
+    return dictionary[text] ?? text;
+  }
+  function bindStaticTranslations(root = document.body) {
+    return () => {
+      document.documentElement.lang = language;
+      for (const element of root.querySelectorAll("[data-i18n]")) {
+        element.textContent = t(element.dataset.i18n);
+      }
+      for (const attribute of ["aria-label", "title"]) {
+        for (const element of root.querySelectorAll(`[data-i18n-${attribute}]`)) {
+          element.setAttribute(attribute, t(element.getAttribute(`data-i18n-${attribute}`)));
+        }
+      }
+    };
+  }
+
   // js/ui/upgradeDescription.js
   function upgradeDescription(item, stats = item.stats) {
-    const damage = `Daño: ${stats.damage}`;
-    const cooldown = `Recarga: ${stats.cooldownMs / 1e3} s`;
-    const improvement = (field, increased, base) => stats[field] > item.stats[field] ? increased : base;
+    const damage = `${t("Daño:")} ${stats.damage}`;
+    const cooldown = `${t("Recarga:")} ${stats.cooldownMs / 1e3} s`;
+    const improvement = (field, increased, base) => t(stats[field] > item.stats[field] ? increased : base);
     switch (item.id) {
       case "garlic":
         return `${damage}
 ${improvement("radius", "Más alcance", "Daña a enemigos cercanos")}
 ${improvement("slowPercent", "Mayor ralentización", "Ralentiza enemigos")}`;
       case "whip":
-        return `${damage} · ${improvement("range", "Más alcance", "Ataque cercano")}${stats.knockbackCm > 0 ? "\nEmpuja enemigos" : ""}${stats.bothSides ? " · Ambos lados" : ""}
+        return `${damage} · ${improvement("range", "Más alcance", "Ataque cercano")}${stats.knockbackCm > 0 ? `
+${t("Empuja enemigos")}` : ""}${stats.bothSides ? ` · ${t("Ambos lados")}` : ""}
 ${cooldown}`;
       case "magic_wand":
         return `${damage}
-Proyectiles: ${stats.count} · Perforación: ${stats.pierce}
+${t("Proyectiles:")} ${stats.count} · ${t("Perforación:")} ${stats.pierce}
 ${cooldown}`;
       case "pierce_ray":
         return `${damage}
 ${improvement("length", "Más alcance", "Atraviesa enemigos")} · ${improvement("width", "Rayo más ancho", "Ataque en línea")}
 ${cooldown}`;
       case "missile":
-        return `${damage} · Misiles: ${stats.count}
+        return `${damage} · ${t("Misiles:")} ${stats.count}
 ${improvement("explodeRadius", "Explosión más grande", "Explota al impactar")}
 ${cooldown}`;
       case "ult_pierce_shot":
         return `${damage}
-Proyectiles: ${stats.count} · Perforación total
+${t("Proyectiles:")} ${stats.count} · ${t("Perforación total")}
 ${cooldown}`;
       case "ult_wave":
         return `${damage}
 ${improvement("maxRadius", "Onda más grande", "Daña a tu alrededor")}
 ${cooldown}`;
       case "ult_orbit_laser":
-        return `${damage} · Haces: ${stats.beams}
-${improvement("length", "Más alcance", "Gira a tu alrededor")}${stats.width > item.stats.width ? " · Láser más grueso" : ""}
-Duración: ${stats.durationMs / 1e3} s · ${cooldown}`;
+        return `${damage} · ${t("Haces:")} ${stats.beams}
+${improvement("length", "Más alcance", "Gira a tu alrededor")}${stats.width > item.stats.width ? ` · ${t("Láser más grueso")}` : ""}
+${t("Duración:")} ${stats.durationMs / 1e3} s · ${cooldown}`;
       default:
         return `${damage}
 ${cooldown}`;
@@ -2191,7 +2348,7 @@ ${cooldown}`;
       name: "Ancient Tome",
       icon: "📖",
       maxLevel: 5,
-      description: (lvl) => `Vida máxima: +${lvl * 10}%`,
+      description: (lvl) => `${t("Vida máxima:")} +${lvl * 10}%`,
       apply(player, level) {
         const bonus = 1 + level * 0.1;
         player.maxHp = Math.round(player._baseMaxHp * bonus);
@@ -2204,7 +2361,7 @@ ${cooldown}`;
       name: "Swift Boots",
       icon: "🥾",
       maxLevel: 5,
-      description: (lvl) => `Velocidad: +${lvl * 8}%`,
+      description: (lvl) => `${t("Velocidad:")} +${lvl * 8}%`,
       apply(player, level) {
         player.speed = player._baseSpeed * (1 + level * 0.08);
       }
@@ -2214,7 +2371,7 @@ ${cooldown}`;
       name: "Bone Armor",
       icon: "🛡️",
       maxLevel: 5,
-      description: (lvl) => `Armadura: +${lvl * 2}`,
+      description: (lvl) => `${t("Armadura:")} +${lvl * 2}`,
       apply(player, level) {
         player.armor = player._baseArmor + level * 2;
       }
@@ -2224,7 +2381,7 @@ ${cooldown}`;
       name: "Pull Amulet",
       icon: "🧲",
       maxLevel: 5,
-      description: (lvl) => `Rango de recogida: +${lvl * 25}%`,
+      description: (lvl) => `${t("Rango de recogida:")} +${lvl * 25}%`,
       apply(player, level) {
         player.magnetRadius = player._baseMagnetRadius * (1 + level * 0.25);
       }
@@ -2234,8 +2391,8 @@ ${cooldown}`;
       name: "Vampire's Kiss",
       icon: "❤️",
       maxLevel: 3,
-      description: (lvl) => `Vida al matar: +${VAMPIRE_KISS.healingByLevel[lvl - 1]}
-Recarga: ${VAMPIRE_KISS.cooldownMs / 1e3} s`,
+      description: (lvl) => `${t("Vida al matar:")} +${VAMPIRE_KISS.healingByLevel[lvl - 1]}
+${t("Recarga:")} ${VAMPIRE_KISS.cooldownMs / 1e3} s`,
       apply(player, level) {
         player.healOnKill = VAMPIRE_KISS.healingByLevel[level - 1];
       }
@@ -2414,8 +2571,8 @@ Recarga: ${VAMPIRE_KISS.cooldownMs / 1e3} s`,
       const s = this.stats;
       this.age += dt * 1e3;
       this.angle += s.turnRate * dt;
-      for (const [uid, t] of this.hitCd) {
-        const next = t - dt * 1e3;
+      for (const [uid, t2] of this.hitCd) {
+        const next = t2 - dt * 1e3;
         if (next <= 0) this.hitCd.delete(uid);
         else this.hitCd.set(uid, next);
       }
@@ -2450,8 +2607,8 @@ Recarga: ${VAMPIRE_KISS.cooldownMs / 1e3} s`,
       if (!this.active) return;
       const s = this.stats;
       const origin = camera.worldToScreen(player.x, player.y);
-      const t = this.age / s.durationMs;
-      const alpha = 0.85 * (1 - t * 0.25);
+      const t2 = this.age / s.durationMs;
+      const alpha = 0.85 * (1 - t2 * 0.25);
       for (let b = 0; b < s.beams; b++) {
         const ang = this.angle + b * Math.PI * 2 / beamsSafe(s.beams);
         const end = camera.worldToScreen(
@@ -2542,10 +2699,10 @@ Recarga: ${VAMPIRE_KISS.cooldownMs / 1e3} s`,
           kind: "ultimate-new",
           id: ult.id,
           icon: ult.icon,
-          title: ult.name,
+          title: t(ult.name),
           description: `${upgradeDescription(ult)}
-Activar: Q / E / R`,
-          tag: "Definitiva"
+${t("Activar:")} Q / E / R`,
+          tag: t("Definitiva")
         }));
       }
       const candidates = [];
@@ -2557,7 +2714,7 @@ Activar: Q / E / R`,
             weight: LEVEL_UP_WEIGHTS["weapon-upgrade"],
             weapon,
             icon: weapon.icon,
-            title: `${weapon.name} → Lv.${weapon.level + 1}`,
+            title: `${t(weapon.name)} → Lv.${weapon.level + 1}`,
             description: upgradeDescription(weapon, weapon.levels[weapon.level])
           });
         }
@@ -2571,7 +2728,7 @@ Activar: Q / E / R`,
               weight: LEVEL_UP_WEIGHTS["weapon-new"],
               id,
               icon: weapon.icon,
-              title: weapon.name,
+              title: t(weapon.name),
               description: upgradeDescription(weapon)
             });
           }
@@ -2587,7 +2744,7 @@ Activar: Q / E / R`,
             instance: passive,
             def,
             icon: def.icon,
-            title: `${def.name} → Lv.${passive.level + 1}`,
+            title: `${t(def.name)} → Lv.${passive.level + 1}`,
             description: def.description(passive.level + 1)
           });
         }
@@ -2600,7 +2757,7 @@ Activar: Q / E / R`,
               weight: LEVEL_UP_WEIGHTS["passive-new"],
               def,
               icon: def.icon,
-              title: def.name,
+              title: t(def.name),
               description: def.description(1)
             });
           }
@@ -2611,9 +2768,9 @@ Activar: Q / E / R`,
           kind: "dash-upgrade",
           weight: LEVEL_UP_WEIGHTS["dash-upgrade"],
           icon: "💨",
-          title: `Dash → Nv. ${player.dashLevel + 1}/${DASH.maxLevel}`,
-          description: `Cargas: ${player.dashMaxCharges + 1}
-+1 carga · Más alcance`,
+          title: `Dash → ${t("Nv.")} ${player.dashLevel + 1}/${DASH.maxLevel}`,
+          description: `${t("Cargas:")} ${player.dashMaxCharges + 1}
+${t("+1 carga")} · ${t("Más alcance")}`,
           tag: "Dash"
         });
       }
@@ -2623,17 +2780,17 @@ Activar: Q / E / R`,
           id: player.ultimate.id,
           weight: LEVEL_UP_WEIGHTS["ultimate-upgrade"],
           icon: player.ultimate.icon,
-          title: `${player.ultimate.name} → Lv.${player.ultimate.level + 1}`,
+          title: `${t(player.ultimate.name)} → Lv.${player.ultimate.level + 1}`,
           description: upgradeDescription(player.ultimate, player.ultimate.levels[player.ultimate.level]),
-          tag: "Definitiva"
+          tag: t("Definitiva")
         });
       }
       if (candidates.length === 0) {
         return [{
           kind: "heal",
           icon: "🍷",
-          title: "Poción curativa",
-          description: "Recupera 30 de vida"
+          title: t("Poción curativa"),
+          description: t("Recupera 30 de vida")
         }];
       }
       return this.selectOptions(candidates, 3);
@@ -3029,14 +3186,14 @@ Activar: Q / E / R`,
         let noise = 0;
         const offset = Math.floor(start * rate);
         for (let i = 0; i < Math.floor(length * rate) && offset + i < data.length; i++) {
-          const t = i / rate;
-          const progress = t / length;
+          const t2 = i / rate;
+          const progress = t2 / length;
           const frequency = from * Math.pow(to / from, Math.floor(progress * 12) / 12);
           phase += frequency / rate;
           if (i % 6 === 0) noise = Math.random() * 2 - 1;
           const square = phase % 1 < 0.5 ? 1 : -1;
           const wave = type === "noise" ? square * 0.5 + noise * 0.5 : square;
-          const envelope = Math.min(1, t / 3e-3) * Math.pow(1 - progress, 1.5);
+          const envelope = Math.min(1, t2 / 3e-3) * Math.pow(1 - progress, 1.5);
           data[offset + i] += wave * volume * envelope;
         }
       }
@@ -3209,6 +3366,7 @@ Activar: Q / E / R`,
     constructor() {
       this.screens = {
         menu: document.getElementById("screen-menu"),
+        options: document.getElementById("screen-options"),
         levelup: document.getElementById("screen-levelup"),
         pause: document.getElementById("screen-pause"),
         gameover: document.getElementById("screen-gameover")
@@ -3234,6 +3392,10 @@ Activar: Q / E / R`,
       this.hideAll();
       this.screens.pause.classList.remove("hidden");
     }
+    showOptions() {
+      this.hideAll();
+      this.screens.options.classList.remove("hidden");
+    }
     /**
      * @param options array of { title, icon, description, onPick }
      */
@@ -3251,11 +3413,11 @@ Activar: Q / E / R`,
         card.style.setProperty("--card-edge", palette[2]);
         const categoryLabel = { ultimate: "Definitiva", passive: "Pasiva", dash: "Dash", heal: "Curación", weapon: "Arma" }[category];
         card.innerHTML = `
-        <div class="levelup-tag">${categoryLabel}</div>
+        <div class="levelup-tag">${t(categoryLabel)}</div>
         <div class="levelup-icon-frame"></div>
         <div class="levelup-title">${opt.title}</div>
         <div class="levelup-desc">${opt.description}</div>
-        <div class="levelup-select" aria-hidden="true">ELEGIR <span>→</span></div>
+        <div class="levelup-select" aria-hidden="true">${t("ELEGIR")} <span>→</span></div>
       `;
         card.querySelector(".levelup-icon-frame").appendChild(createUpgradeIcon(opt));
         card.addEventListener("click", async () => {
@@ -3294,10 +3456,10 @@ Activar: Q / E / R`,
       const mins = Math.floor(time / 60);
       const secs = Math.floor(time % 60).toString().padStart(2, "0");
       this.gameoverStatsEl.innerHTML = `
-      ${isHighScore ? '<div class="new-best">New best time!</div>' : ""}
-      <div class="stat-row"><span>Survived</span><strong>${mins}:${secs}</strong></div>
-      <div class="stat-row"><span>Level reached</span><strong>${level}</strong></div>
-      <div class="stat-row"><span>Enemies slain</span><strong>${kills}</strong></div>
+      ${isHighScore ? `<div class="new-best">${t("New best time!")}</div>` : ""}
+      <div class="stat-row"><span>${t("Survived")}</span><strong>${mins}:${secs}</strong></div>
+      <div class="stat-row"><span>${t("Level reached")}</span><strong>${level}</strong></div>
+      <div class="stat-row"><span>${t("Enemies slain")}</span><strong>${kills}</strong></div>
     `;
     }
   };
@@ -3343,10 +3505,10 @@ Activar: Q / E / R`,
     ctx.fillText(formatTime(player.survivalTime), w / 2, 33);
     const activePowerUps = [];
     if (game.megaMagnetTimer > 0) {
-      activePowerUps.push({ label: `IMAN ${game.megaMagnetTimer.toFixed(1)}s`, color: "#d69cff" });
+      activePowerUps.push({ label: `${t("IMAN")} ${game.megaMagnetTimer.toFixed(1)}s`, color: "#d69cff" });
     }
     if (game.enemyFreezeTimer > 0) {
-      activePowerUps.push({ label: `HIELO ${game.enemyFreezeTimer.toFixed(1)}s`, color: "#78e7ff" });
+      activePowerUps.push({ label: `${t("HIELO")} ${game.enemyFreezeTimer.toFixed(1)}s`, color: "#78e7ff" });
     }
     if (activePowerUps.length > 0) {
       ctx.font = 'bold 10px "Inter", sans-serif';
@@ -3399,7 +3561,7 @@ Activar: Q / E / R`,
       ctx.fillStyle = "rgba(244,236,224,0.5)";
       ctx.font = 'bold 11px "Inter", sans-serif';
       ctx.fillText(
-        player.level < ULTIMATE.unlockLevel ? `Definitiva al Nv. ${ULTIMATE.unlockLevel}` : "Elige definitiva",
+        player.level < ULTIMATE.unlockLevel ? `${t("Definitiva al Nv.")} ${ULTIMATE.unlockLevel}` : t("Elige definitiva"),
         ultX,
         ultY + 16
       );
@@ -3452,9 +3614,9 @@ Activar: Q / E / R`,
     ctx.shadowColor = "#120a10";
     ctx.shadowBlur = 3;
     ctx.font = 'bold 11px "Inter", sans-serif';
-    ctx.fillText("HAN EMERGIDO LOS", x + width / 2 + 22, y + 19);
+    ctx.fillText(t("HAN EMERGIDO LOS"), x + width / 2 + 22, y + 19, width - 80);
     ctx.font = 'bold 21px "Cinzel", serif';
-    ctx.fillText(type.plural.toLocaleUpperCase("es"), x + width / 2 + 22, y + 42);
+    ctx.fillText(t(type.plural).toLocaleUpperCase(getLanguage()), x + width / 2 + 22, y + 42);
     ctx.restore();
   }
   function drawMysteryAnnouncement(ctx, canvas, age) {
@@ -3475,8 +3637,8 @@ Activar: Q / E / R`,
     ctx.font = 'bold 40px "Inter", sans-serif';
     ctx.fillText("?", x + 36, y + 32);
     ctx.font = 'bold 17px "Inter", sans-serif';
-    ctx.fillText("Han aparecido beneficios", x + width / 2 + 26, y + 21, width - 90);
-    ctx.fillText("misteriosos en el mapa", x + width / 2 + 26, y + 43, width - 90);
+    ctx.fillText(t("Han aparecido beneficios"), x + width / 2 + 26, y + 21, width - 90);
+    ctx.fillText(t("misteriosos en el mapa"), x + width / 2 + 26, y + 43, width - 90);
     ctx.restore();
   }
   function drawUltimateReadyIcon(ctx, player, screenX, screenY, infinityRemaining = 0) {
@@ -4053,6 +4215,8 @@ Activar: Q / E / R`,
     return gameInstance;
   }
   window.addEventListener("DOMContentLoaded", () => {
+    const translateStatic = bindStaticTranslations();
+    translateStatic();
     const canvas = document.getElementById("game-canvas");
     const game = new Game(canvas);
     gameInstance = game;
@@ -4068,11 +4232,11 @@ Activar: Q / E / R`,
         if (document.fullscreenElement) await document.exitFullscreen();
         else await wrap.requestFullscreen();
       } catch {
-        fullscreenButton.title = "No se pudo activar. Puedes usar F11 en el navegador.";
+        fullscreenButton.title = t("No se pudo activar. Puedes usar F11 en el navegador.");
       }
     });
     document.addEventListener("fullscreenchange", () => {
-      const label = document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa";
+      const label = t(document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa");
       fullscreenButton.setAttribute("aria-label", label);
       fullscreenButton.title = label;
       resize();
@@ -4087,6 +4251,25 @@ Activar: Q / E / R`,
       soundVolume.setAttribute("aria-valuetext", `${percent}%`);
     };
     updateSoundVolume();
+    const languageSelect = document.getElementById("language-select");
+    languageSelect.value = getLanguage();
+    languageSelect.addEventListener("change", () => {
+      setLanguage(languageSelect.value);
+      translateStatic();
+      updateSoundVolume();
+      const label = t(document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa");
+      fullscreenButton.title = label;
+      fullscreenButton.setAttribute("aria-label", label);
+    });
+    languageSelect.addEventListener("keydown", (event) => event.stopPropagation());
+    languageSelect.addEventListener("keyup", (event) => event.stopPropagation());
+    languageSelect.addEventListener("focus", () => game.input.reset());
+    document.getElementById("btn-options").addEventListener("click", () => game.menu.showOptions());
+    document.getElementById("btn-pause-options").addEventListener("click", () => game.menu.showOptions());
+    document.getElementById("btn-options-back").addEventListener("click", () => {
+      if (game.state === "paused") game.menu.showPause();
+      else game.menu.showMenu();
+    });
     soundVolume.addEventListener("input", () => {
       game.sound.unlock();
       game.sound.setVolume(Number(soundVolume.value) / 100);

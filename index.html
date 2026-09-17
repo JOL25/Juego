@@ -12,22 +12,23 @@
 
   <div id="game-wrap">
     <canvas id="game-canvas"></canvas>
-    <button type="button" id="btn-fullscreen" class="icon-button" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
+    <button type="button" id="btn-fullscreen" class="icon-button" data-i18n-aria-label="Pantalla completa" data-i18n-title="Pantalla completa" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
 
     <!-- Touch pause button (visible always during play, styled via CSS) -->
-    <button id="btn-pause-touch" class="icon-button" aria-label="Pausar">⏸</button>
+    <button id="btn-pause-touch" class="icon-button" data-i18n-aria-label="Pausar" aria-label="Pausar">⏸</button>
 
     <!-- MAIN MENU -->
     <div id="screen-menu" class="screen">
       <div class="panel panel-menu panel-pixel">
         <h1 class="game-title">Circle vs Geometry</h1>
-        <p class="subtitle">Sobrevive a la horda interminable. Sube de nivel. No mires atrás.</p>
-        <button id="btn-start" class="btn-primary">Empezar</button>
+        <p class="subtitle" data-i18n="Sobrevive a la horda interminable. Sube de nivel. No mires atrás.">Sobrevive a la horda interminable. Sube de nivel. No mires atrás.</p>
+        <button id="btn-start" class="btn-primary" data-i18n="Empezar">Empezar</button>
+        <button id="btn-options" class="btn-secondary" data-i18n="Opciones">Opciones</button>
         <div class="controls-hint">
-          <strong>Movimiento:</strong> WASD / Flechas / Joystick táctil<br/>
-          <strong>Dash:</strong> Espacio o Shift<br/>
-          <strong>Definitiva:</strong> Q, E o R (se desbloquea al nivel 5)<br/>
-          <strong>Pausa:</strong> Esc o P
+          <strong data-i18n="Movimiento:">Movimiento:</strong> <span data-i18n="WASD / Flechas / Joystick táctil">WASD / Flechas / Joystick táctil</span><br/>
+          <strong>Dash:</strong> <span data-i18n="Espacio o Shift">Espacio o Shift</span><br/>
+          <strong data-i18n="Definitiva:">Definitiva:</strong> <span data-i18n="Q, E o R (se desbloquea al nivel 5)">Q, E o R (se desbloquea al nivel 5)</span><br/>
+          <strong data-i18n="Pausa:">Pausa:</strong> <span data-i18n="Esc o P">Esc o P</span>
         </div>
       </div>
     </div>
@@ -35,31 +36,46 @@
     <!-- LEVEL UP -->
     <div id="screen-levelup" class="screen hidden">
       <div class="panel panel-levelup panel-pixel">
-        <h2 class="section-title">¡Subiste de nivel!</h2>
-        <p class="subtitle">Elige una mejora</p>
+        <h2 class="section-title" data-i18n="¡Subiste de nivel!">¡Subiste de nivel!</h2>
+        <p class="subtitle" data-i18n="Elige una mejora">Elige una mejora</p>
         <div id="levelup-options" class="levelup-grid"></div>
+      </div>
+    </div>
+
+    <div id="screen-options" class="screen hidden">
+      <div class="panel panel-pixel">
+        <h2 class="section-title" data-i18n="Opciones">Opciones</h2>
+        <div class="language-control">
+          <label for="language-select" data-i18n="Idioma">Idioma</label>
+          <select id="language-select">
+            <option value="en" data-i18n="English">English</option>
+            <option value="es" data-i18n="Español">Español</option>
+          </select>
+        </div>
+        <div id="sound-control">
+          <label for="sound-volume"><span data-i18n="Sonido:">Sonido:</span> <output id="sound-percent" for="sound-volume">100%</output></label>
+          <input id="sound-volume" type="range" min="0" max="100" step="1" value="100" aria-label="Volumen del sonido" data-i18n-aria-label="Volumen del sonido" />
+        </div>
+        <button id="btn-options-back" class="btn-primary" data-i18n="Volver">Volver</button>
       </div>
     </div>
 
     <!-- PAUSE -->
     <div id="screen-pause" class="screen hidden">
       <div class="panel panel-pixel">
-        <h2 class="section-title">Pausa</h2>
-        <div id="sound-control">
-          <label for="sound-volume">Sonido: <output id="sound-percent" for="sound-volume">100%</output></label>
-          <input id="sound-volume" type="range" min="0" max="100" step="1" value="100" aria-label="Volumen del sonido" />
-        </div>
-        <button id="btn-resume" class="btn-primary">Continuar</button>
-        <button id="btn-restart-pause" class="btn-secondary">Reiniciar</button>
+        <h2 class="section-title" data-i18n="Pausa">Pausa</h2>
+        <button id="btn-resume" class="btn-primary" data-i18n="Continuar">Continuar</button>
+        <button id="btn-pause-options" class="btn-secondary" data-i18n="Opciones">Opciones</button>
+        <button id="btn-restart-pause" class="btn-secondary" data-i18n="Reiniciar">Reiniciar</button>
       </div>
     </div>
 
     <!-- GAME OVER -->
     <div id="screen-gameover" class="screen hidden">
       <div class="panel">
-        <h2 class="section-title danger">Has caído</h2>
+        <h2 class="section-title danger" data-i18n="Has caído">Has caído</h2>
         <div id="gameover-stats" class="gameover-stats"></div>
-        <button id="btn-restart-gameover" class="btn-primary">Volver a intentar</button>
+        <button id="btn-restart-gameover" class="btn-primary" data-i18n="Volver a intentar">Volver a intentar</button>
       </div>
     </div>
 

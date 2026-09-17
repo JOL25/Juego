@@ -6,11 +6,13 @@
 // ============================================================
 
 import { createUpgradeIcon, getUpgradePalette } from './UpgradeIcon.js';
+import { t } from './i18n.js';
 
 export class MenuManager {
   constructor() {
     this.screens = {
       menu: document.getElementById('screen-menu'),
+      options: document.getElementById('screen-options'),
       levelup: document.getElementById('screen-levelup'),
       pause: document.getElementById('screen-pause'),
       gameover: document.getElementById('screen-gameover'),
@@ -40,6 +42,11 @@ export class MenuManager {
     this.screens.pause.classList.remove('hidden');
   }
 
+  showOptions() {
+    this.hideAll();
+    this.screens.options.classList.remove('hidden');
+  }
+
   /**
    * @param options array of { title, icon, description, onPick }
    */
@@ -60,11 +67,11 @@ export class MenuManager {
       card.style.setProperty('--card-edge', palette[2]);
       const categoryLabel = { ultimate: 'Definitiva', passive: 'Pasiva', dash: 'Dash', heal: 'Curación', weapon: 'Arma' }[category];
       card.innerHTML = `
-        <div class="levelup-tag">${categoryLabel}</div>
+        <div class="levelup-tag">${t(categoryLabel)}</div>
         <div class="levelup-icon-frame"></div>
         <div class="levelup-title">${opt.title}</div>
         <div class="levelup-desc">${opt.description}</div>
-        <div class="levelup-select" aria-hidden="true">ELEGIR <span>→</span></div>
+        <div class="levelup-select" aria-hidden="true">${t('ELEGIR')} <span>→</span></div>
       `;
       card.querySelector('.levelup-icon-frame').appendChild(createUpgradeIcon(opt));
       card.addEventListener('click', async () => {
@@ -107,10 +114,10 @@ export class MenuManager {
     const mins = Math.floor(time / 60);
     const secs = Math.floor(time % 60).toString().padStart(2, '0');
     this.gameoverStatsEl.innerHTML = `
-      ${isHighScore ? '<div class="new-best">New best time!</div>' : ''}
-      <div class="stat-row"><span>Survived</span><strong>${mins}:${secs}</strong></div>
-      <div class="stat-row"><span>Level reached</span><strong>${level}</strong></div>
-      <div class="stat-row"><span>Enemies slain</span><strong>${kills}</strong></div>
+      ${isHighScore ? `<div class="new-best">${t('New best time!')}</div>` : ''}
+      <div class="stat-row"><span>${t('Survived')}</span><strong>${mins}:${secs}</strong></div>
+      <div class="stat-row"><span>${t('Level reached')}</span><strong>${level}</strong></div>
+      <div class="stat-row"><span>${t('Enemies slain')}</span><strong>${kills}</strong></div>
     `;
   }
 }

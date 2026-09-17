@@ -137,6 +137,10 @@ html, body {
 
 #screen-menu .panel-pixel { --menu-accent: #e8b13a; --menu-edge: #71502e; }
 #screen-pause .panel-pixel { --menu-accent: #7ec6e0; --menu-edge: #36586b; }
+#screen-options .panel-pixel { --menu-accent: #7ec6e0; --menu-edge: #36586b; }
+.language-control { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+#language-select { padding: 12px; font: bold 15px 'Courier New', monospace; color: #f4ece0; background: #201927; border: 2px solid #36586b; border-radius: 0; }
+#language-select:focus-visible { outline: 2px solid #7ec6e0; outline-offset: 2px; }
 #screen-levelup .panel-pixel { --menu-accent: #b89bcc; --menu-edge: #574369; }
 
 .panel-pixel::before {
@@ -163,7 +167,7 @@ html, body {
   color: #cbbfcf;
 }
 
-#screen-levelup, #screen-menu, #screen-pause {
+#screen-levelup, #screen-menu, #screen-pause, #screen-options {
   backdrop-filter: none;
   background: repeating-linear-gradient(0deg, #000000b8 0 2px, #15101fcc 2px 4px);
 }

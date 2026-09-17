@@ -4,6 +4,8 @@ import assert from 'node:assert/strict';
 import { DASH, ULTIMATE } from '../js/config.js';
 import { Player } from '../js/entities/Player.js';
 import { LevelUpSystem } from '../js/systems/LevelUpSystem.js';
+import { setLanguage } from '../js/ui/i18n.js';
+setLanguage('es');
 import {
   createWeapon,
   createUltimate,
