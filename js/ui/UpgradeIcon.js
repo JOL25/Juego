@@ -34,6 +34,27 @@ const PATTERNS = {
 };
 
 let wandSprite = null;
+const PALETTES = {
+  magic_wand: ['#fff0b5', '#e8b13a', '#9d602e'],
+  garlic: ['#f4ece0', '#a8c991', '#587856'],
+  whip: ['#ffd6b1', '#ce8b60', '#83504a'],
+  pierce_ray: ['#fff4be', '#e8c956', '#9b7334'],
+  missile: ['#ffe2bd', '#ed995b', '#a94b3f'],
+  tome: ['#eee0ff', '#ac8bcd', '#635080'],
+  boots: ['#e5f4d4', '#a8c991', '#587856'],
+  armor: ['#e4edf3', '#9caec6', '#566581'],
+  amulet: ['#dcf6f1', '#81c8ba', '#497e84'],
+  heart: ['#ffdbdc', '#e58091', '#a34968'],
+  heal: ['#ffdbdc', '#e58091', '#a34968'],
+  'dash-upgrade': ['#e1f6ff', '#7ec6e0', '#477f9d'],
+  ult_pierce_shot: ['#e1f6ff', '#7ec6e0', '#477f9d'],
+  ult_wave: ['#ffe2bd', '#ed995b', '#a94b3f'],
+  ult_orbit_laser: ['#f6e2ff', '#c69cde', '#80549b'],
+};
+
+export function getUpgradePalette(id) {
+  return PALETTES[id] || PALETTES.magic_wand;
+}
 const hudSprites = new Map();
 
 export function drawUpgradeIcon(ctx, id, x, y, size = 24) {
@@ -59,9 +80,9 @@ export function getMagicWandSprite() {
     ctx.fillRect(2 + i, 19 - i, 4, 4);
   }
   for (let i = 0; i < 14; i++) {
-    ctx.fillStyle = '#902a3d';
+    ctx.fillStyle = '#9d602e';
     ctx.fillRect(3 + i, 20 - i, 2, 2);
-    ctx.fillStyle = '#d46570';
+    ctx.fillStyle = '#ce9653';
     ctx.fillRect(3 + i, 20 - i, 1, 1);
   }
   const star = [
@@ -76,11 +97,11 @@ export function getMagicWandSprite() {
   }));
   star.forEach((row, y) => [...row].forEach((pixel, x) => {
     if (pixel !== '#') return;
-    ctx.fillStyle = x === 5 || y === 5 ? '#fff0dc' : y < 5 ? '#ffa0a4' : '#df4058';
+    ctx.fillStyle = x === 5 || y === 5 ? '#fff0b5' : y < 5 ? '#e8c956' : '#d49837';
     ctx.fillRect(x + 10, y + 1, 1, 1);
   }));
   for (const [x, y] of [[4, 3], [20, 17], [9, 21]]) {
-    ctx.fillStyle = '#df4058';
+    ctx.fillStyle = '#e8b13a';
     ctx.fillRect(x, y - 1, 1, 3);
     ctx.fillRect(x - 1, y, 3, 1);
     ctx.fillStyle = '#fff0dc';
@@ -99,12 +120,7 @@ export function createUpgradeIcon(option) {
     armor: 'shield', tome: 'book', boots: 'boot', amulet: 'magnet',
   };
   const pattern = PATTERNS[shapes[id] || 'bolt'];
-  const passive = ['tome', 'boots', 'armor', 'amulet', 'heart', 'heal'].includes(id);
-  const ultimate = id?.startsWith('ult_');
-  const palette = passive
-    ? ['#fff0dc', '#d9b4af', '#976571']
-    : ultimate ? ['#fff0dc', '#ff657e', '#c52348']
-      : ['#ffe0d8', '#ed8990', '#b83c52'];
+  const palette = getUpgradePalette(id);
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = Math.max(pattern.length, ...pattern.map((row) => row.length)) + 2;
   canvas.className = 'levelup-icon';
@@ -121,7 +137,7 @@ export function createUpgradeIcon(option) {
   const ctx = canvas.getContext('2d');
   pattern.forEach((row, y) => [...row].forEach((pixel, x) => {
     if (pixel !== '#') return;
-    ctx.fillStyle = '#590e1b';
+    ctx.fillStyle = '#241b2d';
     ctx.fillRect(x + 2, y + 2, 1, 1);
   }));
   pattern.forEach((row, y) => [...row].forEach((pixel, x) => {

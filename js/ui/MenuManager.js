@@ -5,7 +5,7 @@
 // simpler to lay out, style, and make accessible than canvas UI.
 // ============================================================
 
-import { createUpgradeIcon } from './UpgradeIcon.js';
+import { createUpgradeIcon, getUpgradePalette } from './UpgradeIcon.js';
 
 export class MenuManager {
   constructor() {
@@ -55,6 +55,9 @@ export class MenuManager {
         : opt.kind.startsWith('passive') ? 'passive'
           : opt.kind.startsWith('dash') ? 'dash' : opt.kind === 'heal' ? 'heal' : 'weapon';
       card.dataset.category = category;
+      const palette = getUpgradePalette(opt.id || opt.weapon?.id || opt.def?.id || opt.kind);
+      card.style.setProperty('--card-accent', palette[1]);
+      card.style.setProperty('--card-edge', palette[2]);
       const categoryLabel = { ultimate: 'Definitiva', passive: 'Pasiva', dash: 'Dash', heal: 'Curación', weapon: 'Arma' }[category];
       card.innerHTML = `
         <div class="levelup-tag">${categoryLabel}</div>
