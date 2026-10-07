@@ -5,15 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Circle vs Geometry</title>
 <link rel="stylesheet" href="style.css" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 
   <div id="game-wrap">
     <canvas id="game-canvas"></canvas>
 
-    <!-- Touch pause button (visible always during play, styled via CSS) -->
+    <div id="touch-controls" hidden>
+      <span class="joystick-hint" data-i18n="Mueve">Mueve</span>
+      <div class="touch-actions">
+        <button id="btn-dash-touch" class="touch-action touch-dash" aria-label="Usar dash" data-i18n-aria-label="Usar dash">
+          <span class="touch-action-name">DASH</span><span id="dash-status" class="touch-action-status"></span>
+        </button>
+        <button id="btn-ultimate-touch" class="touch-action touch-ultimate" aria-label="Usar definitiva" data-i18n-aria-label="Usar definitiva">
+          <span class="touch-action-name">ULT</span><span id="ultimate-status" class="touch-action-status"></span>
+        </button>
+      </div>
+    </div>
+    <div id="tutorial-hint" role="status" aria-live="polite" hidden></div>
+    <div id="ad-overlay" role="status" aria-live="polite" hidden><p id="ad-status"></p></div>
+
+    <!-- Pause stays separate from multi-touch action controls. -->
     <button id="btn-pause-touch" class="icon-button" data-i18n-aria-label="Pausar" aria-label="Pausar">⏸</button>
 
     <!-- MAIN MENU -->
@@ -25,8 +37,8 @@
         <button id="btn-options" class="btn-secondary" data-i18n="Opciones">Opciones</button>
         <div class="controls-hint">
           <strong data-i18n="Movimiento:">Movimiento:</strong> <span data-i18n="WASD / Flechas / Joystick táctil">WASD / Flechas / Joystick táctil</span><br/>
-          <strong>Dash:</strong> <span data-i18n="Espacio o Shift">Espacio o Shift</span><br/>
-          <strong data-i18n="Definitiva:">Definitiva:</strong> <span data-i18n="Q, E o R (se desbloquea al nivel 5)">Q, E o R (se desbloquea al nivel 5)</span><br/>
+          <strong>Dash:</strong> <span id="hint-dash" data-i18n="Espacio o Shift">Espacio o Shift</span><br/>
+          <strong data-i18n="Definitiva:">Definitiva:</strong> <span id="hint-ultimate" data-i18n="Q, E o R (se desbloquea al nivel 5)">Q, E o R (se desbloquea al nivel 5)</span><br/>
           <strong data-i18n="Pausa:">Pausa:</strong> <span data-i18n="Esc o P">Esc o P</span>
         </div>
       </div>

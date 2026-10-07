@@ -24,13 +24,17 @@ import { SoundSystem } from '../systems/SoundSystem.js';
 import { MenuManager } from '../ui/MenuManager.js';
 import { WorldRenderer } from '../rendering/WorldRenderer.js';
 import { createWeapon } from '../weapons/registry.js';
+import { storage } from '../storage.js';
+import { Onboarding } from '../systems/Onboarding.js';
 
 export { STATE };
 
 const HIGH_SCORE_KEY = 'vs_clone_best_time';
 
 export class Game {
-  constructor(canvas) {
+  constructor(canvas, { portal = null } = {}) {
+    this.portal = portal;
+    this.onboarding = new Onboarding();
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     canvas.width = CANVAS.width;
@@ -72,6 +76,13 @@ export class Game {
     requestAnimationFrame((timestamp) => this._loop(timestamp));
   }
 
+  get state() { return this._state; }
+
+  set state(value) {
+    this._state = value;
+    this.portal?.setGameplay(value === STATE.PLAYING && !this.pageHidden);
+  }
+
   resize(width, height) {
     if (width <= 0 || height <= 0) return;
     // Keep figures equally sized on different monitors and preserve their shape.
@@ -87,6 +98,7 @@ export class Game {
   }
 
   start() {
+    if (this.portal?.adPending) return;
     this.sound?.stopAll();
     this.sound?.unlock();
     this.input.reset();
@@ -111,12 +123,14 @@ export class Game {
     this.spawner.updateIntroductions(0, 0);
     this.powerUpSpawner.reset();
     this.levelUpSystem.reset();
+    this.onboarding.reset();
     this.enemyGrid.clear();
     this.state = STATE.PLAYING;
     this.menu.hideAll();
   }
 
   togglePause() {
+    if (this.portal?.adPending) return;
     if (this.state === STATE.PLAYING) {
       this.sound?.stopAll();
       this.input.reset();
@@ -135,9 +149,10 @@ export class Game {
     this.sound?.stopAll();
     this.input.reset();
     this.state = STATE.GAME_OVER;
-    const best = Number(localStorage.getItem(HIGH_SCORE_KEY) || 0);
+    const saved = Number(storage.getItem(HIGH_SCORE_KEY));
+    const best = Number.isFinite(saved) && saved >= 0 ? saved : 0;
     const isHighScore = this.player.survivalTime > best;
-    if (isHighScore) localStorage.setItem(HIGH_SCORE_KEY, String(this.player.survivalTime));
+    if (isHighScore) storage.setItem(HIGH_SCORE_KEY, this.player.survivalTime);
     this.menu.showGameOver({
       level: this.player.level,
       time: this.player.survivalTime,
@@ -158,15 +173,15 @@ export class Game {
 
   _update(dt) {
     if (this.shakeTimer > 0) this.shakeTimer -= dt * 1000;
-    if (this.state !== STATE.PLAYING) return;
+    if (this.state !== STATE.PLAYING || this.pageHidden || this.portal?.adPending) return;
 
     this._updatePowerUpTimers(dt);
 
     const move = this.input.getMoveVector();
     if (this.input.consumeDash()) this.player.tryDash(move);
-    if (this.input.consumeUltimate() && this.player.ultimate) {
-      this.player.ultimate.tryActivate(this);
-    }
+    const ultimateActivated = this.input.consumeUltimate() && this.player.ultimate
+      ? this.player.ultimate.tryActivate(this) : false;
+    this.onboarding?.update(dt, this.player, ultimateActivated);
 
     this.player.update(dt, move);
     if (this.player.ultimate) this.player.ultimate.update(dt, this);
@@ -427,5 +442,6 @@ export class Game {
 
   _render() {
     this.renderer.render(this);
+    this.gameplayUI?.update();
   }
 }

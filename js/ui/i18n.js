@@ -1,4 +1,17 @@
+import { storage } from '../storage.js';
+
 const EN = {
+  'Arrastra para moverte. Tus armas disparan solas.': 'Drag to move. Your weapons fire automatically.',
+  'Muévete con WASD o flechas. Tus armas disparan solas.': 'Move with WASD or arrows. Your weapons fire automatically.',
+  'Recoge las gemas azules para subir de nivel y elegir mejoras.': 'Collect blue gems to level up and choose upgrades.',
+  'Pulsa DASH para esquivar sin soltar el joystick.': 'Tap DASH to dodge while holding the joystick.',
+  'Usa Espacio o Shift para esquivar con el dash.': 'Use Space or Shift to dodge with a dash.',
+  '¡Definitiva lista! Pulsa el botón ULT.': 'Ultimate ready! Tap the ULT button.',
+  '¡Definitiva lista! Pulsa Q, E o R para activarla.': 'Ultimate ready! Press Q, E or R to activate it.',
+  'Botón DASH': 'DASH button', 'Botón ULT (nivel 5)': 'ULT button (level 5)',
+  'Usar dash': 'Use dash', 'Usar definitiva': 'Use ultimate',
+  'Listo': 'Ready', 'Preparando anuncio…': 'Preparing ad…', 'Anuncio en curso…': 'Ad playing…',
+  'Mueve': 'Move',
   'Sobrevive a la horda interminable. Sube de nivel. No mires atrás.': 'Survive the endless horde. Level up. Never look back.',
   'Empezar': 'Play', 'Opciones': 'Options', 'Idioma': 'Language', 'Volver': 'Back',
   'Movimiento:': 'Movement:', 'WASD / Flechas / Joystick táctil': 'WASD / Arrow keys / Touch joystick',
@@ -55,7 +68,7 @@ export function getLanguage() { return language; }
 export function setLanguage(value) {
   if (!['es', 'en'].includes(value)) return;
   language = value;
-  try { localStorage.setItem('vs_clone_language', value); } catch { /* Optional storage. */ }
+  storage.setItem('vs_clone_language', value);
 }
 
 // Translate complete messages, never substrings inside another name or sentence.

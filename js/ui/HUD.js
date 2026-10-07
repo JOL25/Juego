@@ -16,16 +16,26 @@ function formatTime(totalSeconds) {
 
 export function drawHUD(ctx, game) {
   const { player, canvas } = game;
-  const w = canvas.width;
+  // Draw the interface in CSS pixels so mobile text stays readable.
+  const displayWidth = canvas.clientWidth || canvas.width;
+  const leftInset = game.safeArea?.left || 0;
+  const w = displayWidth - leftInset - (game.safeArea?.right || 0);
+  const h = canvas.clientHeight || canvas.height;
+  const compact = w < 700;
+  const controlSpace = game.touchControls ? 124 : 34;
+  const topInset = game.safeArea?.top || 0;
+  const bottomInset = game.safeArea?.bottom || 0;
 
   ctx.save();
+  ctx.scale(canvas.width / displayWidth, canvas.height / h);
+  ctx.translate(leftInset, topInset);
 
   // --- Top bar background ---
   ctx.fillStyle = 'rgba(10,5,8,0.55)';
-  ctx.fillRect(0, 0, w, 54);
+  ctx.fillRect(-leftInset, 0, displayWidth, compact ? 88 : 54);
 
   // --- HP bar ---
-  const hpBarX = 14, hpBarY = 12, hpBarW = 220, hpBarH = 14;
+  const hpBarX = 14, hpBarY = 12, hpBarW = compact ? Math.min(180, w * 0.42) : 220, hpBarH = 16;
   ctx.fillStyle = COLORS.hpBarBack;
   ctx.fillRect(hpBarX, hpBarY, hpBarW, hpBarH);
   const hpPct = Math.max(0, player.hp / player.maxHp);
@@ -34,12 +44,12 @@ export function drawHUD(ctx, game) {
   ctx.strokeStyle = 'rgba(255,255,255,0.25)';
   ctx.strokeRect(hpBarX, hpBarY, hpBarW, hpBarH);
   ctx.fillStyle = COLORS.text;
-  ctx.font = 'bold 11px "Inter", sans-serif';
+  ctx.font = 'bold 12px "Inter", sans-serif';
   ctx.textAlign = 'left';
   ctx.fillText(`${Math.ceil(player.hp)} / ${player.maxHp}`, hpBarX + 6, hpBarY + hpBarH - 3);
 
   // --- XP bar ---
-  const xpBarY = 30, xpBarH = 8;
+  const xpBarY = 32, xpBarH = 8;
   ctx.fillStyle = COLORS.xpBarBack;
   ctx.fillRect(hpBarX, xpBarY, hpBarW, xpBarH);
   const xpPct = Math.max(0, Math.min(1, player.xp / player.xpToNext));
@@ -57,7 +67,7 @@ export function drawHUD(ctx, game) {
   ctx.fillStyle = COLORS.text;
   ctx.font = 'bold 20px "Cinzel", serif';
   ctx.textAlign = 'center';
-  ctx.fillText(formatTime(player.survivalTime), w / 2, 33);
+  ctx.fillText(formatTime(player.survivalTime), w / 2, compact ? 65 : 33);
 
   const activePowerUps = [];
   if (game.megaMagnetTimer > 0) {
@@ -67,7 +77,7 @@ export function drawHUD(ctx, game) {
     activePowerUps.push({ label: `${t('HIELO')} ${game.enemyFreezeTimer.toFixed(1)}s`, color: '#78e7ff' });
   }
   if (activePowerUps.length > 0) {
-    ctx.font = 'bold 10px "Inter", sans-serif';
+    ctx.font = 'bold 12px "Inter", sans-serif';
     const labelsWidth = activePowerUps.reduce(
       (total, powerUp) => total + ctx.measureText(powerUp.label).width,
       0
@@ -77,48 +87,55 @@ export function drawHUD(ctx, game) {
     ctx.textAlign = 'left';
     for (const powerUp of activePowerUps) {
       ctx.fillStyle = powerUp.color;
-      ctx.fillText(powerUp.label, powerUpX, 49);
+      ctx.fillText(powerUp.label, powerUpX, compact ? 81 : 49);
       powerUpX += ctx.measureText(powerUp.label).width + gap;
     }
   }
 
   // --- Kill count (right) ---
-  ctx.textAlign = 'right';
+  ctx.textAlign = compact ? 'left' : 'right';
   ctx.font = 'bold 14px "Inter", sans-serif';
   ctx.fillStyle = COLORS.text;
-  ctx.fillText(`💀 ${player.kills}`, w - 14, 33);
+  ctx.fillText(`💀 ${player.kills}`, compact ? 14 : w - 68, compact ? 65 : 33);
 
   // --- Weapon icons row (bottom-left) ---
-  const iconY = canvas.height - 34;
+  const columns = Math.max(1, Math.floor((w - 28) / 30));
+  const rows = Math.ceil((player.weapons.length + player.passives.length) / columns);
+  const iconY = h - controlSpace - bottomInset - topInset - Math.max(0, rows - 1) * 30;
   let iconX = 14;
+  let itemIndex = 0;
   ctx.textAlign = 'left';
   for (const weapon of player.weapons) {
+    const itemY = iconY + Math.floor(itemIndex / columns) * 30;
+    iconX = 14 + (itemIndex % columns) * 30;
     ctx.fillStyle = 'rgba(10,5,8,0.6)';
-    ctx.fillRect(iconX, iconY, 26, 26);
+    ctx.fillRect(iconX, itemY, 26, 26);
     ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-    ctx.strokeRect(iconX, iconY, 26, 26);
-    drawUpgradeIcon(ctx, weapon.id, iconX + 1, iconY + 1);
-    ctx.font = 'bold 9px "Inter", sans-serif';
+    ctx.strokeRect(iconX, itemY, 26, 26);
+    drawUpgradeIcon(ctx, weapon.id, iconX + 1, itemY + 1);
+    ctx.font = 'bold 11px "Inter", sans-serif';
     ctx.fillStyle = getUpgradePalette(weapon.id)[1];
-    ctx.fillText(String(weapon.level), iconX + 18, iconY + 25);
-    iconX += 30;
+    ctx.fillText(String(weapon.level), iconX + 18, itemY + 25);
+    itemIndex += 1;
   }
   for (const passive of player.passives) {
+    const itemY = iconY + Math.floor(itemIndex / columns) * 30;
+    iconX = 14 + (itemIndex % columns) * 30;
     ctx.fillStyle = 'rgba(10,5,8,0.6)';
-    ctx.fillRect(iconX, iconY, 26, 26);
+    ctx.fillRect(iconX, itemY, 26, 26);
     ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-    ctx.strokeRect(iconX, iconY, 26, 26);
-    drawUpgradeIcon(ctx, passive.id, iconX + 1, iconY + 1);
-    ctx.font = 'bold 9px "Inter", sans-serif';
+    ctx.strokeRect(iconX, itemY, 26, 26);
+    drawUpgradeIcon(ctx, passive.id, iconX + 1, itemY + 1);
+    ctx.font = 'bold 11px "Inter", sans-serif';
     ctx.fillStyle = getUpgradePalette(passive.id)[1];
-    ctx.fillText(String(passive.level), iconX + 18, iconY + 25);
-    iconX += 30;
+    ctx.fillText(String(passive.level), iconX + 18, itemY + 25);
+    itemIndex += 1;
   }
 
   // Ultimate (bottom-right)
   ctx.textAlign = 'right';
-  const ultX = canvas.width - 14;
-  const ultY = canvas.height - 34;
+  const ultX = w - 14;
+  const ultY = compact ? iconY - 24 : iconY;
   if (!player.ultimate) {
     ctx.fillStyle = 'rgba(244,236,224,0.5)';
     ctx.font = 'bold 11px "Inter", sans-serif';
@@ -150,6 +167,18 @@ export function drawHUD(ctx, game) {
 }
 
 export function drawEnemyAnnouncement(ctx, game) {
+  const displayWidth = game.canvas.clientWidth || game.canvas.width;
+  const leftInset = game.safeArea?.left || 0;
+  const w = displayWidth - leftInset - (game.safeArea?.right || 0);
+  const scale = game.canvas.width / displayWidth;
+  ctx.save();
+  if (scale !== 1) ctx.scale(scale, scale);
+  ctx.translate?.(leftInset, (w < 700 ? 30 : 0) + (game.safeArea?.top || 0));
+  drawAnnouncement(ctx, { ...game, canvas: { width: w } });
+  ctx.restore();
+}
+
+function drawAnnouncement(ctx, game) {
   const mysteryAge = game.powerUpSpawner?.announcementAge;
   if (mysteryAge != null) {
     drawMysteryAnnouncement(ctx, game.canvas, mysteryAge);

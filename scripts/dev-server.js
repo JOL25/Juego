@@ -48,9 +48,10 @@ export function createStaticServer({ rootDir = process.cwd(), host = '127.0.0.1'
 async function run() {
   const requestedPort = Number(process.argv[2] || 8080);
   console.log('Nightfall server starting');
-  const server = await createStaticServer({ port: requestedPort });
+  const requestedHost = process.env.NIGHTFALL_HOST || '127.0.0.1';
+  const server = await createStaticServer({ port: requestedPort, host: requestedHost });
   const address = server.address();
-  console.log(`Nightfall server ready at http://127.0.0.1:${address.port}`);
+  console.log(`Nightfall server ready at http://${requestedHost}:${address.port}`);
 }
 
 const isMainModule = process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;

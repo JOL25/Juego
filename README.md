@@ -140,27 +140,52 @@ tests/                       Gameplay, timing, input, spatial-grid, and collisio
 
 ## Publishing to CrazyGames
 
-1. Zip the contents of this folder (not the folder itself — `index.html`
-   should be at the zip's root).
-2. In the CrazyGames developer dashboard, upload the zip as an HTML5 build
-   and set `index.html` as the entry point.
-3. Recommended next steps before submitting:
-   - Integrate the [CrazyGames SDK](https://docs.crazygames.com/sdk/html5/)
-     for loading screen (`sdk.game.loadingStart()` / `loadingStop()`),
-     gameplay state (`sdk.game.gameplayStart()` / `gameplayStop()`), and
-     optional midroll ads on game-over.
-   - Confirm the game plays fully offline after load (no runtime calls to
-     third-party APIs other than the CrazyGames SDK) — this project already
-     satisfies that except for the Google Fonts `<link>` in `index.html`,
-     which you may want to self-host for reliability.
-   - Test the touch joystick on an actual mobile device; CrazyGames traffic
-     skews heavily mobile.
+1. Run `./scripts/package-crazygames.ps1` in PowerShell. Upload only
+   `crazygames/circle-vs-geometry.zip`; it contains one `index.html` at its root.
+2. Select the **Progress Save** toggle in the portal because the CrazyGames build
+   uses the SDK Data module for records, preferences and completed tutorial hints.
+3. Test the uploaded build in the portal preview before submission, including
+   Basic Launch (ads disabled). Monetization is enabled by the portal only after
+   selection for Full Launch.
+
+The dedicated build uses the [CrazyGames SDK v3](https://docs.crazygames.com/sdk/intro/),
+initializes before play, reports loading and gameplay transitions (including pause,
+upgrade selection and game over), and requests a midgame ad on game-over retry.
+It blocks gameplay and menus while requesting/showing an ad, mutes only when the
+ad starts, restores the player's volume, and handles unfilled/disabled ads.
+If SDK loading/initialization fails, the game still works. The generic source and
+`jugar.html` stay self-contained and do not load a portal SDK.
+
+Touch controls support movement plus DASH/ULT with two fingers, show charges and
+cooldowns, and adapt to phones/tablets. First-play hints explain movement, auto-fire,
+XP and dash, with a separate hint on first ultimate acquisition. Completed hints
+are remembered where storage is available; denied storage falls back to the session.
+
+## Browser and device validation
+
+```bash
+npm test
+npm run test:browser
+npm run test:standalone
+npm run test:devices
+npx playwright install webkit
+npm run test:engines
+```
+
+Device QA uses Edge with isolated desktop/mobile/tablet contexts, real protocol
+multi-touch events, iframe checks, SDK callback regressions and a full-combat
+benchmark. Engine QA adds WebKit on Windows and the real SDK's localhost ad flow.
+Reports and screenshots are saved in `qa/`. These are emulation/engine tests;
+physical Android, iPhone Safari, safe areas, interruptions and production portal
+ads still need manual validation. See [qa/VALIDACION.md](qa/VALIDACION.md).
 
 ## Geometry identity and encounter schedule
 
 Weapons: Vector Cannon, Arc Slash, Repulsion Field, Prism Ray, Polygon Missile.
 Passive upgrades: Vital Core, Velocity Vector, Polygon Shell, Attraction Field, Energy Recycle.
-English opens every new visit; Spanish remains available in Options. Volume is saved.
+The generic/offline build starts in English. CrazyGames uses the SDK locale with
+an English fallback; both languages remain available in Options. Volume is saved
+when persistent storage is available.
 The shared web and standalone versions omit the custom fullscreen button so the host platform controls fullscreen.
 Internal weapon IDs and module names remain stable for compatibility.
 

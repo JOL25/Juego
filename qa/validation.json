@@ -1,0 +1,280 @@
+{
+  "engine": "Chromium (Edge headless)",
+  "deviceTesting": "Viewport and touch emulation; not physical Android/iOS or Safari",
+  "profiles": [
+    {
+      "name": "desktop",
+      "width": 907,
+      "height": 510,
+      "passed": true,
+      "multitouch": "Not applicable",
+      "menu": {
+        "width": 907,
+        "height": 510,
+        "panel": {
+          "x": 143.5,
+          "y": 46.953125,
+          "right": 763.5,
+          "bottom": 463.046875
+        },
+        "touch": false
+      },
+      "choices": {
+        "panelVisible": true,
+        "cards": 3,
+        "buttonVisible": true
+      }
+    },
+    {
+      "name": "small-desktop",
+      "width": 640,
+      "height": 360,
+      "passed": true,
+      "multitouch": "Not applicable",
+      "menu": {
+        "width": 640,
+        "height": 360,
+        "panel": {
+          "x": 32,
+          "y": 16,
+          "right": 608,
+          "bottom": 344
+        },
+        "touch": false
+      },
+      "choices": {
+        "panelVisible": true,
+        "cards": 3,
+        "buttonVisible": true
+      }
+    },
+    {
+      "name": "android-portrait-viewport",
+      "width": 360,
+      "height": 800,
+      "touch": true,
+      "passed": true,
+      "multitouch": "Movement + dash and movement + ultimate passed",
+      "menu": {
+        "width": 360,
+        "height": 800,
+        "panel": {
+          "x": 18,
+          "y": 168.328125,
+          "right": 342,
+          "bottom": 631.65625
+        },
+        "touch": true
+      },
+      "choices": {
+        "panelVisible": true,
+        "cards": 3,
+        "buttonVisible": true
+      }
+    },
+    {
+      "name": "android-landscape-viewport",
+      "width": 800,
+      "height": 360,
+      "touch": true,
+      "passed": true,
+      "multitouch": "Movement + dash and movement + ultimate passed",
+      "menu": {
+        "width": 800,
+        "height": 360,
+        "panel": {
+          "x": 90,
+          "y": 16,
+          "right": 710,
+          "bottom": 344
+        },
+        "touch": true
+      },
+      "choices": {
+        "panelVisible": true,
+        "cards": 3,
+        "buttonVisible": true
+      }
+    },
+    {
+      "name": "iphone-viewport",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "passed": true,
+      "multitouch": "Movement + dash and movement + ultimate passed",
+      "menu": {
+        "width": 390,
+        "height": 844,
+        "panel": {
+          "x": 19.5,
+          "y": 205.921875,
+          "right": 370.5,
+          "bottom": 638.0625
+        },
+        "touch": true
+      },
+      "choices": {
+        "panelVisible": true,
+        "cards": 3,
+        "buttonVisible": true
+      }
+    },
+    {
+      "name": "small-phone-viewport",
+      "width": 320,
+      "height": 568,
+      "touch": true,
+      "passed": true,
+      "multitouch": "Movement + dash and movement + ultimate passed",
+      "menu": {
+        "width": 320,
+        "height": 568,
+        "panel": {
+          "x": 16,
+          "y": 52.328125,
+          "right": 304,
+          "bottom": 515.65625
+        },
+        "touch": true
+      },
+      "choices": {
+        "panelVisible": true,
+        "cards": 3,
+        "buttonVisible": true
+      }
+    },
+    {
+      "name": "tablet-portrait-viewport",
+      "width": 768,
+      "height": 1024,
+      "touch": true,
+      "passed": true,
+      "multitouch": "Movement + dash and movement + ultimate passed",
+      "menu": {
+        "width": 768,
+        "height": 1024,
+        "panel": {
+          "x": 74,
+          "y": 307.28125,
+          "right": 694,
+          "bottom": 716.703125
+        },
+        "touch": true
+      },
+      "choices": {
+        "panelVisible": true,
+        "cards": 3,
+        "buttonVisible": true
+      }
+    },
+    {
+      "name": "tablet-landscape-viewport",
+      "width": 1024,
+      "height": 768,
+      "touch": true,
+      "passed": true,
+      "multitouch": "Movement + dash and movement + ultimate passed",
+      "menu": {
+        "width": 1024,
+        "height": 768,
+        "panel": {
+          "x": 202,
+          "y": 174.921875,
+          "right": 822,
+          "bottom": 593.078125
+        },
+        "touch": true
+      },
+      "choices": {
+        "panelVisible": true,
+        "cards": 3,
+        "buttonVisible": true
+      }
+    },
+    {
+      "name": "desktop-iframe",
+      "width": 821,
+      "height": 462,
+      "iframe": true,
+      "passed": true,
+      "multitouch": "Not applicable",
+      "menu": {
+        "width": 821,
+        "height": 462,
+        "panel": {
+          "x": 100.5,
+          "y": 25.015625,
+          "right": 720.5,
+          "bottom": 436.984375
+        },
+        "touch": false
+      },
+      "choices": {
+        "panelVisible": true,
+        "cards": 3,
+        "buttonVisible": true
+      }
+    },
+    {
+      "name": "mobile-iframe",
+      "width": 360,
+      "height": 800,
+      "touch": true,
+      "iframe": true,
+      "passed": true,
+      "multitouch": "Movement + dash and movement + ultimate passed",
+      "menu": {
+        "width": 360,
+        "height": 800,
+        "panel": {
+          "x": 18,
+          "y": 168.328125,
+          "right": 342,
+          "bottom": 631.65625
+        },
+        "touch": true
+      },
+      "choices": {
+        "panelVisible": true,
+        "cards": 3,
+        "buttonVisible": true
+      }
+    }
+  ],
+  "portal": {
+    "completedAd": "Pause, UI lock, mute and restart passed",
+    "unavailableAds": "Disabled, thrown and rejected requests allow retry",
+    "blockedStorage": "Game over and retry passed in iframe with storage denied",
+    "events": [
+      "loadingStart",
+      "loadingStop",
+      "gameplayStart",
+      "gameplayStop",
+      "gameplayStart",
+      "gameplayStop",
+      "gameplayStart",
+      "gameplayStop",
+      "gameplayStart",
+      "gameplayStop",
+      "gameplayStart",
+      "gameplayStop",
+      "gameplayStart",
+      "gameplayStop",
+      "gameplayStart"
+    ]
+  },
+  "physicalDevices": "Pending manual validation",
+  "failures": [],
+  "performance": {
+    "frames": 120,
+    "loadout": "Five maximum-level weapons, five passives and orbit ultimate",
+    "peak": {
+      "enemies": 260,
+      "projectiles": 207,
+      "particles": 839
+    },
+    "averageUpdateAndRenderMs": 4.916666666666667,
+    "device": "Host computer, Chromium headless"
+  }
+}

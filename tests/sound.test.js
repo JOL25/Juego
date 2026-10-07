@@ -114,3 +114,29 @@ test('each ultimate plays its own effect only on successful activation', () => {
     assert.deepEqual(sounds, [ultimate.id, ultimate.id]);
   }
 });
+
+test('ad suspension stops all voices and restores the exact user volume without saving a mute', () => {
+  const { sound, sources } = setup();
+  sound.setVolume(0.37);
+  sound.play('xp');
+  sound.setSuspended(true);
+  assert.equal(sources[0].stopped, true);
+  assert.equal(sound.play('hit'), false);
+  sound.unlock();
+  assert.equal(sound.volume, 0.37);
+  sound.setSuspended(false);
+  assert.equal(sound.volume, 0.37);
+  assert.equal(sound.play('hit'), true);
+  sound.setVolume(1);
+});
+
+test('iOS interrupted audio resumes within a user gesture', async () => {
+  const { sound, context } = setup();
+  let resumed = false;
+  context.state = 'interrupted';
+  context.resume = async () => { resumed = true; context.state = 'running'; };
+  sound.unlock();
+  await Promise.resolve();
+  assert.equal(resumed, true);
+  assert.equal(sound.play('xp'), true);
+});

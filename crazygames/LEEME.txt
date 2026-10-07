@@ -1,0 +1,35 @@
+ARCHIVOS PARA EL ENVIO
+
+Juego: circle-vs-geometry.zip
+Contiene solo index.html en la raiz, con JavaScript y CSS integrados.
+La carpeta juego permite abrir la misma version sin descomprimir el ZIP.
+
+Portadas (subir por separado, no dentro del ZIP del juego):
+  portadas/horizontal-1920x1080.png
+  portadas/vertical-800x1200.png
+  portadas/cuadrada-800x800.png
+
+Idiomas: ingles y espanol. Se usa el locale del SDK con ingles como alternativa;
+ambos idiomas se pueden seleccionar en Options.
+Controles: teclado en ordenador; joystick, DASH y ULT tactiles en movil/tablet.
+Orientaciones: horizontal y vertical; interfaces verificadas mediante emulacion.
+SDK CrazyGames v3 integrado: carga, inicio/fin de gameplay, pausa y mejoras.
+Anuncio midgame al volver a intentar tras perder; el juego y los controles se
+bloquean durante la solicitud/anuncio. El sonido se restaura al finalizar o fallar.
+Basic Launch funciona con anuncios deshabilitados; la monetizacion depende del
+paso a Full Launch y de la habilitacion por CrazyGames.
+Activar Progress Save en la ficha del portal: se usa el modulo Data del SDK.
+
+Los videos finales de 15 segundos estan en ../clipsjuego/finales.
+Incluyen la portada correspondiente al inicio y no tienen pista de audio.
+Subir horizontal y vertical; el cuadrado es un extra.
+Pendiente: probar Android y Safari/iPhone fisicos, la vista previa del portal y
+completar la ficha. WebKit en Windows y la emulacion no sustituyen esas pruebas.
+Informes y capturas: ../qa/validation.json, ../qa/engines.json y ../qa/VALIDACION.md.
+Este paquete no se ha publicado ni enviado a CrazyGames.
+
+Para reconstruir el ZIP despues de editar el juego, desde PowerShell:
+  ./scripts/package-crazygames.ps1
+
+Arte adaptado con el generador de imagenes integrado. Originales conservados
+en ../clipsjuego/portadas; prompts de las adaptaciones en prompts-portadas.txt.

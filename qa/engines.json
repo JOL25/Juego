@@ -1,0 +1,51 @@
+{
+  "webkit": [
+    {
+      "name": "webkit-desktop",
+      "width": 907,
+      "height": 510,
+      "touch": false,
+      "passed": true,
+      "checks": "Menu, language, volume, gameplay, action input, pause, upgrade, denied storage and retry"
+    },
+    {
+      "name": "webkit-iphone-viewport",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "passed": true,
+      "checks": "Menu, language, volume, gameplay, action input, pause, upgrade, denied storage and retry"
+    },
+    {
+      "name": "webkit-tablet-iframe",
+      "width": 768,
+      "height": 1024,
+      "touch": true,
+      "iframe": true,
+      "passed": true,
+      "checks": "Menu, language, volume, gameplay, action input, pause, upgrade, denied storage and retry"
+    }
+  ],
+  "realSdk": {
+    "loaded": true,
+    "ready": true,
+    "environment": "local",
+    "adStates": [
+      [
+        true,
+        false
+      ],
+      [
+        true,
+        true
+      ],
+      [
+        false,
+        false
+      ]
+    ],
+    "retryPassed": true
+  },
+  "limitations": "WebKit on Windows and emulated touch are not physical iPhone/Safari tests",
+  "failures": []
+}

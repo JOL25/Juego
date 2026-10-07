@@ -1,0 +1,101 @@
+[
+  {
+    "filename": "01-horizontal.mp4",
+    "cover": "horizontal-1920x1080.png",
+    "coverSeconds": 0.3,
+    "width": 1920,
+    "height": 1080,
+    "duration": 15.006533,
+    "sourceEnd": 14.722862,
+    "bytes": 19220228,
+    "checks": [
+      {
+        "second": 0.05,
+        "coverDifference": 1.983740033436214
+      },
+      {
+        "second": 0.5,
+        "coverDifference": 49.83337995113169
+      },
+      {
+        "second": 7,
+        "coverDifference": 49.15444798096708
+      },
+      {
+        "second": 14.8,
+        "coverDifference": 58.19826388888889
+      }
+    ],
+    "tracks": [
+      "vide"
+    ],
+    "frames": 450,
+    "averageFps": 29.986939688201133
+  },
+  {
+    "filename": "02-vertical.mp4",
+    "cover": "vertical-800x1200.png",
+    "coverSeconds": 0.3,
+    "width": 1080,
+    "height": 1620,
+    "duration": 15.014433,
+    "sourceEnd": 14.723956,
+    "bytes": 19749544,
+    "checks": [
+      {
+        "second": 0.05,
+        "coverDifference": 2.4113378295991463
+      },
+      {
+        "second": 0.5,
+        "coverDifference": 55.411657902758726
+      },
+      {
+        "second": 7,
+        "coverDifference": 55.38404016156074
+      },
+      {
+        "second": 14.8,
+        "coverDifference": 56.4723746380125
+      }
+    ],
+    "tracks": [
+      "vide"
+    ],
+    "frames": 450,
+    "averageFps": 29.971161748165915
+  },
+  {
+    "filename": "03-cuadrado-extra.mp4",
+    "cover": "cuadrada-800x800.png",
+    "coverSeconds": 0.3,
+    "width": 1080,
+    "height": 1080,
+    "duration": 15.0003,
+    "sourceEnd": 14.721421,
+    "bytes": 20759656,
+    "checks": [
+      {
+        "second": 0.05,
+        "coverDifference": 2.6812814357567443
+      },
+      {
+        "second": 0.5,
+        "coverDifference": 57.39609625057156
+      },
+      {
+        "second": 7,
+        "coverDifference": 58.273042409693645
+      },
+      {
+        "second": 14.8,
+        "coverDifference": 57.41856995884773
+      }
+    ],
+    "tracks": [
+      "vide"
+    ],
+    "frames": 450,
+    "averageFps": 29.99940001199976
+  }
+]

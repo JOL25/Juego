@@ -56,6 +56,7 @@ export class InputManager {
     canvas.addEventListener('pointermove', (event) => this._onPointerMove(event));
     canvas.addEventListener('pointerup', (event) => this._onPointerEnd(event));
     canvas.addEventListener('pointercancel', (event) => this._onPointerEnd(event));
+    canvas.addEventListener('lostpointercapture', (event) => this._onPointerEnd(event));
   }
 
   onPause(callback) {
@@ -122,7 +123,7 @@ export class InputManager {
   }
 
   _onPointerDown(event) {
-    if (this.joystick.active || event.isPrimary === false) return;
+    if (this.joystick.active) return;
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     event.preventDefault();
 
@@ -149,7 +150,7 @@ export class InputManager {
 
   _onPointerEnd(event) {
     if (event.pointerId !== this.joystick.pointerId) return;
-    event.preventDefault();
+    event.preventDefault?.();
     this._releaseJoystick();
   }
 

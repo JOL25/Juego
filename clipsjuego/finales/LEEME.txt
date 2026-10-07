@@ -1,0 +1,17 @@
+VIDEOS FINALES CON PORTADA
+
+01-horizontal.mp4: 1920x1080, 16:9.
+02-vertical.mp4: 1080x1620, 2:3.
+03-cuadrado-extra.mp4: 1080x1080, 1:1 (extra).
+
+Cada video dura aproximadamente 15 segundos: 0.3 segundos de portada
+seguidos de gameplay a velocidad normal. Se recorta el final de la
+captura original para mantener la duracion total.
+MP4/H.264, aproximadamente 30 fps, sin pista de audio, menos de 21 MB.
+Las dimensiones, duraciones y comprobaciones estan en verificacion.json.
+
+Para CrazyGames utilizar horizontal y vertical. Subirlos por separado
+al ZIP del juego. El cuadrado queda disponible como material adicional.
+Originales intactos en la carpeta superior.
+
+Para regenerar: node scripts/finalize-clips.js

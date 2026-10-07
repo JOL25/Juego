@@ -1,4 +1,5 @@
 import { AUDIO } from '../config.js';
+import { storage } from '../storage.js';
 
 // Original chip-style effects, synthesized once and reused; no downloads needed.
 const EFFECTS = {
@@ -27,11 +28,12 @@ export class SoundSystem {
     this.lastPlayed = new Map();
     this.voices = new Set();
     this.volume = 1;
+    this.suspended = false;
     try {
-      const saved = localStorage.getItem('vs_clone_volume');
+      const saved = storage.getItem('vs_clone_volume');
       if (saved !== null && Number.isFinite(Number(saved))) {
         this.volume = Math.max(0, Math.min(1, Number(saved)));
-      } else if (localStorage.getItem('vs_clone_muted') === 'true') {
+      } else if (storage.getItem('vs_clone_muted') === 'true') {
         this.volume = 0;
       }
     } catch { /* Storage is optional. */ }
@@ -39,6 +41,7 @@ export class SoundSystem {
 
   // Called from a user gesture, including subsequent gestures after tab suspension.
   unlock() {
+    if (this.suspended) return;
     try {
       if (!this.context) {
         this.context = this.createContext();
@@ -50,7 +53,7 @@ export class SoundSystem {
           this.buffers.set(name, this._synthesize(effect.notes));
         }
       }
-      if (this.context.state === 'suspended') this.context.resume().catch(() => {});
+      if (['suspended', 'interrupted'].includes(this.context.state)) this.context.resume().catch(() => {});
     } catch { /* Audio unavailable: gameplay still works. */ }
   }
 
@@ -60,17 +63,23 @@ export class SoundSystem {
 
   get muted() { return this.volume === 0; }
 
+  setSuspended(suspended) {
+    this.suspended = suspended;
+    if (suspended) this.stopAll();
+    if (this.master) this.master.gain.setTargetAtTime(suspended ? 0 : this.volume * AUDIO.volume, this.context.currentTime, 0.01);
+  }
+
   setVolume(volume) {
     if (!Number.isFinite(volume)) return;
     this.volume = Math.max(0, Math.min(1, volume));
-    if (this.master) this.master.gain.setTargetAtTime(this.volume * AUDIO.volume, this.context.currentTime, 0.01);
+    if (this.master) this.master.gain.setTargetAtTime(this.suspended ? 0 : this.volume * AUDIO.volume, this.context.currentTime, 0.01);
     if (this.muted) this.stopAll();
-    try { localStorage.setItem('vs_clone_volume', String(this.volume)); } catch { /* Storage is optional. */ }
+    storage.setItem('vs_clone_volume', this.volume);
   }
 
   play(name) {
     const effect = EFFECTS[name];
-    if (!effect || this.muted || this.context?.state !== 'running' || !this.buffers.has(name)) return false;
+    if (!effect || this.muted || this.suspended || this.context?.state !== 'running' || !this.buffers.has(name)) return false;
     const now = this.context.currentTime;
     if (now - (this.lastPlayed.get(name) ?? -Infinity) < effect.cooldown) return false;
     if (this.voices.size >= AUDIO.maxVoices) {

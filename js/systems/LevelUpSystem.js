@@ -34,7 +34,12 @@ export class LevelUpSystem {
     game.sound?.play('levelUp');
     const options = this.buildOptions(game.player);
     game.menu.showLevelUp(
-      options.map((opt) => ({ ...opt, onPick: () => this.applyChoice(opt, game) }))
+      options.map((opt) => ({
+        ...opt,
+        description: game.touchControls && opt.kind === 'ultimate-new'
+          ? opt.description.replace('Q / E / R', t('Botón ULT (nivel 5)')) : opt.description,
+        onPick: () => this.applyChoice(opt, game),
+      }))
     );
   }
 
